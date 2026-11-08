@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Сауны Португалии</title>
 <meta name="description" content="Где попариться у Кашкайша, Оэйраша, Синтры и в Лиссабоне: карта, цены, длительность сеанса, бронь.">
-<meta property="og:title" content="Сауны Португалии">
+<meta property="og:title" content="Сауны Португалии · Saunas of Portugal · Saunas de Portugal">
 <meta property="og:description" content="Сауны, бани и спа вокруг Лиссабона и по Португалии: карта, цены разового входа и абонементов, бронь, фото.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://d7656520-ai.github.io/sauna/">
@@ -360,6 +360,7 @@ const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сау�
 
 Object.assign(I18N.ru,{sch_weekly:"По расписанию",sch_calendar:"По датам",sch_on_request:"По записи",sch_open:"расписание",sch_t:"Расписание",sch_up:"Ближайшие",sch_win:"Свободные окна на этой неделе"});Object.assign(I18N.en,{sch_weekly:"Scheduled sessions",sch_calendar:"Dated sessions",sch_on_request:"By appointment",sch_open:"schedule",sch_t:"Schedule",sch_up:"Upcoming",sch_win:"Free slots this week"});Object.assign(I18N.pt,{sch_weekly:"Sessões com horário",sch_calendar:"Sessões por data",sch_on_request:"Por marcação",sch_open:"horário",sch_t:"Horário",sch_up:"Próximas",sch_win:"Horários livres esta semana"});
 Object.assign(I18N.ru,{showres:"Показать"});Object.assign(I18N.en,{showres:"Show results"});Object.assign(I18N.pt,{showres:"Ver resultados"});
+Object.assign(I18N.ru,{rng:"до"});Object.assign(I18N.en,{rng:"to"});Object.assign(I18N.pt,{rng:"a"});
 Object.assign(I18N.ru,{per_yr:" /год",per_wk:" /нед."});Object.assign(I18N.en,{per_yr:" /yr",per_wk:" /wk"});Object.assign(I18N.pt,{per_yr:" /ano",per_wk:" /sem."});
 Object.assign(I18N.ru,{few:"мало оценок"});Object.assign(I18N.en,{few:"few ratings"});Object.assign(I18N.pt,{few:"poucas avaliações"});
 Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"неделя"});Object.assign(I18N.en,{weekhrs:"Opening hours by day",weekshort:"week"});Object.assign(I18N.pt,{weekhrs:"Horário por dia",weekshort:"semana"});
@@ -386,6 +387,8 @@ Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_m
  wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
 
 I18N.ru._am.ice_fountain="ледяной фонтан";I18N.ru._am.ice_room="ледяная комната";I18N.en._am.ice_fountain="ice fountain";I18N.en._am.ice_room="ice room";I18N.pt._am.ice_fountain="fonte de gelo";I18N.pt._am.ice_room="sala de gelo";I18N.ru.inc.ice_fountain="ледяной фонтан";I18N.ru.inc.ice_room="ледяная комната";I18N.en.inc.ice_fountain="ice fountain";I18N.en.inc.ice_room="ice room";I18N.pt.inc.ice_fountain="fonte de gelo";I18N.pt.inc.ice_room="sala de gelo";
+const TFX={"en": {"has": "Features", "p_has": "On site", "x_hammam": "Hammam or steam room", "acc_walkin": "Walk-in", "b_recommended": "Recommended", "guests": "hotel guests only", "only_trt": "only with a treatment", "p_day": "Single visit", "s_price": "Single-visit price", "empty": "Nothing matches these filters. Loosen them or tap “Reset all”.", "d_social": "Social media", "d_via": "via {0}", "join": "+ {0} joining fee", "grp_cap": "per group up to {0} · from {1} per person", "sch_calendar": "Sessions on set dates", "sch_win": "Available slots this week", "rg_centro": "Central Portugal", "_area.Centro": "Central Portugal", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "_am.rooms": "{0} saunas", "inc.infrared": "infrared sauna", "cond.booking_required": "booking required", "cond.booking_recommended": "booking recommended", "cond.min_term_months": "{0}-month minimum term", "cond.sauna_after_class_only": "sauna after class only", "cond.trial_once": "one time only", "cond.cancel_24h": "cancel up to 24 h ahead"}, "pt": {"has": "Características", "p_has": "No local", "b_walk_in": "Sem reserva", "guests": "só para hóspedes", "x_cold": "Imersão em água fria", "_am.cold_plunge": "imersão em água fria", "inc.cold_plunge": "imersão em água fria", "_am.hot_tub": "hot tub", "inc.hot_tub": "hot tub", "_am.infrared": "sauna de infravermelhos", "inc.infrared": "sauna de infravermelhos", "empty": "Nada corresponde a estes filtros. Alargue-os ou toque em “Limpar tudo”.", "d_via": "via {0}", "d_fromme": "Distância", "reliab": "fiabilidade dos dados: {0}", "grp_cap": "por grupo até {0} · desde {1} por pessoa", "sch_calendar": "Sessões em datas marcadas", "sch_win": "Horários disponíveis esta semana", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "cond.booking_required": "reserva obrigatória", "cond.booking_recommended": "reserva recomendada", "cond.min_term_months": "fidelização de {0} meses", "cond.cancel_24h": "cancelamento até 24 h antes", "cond.sauna_after_class_only": "sauna só após a aula", "cond.trial_once": "só uma vez"}};
+for(const L in TFX){ for(const k in TFX[L]){ const parts=k.split("."); let o=I18N[L]; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]=o[parts[i]]||{}; } o[parts[parts.length-1]]=TFX[L][k]; } }
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
@@ -424,8 +427,9 @@ try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https:\/\//i.test(u||"") ? u : null;
 const km = (a,b) => {const R=6371,t=Math.PI/180,dl=(b[0]-a[0])*t,dn=(b[1]-a[1])*t;const x=Math.sin(dl/2)**2+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
-const eur = v => v==null?null:("€"+(Math.round(v*100)/100).toString().replace(".",LANG==="en"?".":","));
-const dec = v => String(v).replace(".",",");
+const eur = v => { if(v==null) return null; const r=Math.round(v*100)/100; const s=Number.isInteger(r)?String(r):r.toFixed(2); return "€"+s.replace(".",LANG==="en"?".":","); };
+const dec = v => String(v).replace(".",LANG==="en"?".":",");
+const pname = p => (LANG!=="ru"&&p.nm_lat)?p.nm_lat:p.name;
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
 const kmTxt = d => d<1?t("lt1"):String(Math.round(d));
 
@@ -571,7 +575,7 @@ function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; cons
   add(t("p_book"), BOOK[a.booking]?BOOK[a.booking][0].toLowerCase():"");
   add(t("p_hours"), hoursCell(p));
   add(t("p_rate"), rb(r,true));
-  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">‹</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">›</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}</div>`:""}<div class="pp-b"><b class="t">${esc(p.name)} <button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></b>${p._weak?`<div class="wnote">${esc(t("wt_"+p._weak+"_h"))}</div>`:""}<div class="sub"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])} · ${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">${bookBtn(p)}<button type="button" class="pp-more" data-i="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("route"))}</a>`:""}</div></div>`;
+  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">‹</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">›</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}</div>`:""}<div class="pp-b"><b class="t">${esc(pname(p))} <button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></b>${p._weak?`<div class="wnote">${esc(t("wt_"+p._weak+"_h"))}</div>`:""}<div class="sub"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])} · ${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">${bookBtn(p)}<button type="button" class="pp-more" data-i="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("route"))}</a>`:""}</div></div>`;
 }
 
 // cells
@@ -636,7 +640,7 @@ const perSfx=per=>({month:t("per_mo"),"4weeks":t("mo4w"),year:t("per_yr"),week:t
 function condTxt(c){ const cs=String(c), ci=cs.indexOf(":"); const k=ci<0?cs:cs.slice(0,ci), v=ci<0?"":cs.slice(ci+1); const m=D_().cond||{}; if(k==="time"&&v) return v.replace("-"," "+t("to")+" "); const w=m[k]; return w?w.replace("{0}",v||""):""; }
 const incTxt=c=>(D_().inc||{})[c]||"";
 const offLabel=o=>o["label_"+LANG]||o.label_en||o.label_ru||"";
-const pr=o=>o.price_eur==null?"":(o.price_max_eur?`${eur(o.price_eur)} ${t("to")} ${eur(o.price_max_eur).replace("€","")}`:eur(o.price_eur));
+const pr=o=>o.price_eur==null?"":(o.price_max_eur?`${eur(o.price_eur)} ${t("rng")} ${eur(o.price_max_eur).replace("€","")}`:eur(o.price_eur));
 function offGroup(o){ if(o.for==="guests") return "guest"; if(o.kind==="membership") return "mem"; if(o.kind==="pack"||o.kind==="pass") return "pack"; if(o.kind==="treatment") return "trt"; if(o.kind==="private"&&o.per==="group") return "group"; if(o.kind==="trial") return "trial"; return "visit"; }
 function priceCell(p){ const h=p.hl||{}; const w=warn(p); const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
   if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
@@ -768,7 +772,7 @@ function render(){
     const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(t("wt_"+p._weak))}</span>`:"";
     const row=`<tr class="row${open?" active":""}${p._weak?" weak":""}" data-i="${p._i}" tabindex="0" aria-expanded="${open}">
       <td>${photoCell(p)}</td>
-      <td><div class="name">${esc(p.name)}${wk}<button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
+      <td><div class="name">${esc(pname(p))}${wk}<button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
       <td class="hide-m hide-l">${kindCell(p)}</td>
       <td>${priceCell(p)}<div class="bk2">${bookCell(a,p)}</div></td>
       <td class="hide-m">${memCellNew(p)}</td>
@@ -844,7 +848,7 @@ map.on("movestart",()=>{ hpop.hidden=true; });
 const lb=document.getElementById("lb"); const lbImg=document.createElement("img"); lbImg.alt=""; document.getElementById("lb-imgslot").appendChild(lbImg);
 let lbP=null, lbJ=0, lastFocus=null;
 function lbShow(){ const x=lbP._ph[lbJ]; lbImg.src=x.u; lbImg.alt=lbP.name;
-  document.getElementById("lb-title").textContent=lbP.name;
+  document.getElementById("lb-title").textContent=pname(lbP);
   document.getElementById("lb-count").textContent=t("n_of",lbJ+1,lbP._ph.length);
   const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
   const many=lbP._ph.length>1; document.getElementById("lb-prev").hidden=!many; document.getElementById("lb-next").hidden=!many;
