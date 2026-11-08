@@ -564,8 +564,9 @@ function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; cons
 // cells
 const NA = ``;
 const TZ="Europe/Lisbon"; const DN=()=>I18N[LANG]._dn; const DL=()=>I18N[LANG]._dl;
-function nowL(){ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()); const g=t=>parts.find(x=>x.type===t).value; return {d:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(g("weekday")), m:(+g("hour"))*60+(+g("minute"))}; }
-const NOW=nowL();
+function nowL(tz){ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:tz||TZ,weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()); const g=t=>parts.find(x=>x.type===t).value; return {d:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(g("weekday")), m:(+g("hour"))*60+(+g("minute"))}; }
+let NOWC={}; const nowFor=tz=>NOWC[tz]||(NOWC[tz]=nowL(tz)); let NOW=nowFor(TZ);
+const tzOf=p=>p&&p.reg==="acores"?"Atlantic/Azores":TZ; const useNow=p=>{ NOW=nowFor(tzOf(p)); };
 const fmtT=m=>{ m=m%1440; return `${Math.floor(m/60)}:${String(m%60).padStart(2,"0")}`; };
 function openState(wk){ if(!wk) return null; const {d,m}=NOW; const tt=wk[d];
   if(Array.isArray(tt)&&m>=tt[0]&&m<tt[1]) return tt[1]-m<=60?{st:"soon",lab:t("hs_soon"),tm:fmtT(tt[1])}:{st:"open",lab:t("hs_open"),tm:t("hs_until",fmtT(tt[1]))};
@@ -576,8 +577,8 @@ function openState(wk){ if(!wk) return null; const {d,m}=NOW; const tt=wk[d];
 function todayBar(wk){ const x=wk[NOW.d]; const pct=v=>Math.max(0,Math.min(100,v/14.4));
   const seg=Array.isArray(x)?`<i class="tb-on" style="left:${pct(x[0])}%;width:${pct(Math.min(x[1],1440))-pct(x[0])}%"></i>`:"";
   return `<span class="tb" aria-hidden="true">${seg}<i class="tb-now" style="left:${pct(NOW.m)}%"></i></span>`; }
-function statusLine(p){ const s=openState(p.wk); if(!s) return ""; return `<div class="hs ${s.st}"><i class="hdot"></i><b>${esc(s.lab)}</b>${s.tm?` <span>${esc(s.tm)}</span>`:""}</div>`; }
-function hoursCell(p){ if(p.sch&&!p.wk){ const sm=p.sch['summary_'+LANG]||p.sch.summary_en||''; return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))} ▾</span></div></button>`; }
+function statusLine(p){ useNow(p); const s=openState(p.wk); if(!s) return ""; return `<div class="hs ${s.st}"><i class="hdot"></i><b>${esc(s.lab)}</b>${s.tm?` <span>${esc(s.tm)}</span>`:""}</div>`; }
+function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ const sm=p.sch['summary_'+LANG]||p.sch.summary_en||''; return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))} ▾</span></div></button>`; }
   if(p.wk){ const x=p.wk[NOW.d]; const today=Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:(x==="x"?t("dayoff"):""); return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${statusLine(p)}${todayBar(p.wk)}${today?`<div class="tdy">${esc(today)} · <span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`:`<div class="tdy"><span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`}</button>`; } const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
 function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b); const g=[];
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
@@ -682,7 +683,7 @@ function detail(p){const a=p.access||{};
   const conf=p.confidence?t("conf_"+p.confidence):"";
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
   const bu=bookUrl(p);
-  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("r_google"))}</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
+  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${p.lat!=null?`<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>`:""}${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("r_google"))}</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
   return `${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${esc(t("checked",p.verified_on||""))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${t("sources")}: ${src}`:""}</div>`;
 }
 
@@ -699,8 +700,8 @@ function filtered(){
         if(st.hrs.has("wknd")&&!hasWknd) return false;
         if(st.hrs.has("eve")&&!lateStart) return false;
         if(st.hrs.has("early")&&!early) return false;
-      } else { const S=openState(w);
-      if(st.hrs.has("now") && !(S&&S.open)) return false;
+      } else { useNow(p); const S=openState(w);
+      if(st.hrs.has("now") && !(S&&(S.st==="open"||S.st==="soon"))) return false;
       if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false;
       if(st.hrs.has("wknd") && !(Array.isArray(w[5])||Array.isArray(w[6]))) return false;
       if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; } }
@@ -813,7 +814,7 @@ function showSched(btn){ const p=P[+btn.dataset.sch]; const c=p&&p.sch; if(!c) r
   const bu=safeUrl(c.booking_url)||bookUrl(p);
   hpop.innerHTML=`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div style="font-size:12.5px">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}${bu?`<a class="bookb" href="${esc(bu)}" target="_blank" rel="noopener" style="margin-top:8px">${esc(t("book"))}</a>`:""}`;
   hpop.classList.add("wide"); placePop(btn); }
-function showHours(btn){ hpop.classList.remove("wide"); const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; hpop.innerHTML=`<div class="hpt">${esc(t("weekhrs"))}</div>${statusLine(p)}${weekTable(p.wk)}`; hpop.hidden=false;
+function showHours(btn){ hpop.classList.remove("wide"); const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); hpop.innerHTML=`<div class="hpt">${esc(t("weekhrs"))}</div>${statusLine(p)}${weekTable(p.wk)}`; hpop.hidden=false;
   const r=btn.getBoundingClientRect(); const w=hpop.offsetWidth, h=hpop.offsetHeight; let x=Math.min(r.left, innerWidth-w-10); let y=r.bottom+6; if(y+h>innerHeight-10) y=Math.max(10,r.top-h-6); hpop.style.left=Math.max(10,x)+"px"; hpop.style.top=y+"px"; hpop.dataset.for=btn.dataset.hrs; }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".hbtn"); if(b){ e.stopPropagation(); e.preventDefault(); const key=b.dataset.hrs||('s'+b.dataset.sch); if(!hpop.hidden&&hpop.dataset.for===key){ hpop.hidden=true; return; } if(b.dataset.sch!=null) showSched(b); else showHours(b); hpop.dataset.for=key; return; } if(!e.target.closest||!e.target.closest("#hpop")) hpop.hidden=true; },true);
 document.addEventListener("keydown",e=>{ if(e.key==="Escape") hpop.hidden=true; });
@@ -843,6 +844,7 @@ lb.addEventListener("touchend",e=>{ if(tx==null) return; const dx=e.changedTouch
 lbImg.onerror=()=>{ if(lbP && lbP._ph.length>1){ lbP._ph.splice(lbJ,1); if(lbJ>=lbP._ph.length) lbJ=0; lbShow(); } };
 document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; } },true);
 
+setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(); },300000);
 render();
 (function(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]); if(!p) return;
   openRow(p._i,false); const r=tbody.querySelector(`tr.row[data-i="${p._i}"]`); r&&r.scrollIntoView({block:"start"}); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); })();
