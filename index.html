@@ -739,7 +739,7 @@ function filtered(){
 
 const tbody=document.getElementById("tbody");
 function fitNameCol(){ const w=document.querySelector(".tablewrap"); if(!w) return; document.documentElement.style.setProperty("--namew", Math.max(120, w.clientWidth-62-108-2)+"px"); }
-fitNameCol(); window.addEventListener("resize",fitNameCol);
+fitNameCol(); window.addEventListener("resize",fitNameCol); try{ new ResizeObserver(()=>fitNameCol()).observe(document.querySelector(".tablewrap")); }catch(e){}
 let lastAreaKey="";
 function render(){
   renderHead();
