@@ -108,8 +108,8 @@ tr.row.weak td:first-child img{filter:grayscale(.5);opacity:.8}
 .thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
 .nophoto{width:58px;height:44px;border-radius:7px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;line-height:1.1}
-tr.detail td{background:var(--bg);padding:10px 12px 12px}
-.gallery{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px}
+tr.detail td{background:var(--bg);padding:10px 12px 12px;max-width:0}
+.gallery{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;max-width:var(--detw,100%);width:100%}
 .gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip)}
 .gallery img{width:100%;height:100%;object-fit:cover;display:block}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px 18px;font-size:13px;line-height:1.4;margin:0}
@@ -701,7 +701,7 @@ function filtered(){
         if(st.hrs.has("eve")&&!lateStart) return false;
         if(st.hrs.has("early")&&!early) return false;
       } else { useNow(p); const S=openState(w);
-      if(st.hrs.has("now") && !(S&&(S.st==="open"||S.st==="soon"))) return false;
+      if(st.hrs.has("now") && (p.status==="soon"||p.status==="closed"||!(S&&(S.st==="open"||S.st==="soon")))) return false;
       if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false;
       if(st.hrs.has("wknd") && !(Array.isArray(w[5])||Array.isArray(w[6]))) return false;
       if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; } }
