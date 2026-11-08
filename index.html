@@ -6,18 +6,22 @@
 <meta name="robots" content="noindex">
 <title>Сауны у Кашкайша</title>
 <meta name="description" content="Где попариться у Кашкайша, Оэйраша, Синтры и в Лиссабоне: карта, цены, длительность сеанса, бронь.">
+<meta property="og:title" content="Сауны у Кашкайша">
+<meta property="og:description" content="Сауны, бани и спа вокруг Лиссабона и по Португалии: карта, цены разового входа и абонементов, бронь, фото.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://d7656520-ai.github.io/sauna/">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
 <style>
-/* Layout: split screen. Left: header, filters, table. Right: sticky map. Phone: map on top, then filters and compact rows. */
+/* Layout: split screen. Left: header, filters, sortable table. Right: sticky map. Phone: header, map, filters (collapsible), compact rows. */
 :root{
   --bg:#f4f6f5; --panel:#ffffff; --ink:#18201d; --muted:#5d6a65; --line:#dde3e0;
   --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf;
   --ok:#2f7d4f; --ok-soft:#e3f2e8; --warn:#9a6a00; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
-  --chip:#eef2f0; --shadow:0 1px 2px rgba(20,40,35,.06),0 6px 24px rgba(20,40,35,.06);
+  --chip:#eef2f0; --scrim:rgba(8,14,12,.92); --tilefilter:none;
   --f-display:"Unbounded","Onest",system-ui,sans-serif;
   --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   color-scheme:light;
@@ -26,154 +30,232 @@
   --bg:#0f1513; --panel:#161e1b; --ink:#e6ece9; --muted:#97a6a0; --line:#26322e;
   --sea:#5cc0c6; --sea-soft:#15302f; --heat:#f0a24a; --heat-soft:#3a2810;
   --ok:#6fcf93; --ok-soft:#173326; --warn:#e5bf55; --warn-soft:#3a3010; --no:#ef8a8a; --no-soft:#3d1c1c;
-  --chip:#1d2723; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 24px rgba(0,0,0,.25);
+  --chip:#1d2723; --scrim:rgba(0,0,0,.94);
+  --tilefilter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6);
   color-scheme:dark;
 }}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 html,body{margin:0;height:100%}
+html{overscroll-behavior-y:none}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-font-smoothing:antialiased}
 a{color:var(--sea)}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--sea);outline-offset:2px}
-.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(360px,40vw);grid-template-rows:auto 1fr;min-height:100%}
+.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,30vw);grid-template-rows:auto 1fr;min-height:100%}
 .hd{grid-column:1;grid-row:1;min-width:0;padding-block:20px 0;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
-.main{grid-column:1;grid-row:2}
-.main{min-width:0;padding-block:0 40px;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
+.main{grid-column:1;grid-row:2;min-width:0;padding-block:0 40px;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
 .mapwrap{grid-column:2;grid-row:1 / span 2;align-self:start;position:sticky;top:0;height:100vh;border-left:1px solid var(--line)}
-:root{--tilefilter:none}
-@media (prefers-color-scheme:dark){:root{--tilefilter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6)}}
-.leaflet-tile-pane{filter:var(--tilefilter)}
 #map{position:absolute;inset:0;background:var(--chip)}
-header h1{font:700 clamp(22px,3vw,30px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
-header p{margin:0;color:var(--muted);max-width:62ch}
-.stats{display:flex;gap:16px;flex-wrap:wrap;margin:14px 0 4px;color:var(--muted);font-size:13px}
+.leaflet-tile-pane{filter:var(--tilefilter)}
+.hd h1{font:700 clamp(22px,3vw,30px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
+.hd p{margin:0;color:var(--muted);max-width:66ch}
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 2px;color:var(--muted);font-size:13px}
 .stats b{color:var(--ink);font-variant-numeric:tabular-nums}
+.legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .filters{display:grid;gap:10px;margin:16px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
-.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.flabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:78px}
+.frow{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.flabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:84px}
 .chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;white-space:nowrap;line-height:1.2}
-.chip[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:var(--panel)}
+.chip[aria-pressed="true"],.chip[aria-expanded="true"]{background:var(--sea);border-color:var(--sea);color:var(--panel)}
 .chip:hover{border-color:var(--sea)}
 .search{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 11px}
 .range{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-.range input{width:150px;accent-color:var(--sea)}
-.range output{color:var(--ink);font-variant-numeric:tabular-nums;min-width:56px}
+.range input{width:130px;accent-color:var(--sea)}
+.range output{color:var(--ink);font-variant-numeric:tabular-nums;min-width:48px}
 select{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 8px;font-size:13px}
 .reset{background:none;border:none;color:var(--sea);cursor:pointer;font-size:13px;padding:4px 2px;text-decoration:underline}
+.ftoggle,.maptoggle{display:none}
+.hint{font-size:12.5px;color:var(--muted);margin:0 0 8px}
+.warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:700;vertical-align:1px;margin-left:4px}
 .tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px}
 table{width:100%;border-collapse:collapse;font-size:14px}
-th{position:sticky;top:0;background:var(--panel);text-align:left;font-weight:600;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:10px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
-td{padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{position:sticky;top:0;z-index:1;background:var(--panel);text-align:left;font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
+th button{all:unset;cursor:pointer;display:block;padding:10px 9px}
+th button:focus-visible{outline:2px solid var(--sea)}
+th[aria-sort] button::after{content:"";display:inline-block;margin-left:4px;border:4px solid transparent;vertical-align:1px}
+th[aria-sort="ascending"] button::after{border-bottom-color:currentColor;border-top-width:0}
+th[aria-sort="descending"] button::after{border-top-color:currentColor;border-bottom-width:0}
+th[aria-sort] {color:var(--ink)}
+th.nosort{padding:10px 9px}
+td{padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
 tr.row{cursor:pointer}
 tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .name{font-weight:600}
+@media (min-width:901px){tbody td:nth-child(2){min-width:210px}}
 .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
+.am{font-size:12.5px;color:var(--heat);margin-top:4px;line-height:1.35}
 .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
 .tag{font-size:11.5px;padding:1px 7px;border-radius:6px;background:var(--chip);color:var(--muted);white-space:nowrap}
 .tag.heat{background:var(--heat-soft);color:var(--heat)}
 .pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:500}
 .p-ok{background:var(--ok-soft);color:var(--ok)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-no{background:var(--no-soft);color:var(--no)}.p-na{background:var(--chip);color:var(--muted)}
+.kind{display:inline-flex;align-items:center;font-size:12.5px;white-space:nowrap}
 .price{font-weight:600}
 .dim{color:var(--muted)}
+.hrs{font-size:12.5px;color:var(--muted);min-width:110px;max-width:160px}
+.thumbs{display:flex;gap:3px;width:max-content}
+.thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:7px;overflow:hidden;background:var(--chip);width:58px;height:44px}
+.thumbs button + button{width:30px}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.nophoto{width:58px;height:44px;border-radius:7px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;line-height:1.1}
 tr.detail td{background:var(--bg);padding:12px 14px 16px}
-.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 22px;font-size:13.5px}
+.gallery{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px}
+.gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:150px;height:105px;border-radius:9px;overflow:hidden;background:var(--chip)}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px 22px;font-size:13.5px;margin:0}
 .dgrid dt{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
-.dgrid dd{margin:0}
+.dgrid dd{margin:0;overflow-wrap:anywhere}
 .note{margin-top:10px;font-size:13.5px;max-width:75ch}
 .src{margin-top:8px;font-size:12px;color:var(--muted)}
 .src a{color:var(--muted)}
 .empty{padding:28px;text-align:center;color:var(--muted)}
-.foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:75ch}
-.maptoggle{display:none}
-.leaflet-container{font:inherit}
-.mk{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid var(--panel);box-shadow:0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center}
-.mk span{transform:rotate(45deg);font-size:10px;font-weight:700;color:#fff}
-.mk.active{outline:3px solid var(--heat)}
-.leaflet-popup-content{margin:10px 12px;font-size:13px}
-.leaflet-popup-content b{font-size:14px}
-.mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;border:3px solid var(--panel);box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:78ch}
 .show-m{display:none}
-.ftoggle{display:none}
-@media (max-width:900px){.ftoggle{display:inline-block}.filters:not(.open) > .frow:not(:first-child){display:none}.ftoggle[aria-expanded="true"]{background:var(--sea);color:var(--panel);border-color:var(--sea)}}
-@media (max-width:900px){.show-m{display:block}}
-.hint{font-size:12.5px;color:var(--muted);margin:0 0 8px}
-.warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:10.5px;font-weight:700;vertical-align:1px;margin-left:4px}
-.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0}
-.legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+.fab{display:none}
+.mapfull-x{display:none}
+html.mapfull{overflow:hidden}
+html.mapfull .mapwrap{position:fixed!important;inset:0;height:100%!important;z-index:1500;border:none}
+html.mapfull .mapfull-x{all:unset;display:block;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));cursor:pointer;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.act{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--ink);text-decoration:none}
+a.act{color:var(--ink)}
+.act:hover{border-color:var(--sea)}
+.near{all:unset;cursor:pointer;color:var(--sea);font-size:13px;text-decoration:underline;padding:4px 2px}
+.m-in{display:none}
+/* map */
+.leaflet-container{font:inherit}
+.mk{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center}
+.mk span{transform:rotate(45deg);font-size:11px;font-weight:700;color:#fff}
+.mk.active{outline:3px solid var(--heat)}
+.mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.leaflet-popup-content-wrapper{border-radius:12px;background:var(--panel);color:var(--ink)}
+.leaflet-popup-tip{background:var(--panel)}
+.leaflet-popup-content{margin:0;width:250px!important;font-size:13px;line-height:1.35}
+.pp-img{display:flex;gap:2px;height:110px;border-radius:12px 12px 0 0;overflow:hidden;background:var(--chip)}
+.pp-img button{all:unset;cursor:zoom-in;flex:1 1 0;min-width:0}
+.pp-img button:first-child{flex:2 1 0}
+.pp-img img{width:100%;height:100%;object-fit:cover;display:block}
+.pp-b{padding:10px 12px 12px}
+.pp-b b.t{font-size:14px;display:block}
+.pp-grid{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin-top:8px}
+.pp-grid span:nth-child(odd){color:var(--muted)}
+.pp-more{all:unset;cursor:pointer;color:var(--sea);margin-top:8px;display:inline-block;text-decoration:underline}
+.leaflet-container a.leaflet-popup-close-button{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);font-size:20px;width:26px;height:26px}
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:2000;background:var(--scrim);display:grid;grid-template-rows:auto 1fr auto;color:#fff;touch-action:pan-y}
+.lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));font-size:14px}
+.lb-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-x{all:unset;cursor:pointer;font-size:28px;line-height:1;padding:4px 8px}
+.lb-stage{position:relative;min-height:0;display:grid;place-items:center;overflow:hidden}
+.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.lb-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:22px}
+.lb-nav:hover{background:rgba(255,255,255,.26)}
+.lb-prev{left:max(10px,env(safe-area-inset-left,0px))}.lb-next{right:max(10px,env(safe-area-inset-right,0px))}
+.lb-bot{display:flex;justify-content:space-between;gap:12px;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));font-size:13px;color:rgba(255,255,255,.75)}
+.lb-bot a{color:rgba(255,255,255,.85)}
 @media (max-width:900px){
   .app{display:block}
   .hd{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-block:14px 12px}
-  .mapwrap{position:relative;height:38vh;border-left:none;border-block:1px solid var(--line)}
+  .mapwrap{position:relative;height:38vh;height:38svh;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
+  #map{touch-action:none}
   .mapwrap.collapsed{height:0;border:none}
-  .main{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-top:14px}
-  .maptoggle{display:inline-block}
+  .main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:12px}
+  .ftoggle,.maptoggle{display:inline-block}
+  input,select,textarea{font-size:16px!important}
+  .fab{all:unset;display:block;position:fixed;z-index:1400;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));cursor:pointer;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+  html.mapfull .fab{display:none}
   .filters{padding:10px;gap:8px}
-  .flabel{min-width:100%;font-size:10px;margin-bottom:-3px}
+  .filters:not(.open) > .frow:not(:first-child){display:none}
+  .flabel{min-width:100%;font-size:11px;margin-bottom:-3px}
   .chip{padding:4px 9px;font-size:12.5px}
-  .frow{gap:6px}
   .hide-m{display:none}
+  .show-m{display:block}
+  .m-in{display:inline}
+  table{table-layout:fixed}
+  thead th:nth-child(1){width:62px}
+  thead th:nth-child(4){width:92px}
+  thead th:nth-child(5){width:84px}
+  thead th:nth-child(2){width:calc(100vw - 24px - 240px)}
+  .pill{white-space:normal;font-size:11.5px;padding:2px 7px}
+  td{overflow-wrap:anywhere}
   table{font-size:13.5px}
-  td,th{padding:8px 7px}
-  .range input{width:120px}
+  td{padding:8px 6px}
+  th button,th.nosort{padding:9px 6px}
+  .thumbs button{width:52px;height:52px}
+  .thumbs button + button{display:none}
+  .nophoto{width:52px;height:52px}
+  .range input{width:110px}
+  .lb-nav{display:none}
 }
-@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
 <div class="app">
   <header class="hd">
-      <h1>Сауны у Кашкайша</h1>
-      <p>Куда можно прийти попариться без проживания в отеле: отели со спа, спа-комплексы, клубы, муниципальные бассейны и отдельные сауны. Кашкайш, Эшторил, Каркавелуш, Оэйраш, Синтра и Лиссабон.</p>
-      <div class="stats" id="stats"></div>
-      <div class="legend" id="legend"></div>
+    <h1>Сауны у Кашкайша</h1>
+    <p>Куда можно прийти попариться без проживания в отеле. Кашкайш, Эшторил, Каркавелуш, Оэйраш, Синтра и Лиссабон.</p>
+    <div class="stats" id="stats"></div>
+    <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" aria-label="Карта саун"></div></div>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" aria-label="Карта саун"></div><button type="button" class="mapfull-x" id="mapfull-x">Список</button></div>
+  <button type="button" class="fab" id="fab">Карта на весь экран</button>
   <main class="main">
-
     <section class="filters" aria-label="Фильтры">
       <div class="frow">
         <input id="q" class="search" type="search" placeholder="Поиск по названию или району" aria-label="Поиск">
         <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false">Фильтры</button>
-        <button class="chip maptoggle" id="maptoggle" aria-pressed="true">Карта</button>
       </div>
+      <div class="frow"><span class="flabel">Где</span><div class="frow" id="f-scope"></div></div>
       <div class="frow"><span class="flabel">Район</span><div class="frow" id="f-area"></div></div>
-      <div class="frow"><span class="flabel">Тип</span><div class="frow" id="f-type"></div></div>
+      <div class="frow"><span class="flabel">Тип</span><div class="frow" id="f-kind"></div></div>
       <div class="frow"><span class="flabel">Доступ</span><div class="frow" id="f-access"></div></div>
       <div class="frow"><span class="flabel">Есть</span><div class="frow" id="f-ext"></div></div>
+      <div class="frow"><span class="flabel">Рейтинг</span><div class="frow" id="f-rate"></div></div>
       <div class="frow">
         <span class="flabel">Цена</span>
-        <label class="range" for="price">разовый вход до <input id="price" type="range" min="0" max="200" step="5" value="200"><output id="priceout">любая</output></label>
+        <label class="range" for="price">разовый вход до <input id="price" type="range" min="0" max="100" step="5" value="100"><output id="priceout">любая</output></label>
+        <label class="range" for="mprice">абонемент до <input id="mprice" type="range" min="0" max="300" step="10" value="300"><output id="mpriceout">любой</output></label>
+      </div>
+      <div class="frow">
         <label class="range" for="sort">Сортировка
           <select id="sort">
             <option value="dist">Ближе к центру Кашкайша</option>
             <option value="score">Рейтинг</option>
             <option value="price">Цена разового входа</option>
+            <option value="mprice">Цена абонемента</option>
+            <option value="session">Длительность сеанса</option>
             <option value="sea">Ближе к морю</option>
             <option value="name">По названию</option>
           </select>
         </label>
-        <button class="reset" id="reset" type="button">Сбросить</button>
+        <button class="near" id="near" type="button">Рядом со мной</button>
+        <button class="reset" id="reset" type="button">Сбросить всё</button>
       </div>
     </section>
 
-    <p class="hint">Нажми на строку, чтобы открыть подробности. <span class="warn-i">?</span> рядом с ценой: данные не подтверждены официальным сайтом, лучше уточнить. G это рейтинг Google, B это Booking.</p>
+    <p class="hint">Нажми на строку, чтобы открыть подробности и фото. <span class="warn-i">?</span> значит, что данные лучше уточнить.</p>
     <div class="tablewrap">
       <table>
-        <thead><tr>
-          <th>Место</th>
-          <th>Разовый вход</th>
-          <th class="hide-m">Сеанс</th>
-          <th>Бронь</th>
-          <th class="hide-m">Абонемент</th>
-          <th class="hide-m">Рейтинг</th>
-        </tr></thead>
+        <thead><tr id="thead"></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
-      <div class="empty" id="empty" hidden>Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить».</div>
+      <div class="empty" id="empty" hidden>Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».</div>
     </div>
     <p class="foot" id="foot"></p>
   </main>
+</div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Фотографии">
+  <div class="lb-top"><b id="lb-title"></b><button class="lb-x" id="lb-x" type="button" aria-label="Закрыть">×</button></div>
+  <div class="lb-stage" id="lb-stage">
+    <div id="lb-imgslot" style="display:contents"></div>
+    <button class="lb-nav lb-prev" id="lb-prev" type="button" aria-label="Предыдущее фото">‹</button>
+    <button class="lb-nav lb-next" id="lb-next" type="button" aria-label="Следующее фото">›</button>
+  </div>
+  <div class="lb-bot"><span id="lb-count"></span><a id="lb-src" target="_blank" rel="noopener">источник фото</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -184,134 +266,219 @@ tr.detail td{background:var(--bg);padding:12px 14px 16px}
 const D = window.SAUNA_DATA || {places:[],meta:{}};
 const P = D.places;
 const CASCAIS = [38.6968, -9.4215];
-const AREAS = ["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra"];
-const AREA_RU = {Cascais:"Кашкайш",Estoril:"Эшторил",Carcavelos:"Каркавелуш",Oeiras:"Оэйраш",Sintra:"Синтра",Lisboa:"Лиссабон",Mafra:"Мафра"};
-const TYPES = {hotel_spa:["Отель со спа","#0f6b72"],day_spa:["Спа-комплекс","#6b4fa0"],gym_club:["Клуб, фитнес","#2f6fb2"],municipal:["Муниципальный","#4f7d2f"],standalone_sauna:["Отдельная сауна","#c26a12"],beach_sauna:["Сауна у пляжа","#c23c5a"],other:["Другое","#6a6a6a"]};
-const SAUNA_RU = {finnish:"финская",steam:"парная",hammam:"хаммам",bio:"био",infrared:"инфракрасная",banya:"баня",other:"другая",mobile:"мобильная"};
+const AREAS = ["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra","Lisboa e Setúbal","Oeste","Centro","Porto e Norte","Douro","Alentejo","Algarve","Madeira","Açores"];
+const NEAR = new Set(["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra"]);
+const AREA_RU = {Cascais:"Кашкайш",Estoril:"Эшторил",Carcavelos:"Каркавелуш",Oeiras:"Оэйраш",Sintra:"Синтра",Lisboa:"Лиссабон",Mafra:"Мафра","Lisboa e Setúbal":"Сетубал и окрестности",Oeste:"Запад, Оэште",Centro:"Центр","Porto e Norte":"Порту и север",Douro:"Долина Дору",Alentejo:"Алентежу",Algarve:"Алгарве",Madeira:"Мадейра","Açores":"Азоры"};
+const KINDS = {hotel:["Отель","#0f6b72"],spa:["Спа-центр","#7a55b0"],gym:["Фитнес-клуб","#2f6fb2"],sauna:["Сауна","#c26a12"],public:["Муниципальный","#4f7d2f"]};
+const SAUNA_RU = {finnish:"финская",steam:"парная",hammam:"хаммам",bio:"био",infrared:"инфракрасная",banya:"баня"};
 const EXT_RU = {indoor_pool:"крытый бассейн",outdoor_pool:"открытый бассейн",heated_pool:"тёплый бассейн",jacuzzi:"джакузи",cold_plunge:"холодная купель",ice_bath:"ледяная ванна",sea_view:"вид на море",beach_access:"выход к пляжу",gym:"зал",massage:"массаж",relax_room:"зона отдыха"};
+const AM_S = {finnish:"финская сауна",banya:"русская баня",steam:"парная",hammam:"хаммам",bio:"биосауна",infrared:"инфракрасная сауна"};
+const AM_E = [["pool","бассейн"],["jacuzzi","джакузи"],["cold_plunge","купель"],["ice_bath","ледяная ванна"],["massage","массаж"],["gym","зал"],["sea_view","вид на море"],["beach_access","у пляжа"]];
+function amen(p){ const ex=new Set(p.extras||[]); const o=[];
+  (p.sauna_types||[]).forEach(s=>{ if(AM_S[s]) o.push(AM_S[s]); });
+  if(p.steam_rooms>1) o.push(`${p.steam_rooms} парных`);
+  if(p.capacity) o.push(`парная до ${p.capacity} чел.`);
+  AM_E.forEach(([k,l])=>{ if(k==="pool"){ if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?"тёплый бассейн":"бассейн"); } else if(ex.has(k)) o.push(l); });
+  if(ex.has("hot_tub")) o.push("чан");
+  return o; }
 const ACCESS = {day:"Разовый вход",membership:"Абонемент",treatment:"С процедурой",walkin:"Без брони"};
-const EXTF = {pool:"Бассейн",cold:"Холодная купель",hammam:"Хаммам или парная",sea:"Вид на море"};
+const EXTF = {pool:"Бассейн",cold:"Холодная купель",hammam:"Хаммам или парная",sea:"Море рядом",photo:"С фото"};
+const RATE = {"0":"Любой","4":"От 4,0","4.5":"От 4,5"};
 const BOOK = {required:["Нужна","p-warn"],recommended:["Желательна","p-warn"],walk_in:["Не нужна","p-ok"]};
+const COLS = [
+  {k:"photo",t:"Фото",sort:null,cls:""},
+  {k:"name",t:"Место",sort:"name",cls:""},
+  {k:"kind",t:"Тип",sort:"kind",cls:"hide-m"},
+  {k:"day",t:"Разовый вход",sort:"price",cls:""},
+  {k:"book",t:"Бронь",sort:"book",cls:""},
+  {k:"mem",t:"Абонемент",sort:"mprice",cls:"hide-m"},
+  {k:"hours",t:"Часы",sort:null,cls:"hide-m"},
+  {k:"rate",t:"Рейтинг",sort:"score",cls:"hide-m"},
+];
+const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {q:"",area:new Set(),type:new Set(),access:new Set(),ext:new Set(),price:200,sort:"dist",open:null};
-try{const s=JSON.parse(localStorage.getItem("sauna-f2")||"null"); if(s){st.sort=s.sort||st.sort;}}catch(e){}
+const st = {scope:"near",q:"",area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:"0",price:null,mprice:null,sort:"dist",dir:1,open:null};
+try{const s=JSON.parse(localStorage.getItem("sauna-f3")||"null"); if(s&&s.sort){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-const safeUrl = u => /^https?:\/\//i.test(u||"") ? u : null;
+const safeUrl = u => /^https:\/\//i.test(u||"") ? u : null;
 const km = (a,b) => {const R=6371,t=Math.PI/180,dl=(b[0]-a[0])*t,dn=(b[1]-a[1])*t;const x=Math.sin(dl/2)**2+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
-const fmtEur = v => v==null?null:("€"+(Math.round(v*100)/100).toString().replace(".",","));
-P.forEach((p,i)=>{p._i=i; p._d=(p.lat&&p.lon)?km(CASCAIS,[p.lat,p.lon]):999; const a=p.access||{};
-  const r=p.ratings||{}; const g=r.google||(r.booking?r.booking/2:0); const n=r.google_reviews||r.booking_reviews||(g?20:0);
-  p._score = g ? (g*n+4.3*60)/(n+60) : 0;
-  p._day = a.day_pass===true || a.day_pass_price_eur!=null;
-  p._mem = a.membership===true || a.membership_month_eur!=null;
-  p._trt = a.treatment_access===true;
+const eur = v => v==null?null:("€"+(Math.round(v*100)/100).toString().replace(".",","));
+const dec = v => String(v).replace(".",",");
+const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
+const kmTxt = d => d<1?"меньше 1":String(Math.round(d));
+
+P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
+  p._d=(p.lat!=null&&p.lon!=null)?km(CASCAIS,[p.lat,p.lon]):999;
+  const g=r.google||(r.booking?r.booking/2:0), n=r.google_reviews||r.booking_reviews||(g?20:0);
+  p._g=g; p._score=g?(g*n+4.3*60)/(n+60):0;
+  p._day=a.day_pass===true||a.day_pass_price_eur!=null; p._mem=a.membership===true||a.membership_month_eur!=null; p._trt=a.treatment_access===true;
   const ex=new Set(p.extras||[]), sa=new Set(p.sauna_types||[]);
-  p._pool = ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool");
-  p._cold = ex.has("cold_plunge")||ex.has("ice_bath");
-  p._ham = sa.has("hammam")||sa.has("steam");
-  p._sea = ex.has("sea_view")||ex.has("beach_access");
+  p._pool=ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool");
+  p._cold=ex.has("cold_plunge")||ex.has("ice_bath"); p._ham=sa.has("hammam")||sa.has("steam");
+  p._sea=ex.has("sea_view")||ex.has("beach_access")||p.beach||(p.sea_distance_m!=null&&p.sea_distance_m<=600);
+  p._ph=(p.photos||[]).filter(x=>safeUrl(x.u));
+  p._book={walk_in:0,recommended:1,required:2}[a.booking]; if(p._book==null) p._book=3;
 });
 
-function chips(el,map,set){
+function chips(el,map,get,set){
   el.innerHTML="";
   Object.entries(map).forEach(([k,label])=>{
-    const n = typeof label==="string"?label:label[0];
-    const b=document.createElement("button"); b.type="button"; b.className="chip"; b.textContent=n; b.setAttribute("aria-pressed","false");
-    b.onclick=()=>{set.has(k)?set.delete(k):set.add(k); b.setAttribute("aria-pressed",set.has(k)); render();};
+    const b=document.createElement("button"); b.type="button"; b.className="chip"; b.dataset.k=k;
+    b.innerHTML=Array.isArray(label)?`<span class="dot" style="background:${label[1]}"></span>${esc(label[0])}`:esc(label);
+    b.setAttribute("aria-pressed",String(get(k)));
+    b.onclick=()=>{set(k); el.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(get(c.dataset.k)))); render();};
     el.appendChild(b);
   });
 }
-const areaMap={}; AREAS.forEach(a=>{ if(P.some(p=>p.area===a)) areaMap[a]=AREA_RU[a]; });
-const typeMap={}; Object.keys(TYPES).forEach(t=>{ if(P.some(p=>p.type===t)) typeMap[t]=TYPES[t]; });
-chips(document.getElementById("f-area"),areaMap,st.area);
-document.getElementById("f-area").addEventListener("click",()=>setTimeout(()=>{const pts=filtered().filter(p=>p.lat!=null).map(p=>[p.lat,p.lon]); if(st.area.size&&pts.length) map.fitBounds(pts,{padding:[30,30],maxZoom:14}); else if(!st.area.size) map.fitBounds([[38.68,-9.49],[38.80,-9.13]],{padding:[10,10]});},0));
-chips(document.getElementById("f-type"),typeMap,st.type);
-chips(document.getElementById("f-access"),ACCESS,st.access);
-chips(document.getElementById("f-ext"),EXTF,st.ext);
-document.getElementById("legend").innerHTML = Object.entries(typeMap).map(([k,v])=>`<span><i style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("") + `<span>€ на метке: есть цена разового входа</span><span>кружок с числом: несколько мест рядом</span>`;
+const toggle = s => k => s.has(k)?s.delete(k):s.add(k);
+const hasFar=P.some(p=>!NEAR.has(p.area));
+function areaMap(){const m={}; AREAS.forEach(a=>{ if((st.scope==="all"||NEAR.has(a)) && P.some(p=>p.area===a)) m[a]=AREA_RU[a]; }); return m;}
+function drawAreas(){ chips(document.getElementById("f-area"),areaMap(),k=>st.area.has(k),toggle(st.area)); }
+const kindMap={}; Object.keys(KINDS).forEach(t=>{ if(P.some(p=>p.kind===t)) kindMap[t]=KINDS[t]; });
+const extMap=Object.assign({},EXTF); if(!P.some(p=>p._ph.length)) delete extMap.photo;
+drawAreas();
+if(hasFar) chips(document.getElementById("f-scope"),{near:"Рядом с Кашкайшем и Лиссабоном",all:"Вся Португалия"},k=>st.scope===k,k=>{ if(st.scope===k) return; st.scope=k; [...st.area].forEach(a=>{ if(!NEAR.has(a)) st.area.delete(a); }); drawAreas(); lastAreaKey="*"; });
+else document.getElementById("f-scope").parentElement.hidden=true;
+chips(document.getElementById("f-kind"),kindMap,k=>st.kind.has(k),toggle(st.kind));
+chips(document.getElementById("f-access"),ACCESS,k=>st.access.has(k),toggle(st.access));
+chips(document.getElementById("f-ext"),extMap,k=>st.ext.has(k),toggle(st.ext));
+chips(document.getElementById("f-rate"),RATE,k=>st.rate===k,k=>{st.rate=k;});
+document.getElementById("legend").innerHTML = Object.values(kindMap).map(v=>`<span><i class="dot" style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("")+`<span>€ на метке: есть цена разового входа</span>`;
 
-const priceEl=document.getElementById("price"), priceOut=document.getElementById("priceout");
-const maxP = Math.max(50, ...P.map(p=>(p.access&&p.access.day_pass_price_eur)||0));
-priceEl.max = Math.ceil(maxP/10)*10; priceEl.value=priceEl.max; st.price=+priceEl.max;
-priceEl.oninput=()=>{st.price=+priceEl.value; render();};
+function slider(id,outId,vals,anyTxt,key){
+  const el=document.getElementById(id), out=document.getElementById(outId);
+  const mx=Math.max(50,...vals); el.max=Math.ceil(mx/10)*10; el.value=el.max;
+  el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; out.textContent= st[key]==null?anyTxt:"€"+st[key]; render();};
+  return ()=>{el.value=el.max; st[key]=null; out.textContent=anyTxt;};
+}
+const resetPrice=slider("price","priceout",P.map(p=>(p.access||{}).day_pass_price_eur||0),"любая","price");
+const resetM=slider("mprice","mpriceout",P.map(p=>(p.access||{}).membership_month_eur||0),"любой","mprice");
 document.getElementById("q").oninput=e=>{st.q=e.target.value.trim().toLowerCase(); render();};
-const sortEl=document.getElementById("sort"); sortEl.value=st.sort;
-sortEl.onchange=()=>{st.sort=sortEl.value; try{localStorage.setItem("sauna-f2",JSON.stringify({sort:st.sort}))}catch(e){} render();};
-document.getElementById("reset").onclick=()=>{st.q="";document.getElementById("q").value="";[st.area,st.type,st.access,st.ext].forEach(s=>s.clear());document.querySelectorAll(".filters .chip:not(.maptoggle)").forEach(b=>b.setAttribute("aria-pressed","false"));priceEl.value=priceEl.max;st.price=+priceEl.max;render();};
+const sortEl=document.getElementById("sort");
+function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; try{localStorage.setItem("sauna-f3",JSON.stringify({sort:st.sort,dir:st.dir}))}catch(e){} render(); }
+sortEl.onchange=()=>setSort(sortEl.value);
+sortEl.value=st.sort;
+document.getElementById("reset").onclick=()=>{st.scope="near"; document.querySelectorAll("#f-scope .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k==="near"))); st.q="";document.getElementById("q").value="";[st.area,st.kind,st.access,st.ext].forEach(s=>s.clear());st.rate="0";
+  document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed",String(b.dataset.k==="0"&&b.parentElement.id==="f-rate")); });
+  resetPrice(); resetM(); drawAreas(); lastAreaKey="*"; render();};
 const ft=document.getElementById("ftoggle"), fbox=document.querySelector(".filters");
-ft.onclick=()=>{const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",o);};
-const mw=document.getElementById("mapwrap"), mt=document.getElementById("maptoggle");
-mt.onclick=()=>{const c=mw.classList.toggle("collapsed"); mt.setAttribute("aria-pressed",!c); setTimeout(()=>map.invalidateSize(),50);};
+ft.onclick=()=>{const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",String(o));};
 
-// Map
-const map = L.map("map",{zoomControl:true,scrollWheelZoom:true}).setView([38.72,-9.30],11);
-const dark = matchMedia("(prefers-color-scheme: dark)");
-let tiles;
-function setTiles(){ if(tiles) map.removeLayer(tiles);
-  tiles = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map); }
-setTiles(); dark.addEventListener?.("change",setTiles);
-const markers={};
-const cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:14,iconCreateFunction:c=>L.divIcon({className:'',html:`<div class="mcl">${c.getChildCount()}</div>`,iconSize:[34,34]})});
+
+// header
+const thead=document.getElementById("thead");
+function renderHead(){
+  thead.innerHTML=COLS.map(c=>{ const s=c.sort; const on=s&&s===st.sort;
+    if(!s) return `<th class="nosort ${c.cls}" scope="col">${esc(c.t)}</th>`;
+    return `<th class="${c.cls}" scope="col"${on?` aria-sort="${st.dir>0?"ascending":"descending"}"`:""}><button type="button" data-s="${s}">${esc(c.t)}</button></th>`; }).join("");
+}
+thead.addEventListener("click",e=>{const b=e.target.closest("button[data-s]"); if(!b) return; const k=b.dataset.s; setSort(k, st.sort===k?-st.dir:DEFDIR[k]);});
+
+// map
+const map = L.map("map",{zoomControl:true,scrollWheelZoom:true,tapTolerance:12,zoomSnap:0.25});
+// one-finger drag must move only the map, never the page
+(function(){const el=document.getElementById("map");
+  ["touchstart","touchmove"].forEach(t=>el.addEventListener(t,e=>{ if(t==="touchmove"&&e.cancelable) e.preventDefault(); },{passive:false}));
+  el.addEventListener("wheel",e=>e.preventDefault(),{passive:false});
+})();
+const fitDefault=()=>map.fitBounds(matchMedia("(max-width:900px)").matches?[[38.68,-9.49],[38.76,-9.24]]:[[38.68,-9.49],[38.79,-9.13]],{padding:[0,0]});
+fitDefault();
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+const cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:14,iconCreateFunction:c=>L.divIcon({className:"",html:`<div class="mcl">${c.getChildCount()}</div>`,iconSize:[34,34]})});
 map.addLayer(cluster);
+const markers={};
 P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
-  const col=(TYPES[p.type]||TYPES.other)[1];
-  const icon=L.divIcon({className:"",html:`<div class="mk" data-i="${p._i}" style="background:${col}"><span>${p._day?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
+  const col=(KINDS[p.kind]||KINDS.sauna)[1];
+  const icon=L.divIcon({className:"",html:`<div class="mk" data-i="${p._i}" style="background:${col}"><span>${(p.access||{}).day_pass_price_eur!=null?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name}); cluster.addLayer(m);
-  m.bindPopup(()=>popup(p)); m.on("click",()=>openRow(p._i,true));
+  m.bindPopup(()=>popup(p),{maxWidth:260,minWidth:250,autoPanPadding:[20,20]});
   markers[p._i]=m;
 });
+map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
+  el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
+  const mb=el.querySelector(".pp-more"); if(mb) mb.onclick=()=>openRow(+mb.dataset.i,true);
+});
 
-function popup(p){const a=p.access||{};
-  const parts=[`<b>${esc(p.name)}</b><div class="sub">${esc((TYPES[p.type]||TYPES.other)[0])} · ${esc(AREA_RU[p.area]||p.area||"")}</div>`];
-  if(a.day_pass_price_eur!=null) parts.push(`Разовый вход: <b>${fmtEur(a.day_pass_price_eur)}</b>${a.session_minutes?`, ${a.session_minutes} мин`:""}`);
-  else if(p._day) parts.push("Разовый вход есть, цену уточнить");
-  if(a.membership_month_eur!=null) parts.push(`Абонемент: ${fmtEur(a.membership_month_eur)} в месяц`);
-  return parts.join("<br>");
+function dayTxt(p){const a=p.access||{};
+  if(p.status==="soon") return "ещё не открыто";
+  if(p.stay && a.day_pass_price_eur==null && !p._trt) return "для гостей отеля";
+  if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?` за ${a.session_minutes} мин`:""}`;
+  if(p._day) return "есть, цена не указана";
+  if(p._trt) return "только с процедурой";
+  if(p._mem&&a.day_pass!==true) return "только абонемент";
+  if(a.day_pass===false) return "нет";
+  return "уточнить";
+}
+function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `${eur(a.membership_month_eur)} в месяц`; if(p._mem) return "есть, цена по запросу"; if(a.membership===false) return "нет"; return null;}
+function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; const r=p.ratings||{};
+  const ph=p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="Открыть фото"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("");
+  const rows=[];
+  const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
+  const am=amen(p); if(am.length) rows.push(`<span>Есть</span><span>${esc(am.join(", "))}</span>`);
+  add("Разовый", esc(dayTxt(p)) + (p.confidence==="low"?' <span class="warn-i" title="не подтверждено">?</span>':""));
+  add("Абонемент", esc(memTxt(p)||""));
+  add("Бронь", BOOK[a.booking]?BOOK[a.booking][0].toLowerCase():"");
+  add("Часы", esc(p.hours_short||""));
+  add("Рейтинг", [r.google?`Google ${dec(r.google)}${r.google_reviews?` (${r.google_reviews})`:""}`:"", r.booking?`Booking ${dec(r.booking)}${r.booking_reviews?` (${r.booking_reviews})`:""}`:""].filter(Boolean).join("<br>"));
+  return `${ph?`<div class="pp-img">${ph}</div>`:""}<div class="pp-b"><b class="t">${esc(p.name)}</b><div class="sub"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])} · ${esc(AREA_RU[p.area]||p.area||"")}${p._d<900?` · ${kmTxt(p._d)} км`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap"><button type="button" class="pp-more" data-i="${p._i}">Подробнее</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Маршрут</a>`:""}</div></div>`;
 }
 
-function bookPill(a){const b=BOOK[a.booking]; return b?`<span class="pill ${b[1]}">${b[0]}</span>`:`<span class="pill p-na" title="нет данных">н/д</span>`;}
-function dayCell(p){const a=p.access||{}; const w=p.confidence==="low"?`<span class="warn-i" title="не подтверждено официальным сайтом">?</span>`:"";
+// cells
+const NA = ``;
+const warn = p => p.confidence==="low"?`<span class="warn-i" title="не подтверждено официальным сайтом">?</span>`:"";
+function photoCell(p){ if(!p._ph.length) return `<div class="nophoto">нет фото</div>`;
+  return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="Фото ${j+1}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
+function dayCell(p){const a=p.access||{}; const w=warn(p);
   if(p.status==="soon") return `<span class="pill p-na">ещё не открыто</span>`;
-  if(a.day_pass_price_eur!=null) return `<span class="price num">${fmtEur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num show-m">${a.session_minutes} мин</div>`:""}${a.weekend_price_eur!=null&&a.weekend_price_eur!==a.day_pass_price_eur?`<div class="sub num">выходные ${fmtEur(a.weekend_price_eur)}</div>`:""}`;
+  if(p.stay && a.day_pass_price_eur==null && !p._trt) return `<span class="pill p-na">для гостей отеля</span>`;
+  if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${a.session_minutes} мин</div>`:""}`;
   if(p._day) return `<span class="pill p-ok">есть</span>${w}<div class="sub">цена не указана</div>`;
-  if(p._trt) return `<span class="pill p-warn">только с процедурой</span>${w}`;
-  if(p._mem && a.day_pass!==true) return `<span class="pill p-na">только абонемент</span>${w}`;
+  if(p._trt) return `<span class="pill p-warn">с процедурой</span>${w}`;
+  if(p._mem&&a.day_pass!==true) return `<span class="pill p-na">абонемент</span>${w}`;
   if(a.day_pass===false) return `<span class="pill p-no">нет</span>`;
-  return `<span class="dim">уточнить</span>${w}`;
+  return w;
 }
-function sessCell(a){ if(a.session_minutes) return `<span class="num">${a.session_minutes} мин</span>`; if(a.day_pass_price_note&&/весь день|unlimited|без ограничен/i.test(a.day_pass_price_note)) return "весь день"; return `<span class="dim" title="нет данных">н/д</span>`; }
-function memCell(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${fmtEur(a.membership_month_eur)}</span><span class="dim"> /мес</span>`; if(p._mem) return `<span class="dim">по запросу</span>`; if(a.membership===false) return `<span class="dim">нет</span>`; return `<span class="dim" title="нет данных">н/д</span>`;}
-function rateCell(r){ if(!r) return `<span class="dim" title="нет данных">н/д</span>`; const o=[]; if(r.google) o.push(`<span class="num">G ${String(r.google).replace(".",",")}</span>${r.google_reviews?`<span class="dim num"> (${r.google_reviews})</span>`:""}`); if(r.booking) o.push(`<span class="num">B ${String(r.booking).replace(".",",")}</span>${r.booking_reviews?`<span class="dim num"> (${r.booking_reviews})</span>`:""}`); return o.join("<br>")||`<span class="dim" title="нет данных">н/д</span>`; }
+const sessCell = a => a.session_minutes?`<span class="num">${a.session_minutes} мин</span>`:NA;
+function memCell(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim"> /мес</span>`; if(p._mem) return `<span class="dim">по запросу</span>`; if(a.membership===false) return `<span class="dim">нет</span>`; return NA;}
+const bookCell = a => {const b=BOOK[a.booking]; return b?`<span class="pill ${b[1]}">${b[0]}</span>`:NA;};
+function rateCell(r){ if(!r||(!r.google&&!r.booking)) return NA; const o=[]; if(r.google) o.push(`<span class="num">${dec(r.google)}</span>${r.google_reviews?`<span class="dim num"> (${r.google_reviews})</span>`:""}`); if(r.booking) o.push(`<span class="num">B ${dec(r.booking)}</span>${r.booking_reviews?`<span class="dim num"> (${r.booking_reviews})</span>`:""}`); return o.join("<br>"); }
+const kindCell = p => {const k=KINDS[p.kind]||KINDS.sauna; return `<span class="kind"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])}</span>${p.beach?`<div class="sub">на пляже</div>`:""}`;};
 
-function detail(p){const a=p.access||{}; const r=p.ratings||{};
-  const link=(u,t)=>{const s=safeUrl(u); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
+function detail(p){const a=p.access||{};
+  const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
   const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
-  const items=[];
-  const add=(k,v)=>{ if(v) items.push(`<div><dt>${k}</dt><dd>${v}</dd></div>`); };
-  add("Адрес", `${esc(p.address||"")} ${link(maps,"на карте")}`);
-  add("Сауны", esc((p.sauna_types||[]).map(s=>SAUNA_RU[s]||s).join(", ")));
-  add("Ещё есть", esc((p.extras||[]).map(s=>EXT_RU[s]||s).join(", ")));
-  add("Разовый вход", esc([a.day_pass_price_eur!=null?fmtEur(a.day_pass_price_eur):"", a.session_minutes?a.session_minutes+" мин":"", a.day_pass_price_note||""].filter(Boolean).join(" · ")));
-  add("Абонемент", esc([a.membership_month_eur!=null?fmtEur(a.membership_month_eur)+" в месяц":"", a.membership_note||""].filter(Boolean).join(" · ")));
-  const bh=(a.booking_how||"").replace(/\bphone\b/gi,"телефон").replace(/\bsite\b/gi,"сайт").replace(/\bemail\b/gi,"почта").replace(/\bapp\b/gi,"приложение").replace(/\s*\/\s*/g,", ");
-  add("Как забронировать", [esc(bh), link(a.booking_url||p.booking_url,"бронь")].filter(Boolean).join(" "));
-  add("Часы", esc(p.hours||""));
+  const it=[]; const add=(k,v)=>{ if(v) it.push(`<div><dt>${k}</dt><dd>${v}</dd></div>`); };
+  add("Тип", kindCell(p));
+  add("Адрес", `${esc(p.address||"")} ${link(maps,"открыть в Google Maps")}`);
+  add("На месте", esc(amen(p).join(", ")));
+  add("Разовый вход", esc([cap(dayTxt(p)), cap(a.day_pass_price_note||"")].filter(Boolean).join(". ")));
+  add("Абонемент", esc([cap(memTxt(p)||""), cap(a.membership_note||"")].filter(Boolean).join(". ")));
+  add("Бронь", [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", a.booking_how?esc("через: "+a.booking_how):"", link(a.booking_url||p.booking_url,"страница брони")].filter(Boolean).join(", "));
+  add("Часы", esc(p.hours||p.hours_short||""));
   add("Телефон", p.phone?`<span style="user-select:all">${esc(p.phone)}</span>`:"");
   add("Сайт", link(p.website,"официальная страница"));
-  add("До моря", p.sea_distance_m!=null?`≈ ${p.sea_distance_m>=1000?(Math.round(p.sea_distance_m/100)/10).toString().replace(".",",")+" км":p.sea_distance_m+" м"}`:"");
-  add("От центра Кашкайша", p._d<900?(p._d<1?"меньше 1 км":`≈ ${Math.round(p._d)} км`):"");
-  add("Правила", esc([p.min_age?`с ${p.min_age} лет`:"", p.rules||""].filter(Boolean).join(" · ")));
-  const src=(p.sources||[]).map(safeUrl).filter(Boolean).slice(0,4).map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">${i+1}</a>`).join(" ");
-  return `<dl class="dgrid">${items.join("")}</dl>${p.notes?`<p class="note">${esc(p.notes)}</p>`:""}<div class="src">Проверено ${esc(p.verified_on||"")}${p.confidence?`, надёжность: ${({high:"высокая",medium:"средняя",low:"низкая"})[p.confidence]||esc(p.confidence)}`:""}${src?`. Источники: ${src}`:""}</div>`;
+  add("Рейтинг Google", p.ratings&&p.ratings.google?`${dec(p.ratings.google)}${p.ratings.google_reviews?`, отзывов: ${p.ratings.google_reviews}`:""}`:"");
+  add("Рейтинг Booking", p.ratings&&p.ratings.booking?`${dec(p.ratings.booking)}${p.ratings.booking_reviews?`, отзывов: ${p.ratings.booking_reviews}`:""}`:"");
+  add("В подборках", esc((p.lists||[]).join(", ")));
+  add("До моря", p.sea_distance_m!=null?`≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" км":p.sea_distance_m+" м"}`:"");
+  add("От центра Кашкайша", p._d<900?`≈ ${kmTxt(p._d)} км по прямой`:"");
+  add("Правила", esc([p.min_age?`С ${p.min_age} лет`:"", cap(p.rules||"")].filter(Boolean).join(". ")));
+  const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).slice(0,4).map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">${i+1}</a>`).join(" ");
+  const gal=p._ph.length?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="Фото ${j+1}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
+  const conf={high:"высокая",medium:"средняя",low:"низкая, лучше уточнить"}[p.confidence];
+  const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
+  const acts=`<div class="acts"><button type="button" class="act" data-showmap="${p._i}">Показать на карте</button>${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Маршрут Google</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">Apple Карты</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">Скопировать ссылку</button></div>`;
+  return `${acts}${gal}<dl class="dgrid">${it.join("")}</dl>${p.notes?`<p class="note">${esc(p.notes)}</p>`:""}<div class="src">Проверено ${esc(p.verified_on||"")}${conf?`, надёжность данных: ${conf}`:""}${src?`. Источники: ${src}`:""}</div>`;
 }
 
 function filtered(){
-  return P.filter(p=>{
-    if(st.q && !(`${p.name} ${p.address||""} ${AREA_RU[p.area]||""} ${p.area||""}`.toLowerCase().includes(st.q))) return false;
+  const minR=+st.rate;
+  return P.filter(p=>{const a=p.access||{};
+    if(st.q && !(`${p.name} ${p.subtitle||""} ${p.address||""} ${AREA_RU[p.area]||""} ${p.area||""}`.toLowerCase().includes(st.q))) return false;
+    if(st.scope==="near" && !NEAR.has(p.area)) return false;
     if(st.area.size && !st.area.has(p.area)) return false;
-    if(st.type.size && !st.type.has(p.type)) return false;
-    const a=p.access||{};
+    if(st.kind.size && !st.kind.has(p.kind)) return false;
     if(st.access.has("day") && !p._day) return false;
     if(st.access.has("membership") && !p._mem) return false;
     if(st.access.has("treatment") && !p._trt) return false;
@@ -320,57 +487,118 @@ function filtered(){
     if(st.ext.has("cold") && !p._cold) return false;
     if(st.ext.has("hammam") && !p._ham) return false;
     if(st.ext.has("sea") && !p._sea) return false;
-    if(st.price < +priceEl.max){ if(a.day_pass_price_eur==null || a.day_pass_price_eur>st.price) return false; }
+    if(st.ext.has("photo") && !p._ph.length) return false;
+    if(minR && !(p._g>=minR)) return false;
+    if(st.price!=null && (a.day_pass_price_eur==null || a.day_pass_price_eur>st.price)) return false;
+    if(st.mprice!=null && (a.membership_month_eur==null || a.membership_month_eur>st.mprice)) return false;
     return true;
-  }).sort((x,y)=>{
-    const ax=x.access||{}, ay=y.access||{};
+  }).sort((x,y)=>{const ax=x.access||{}, ay=y.access||{}, d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
     switch(st.sort){
-      case "price": return (ax.day_pass_price_eur??1e9)-(ay.day_pass_price_eur??1e9);
-      case "dist": return x._d-y._d;
-      case "sea": return (x.sea_distance_m??1e9)-(y.sea_distance_m??1e9);
-      case "name": return x.name.localeCompare(y.name);
-      default: return (y._score-x._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
+      case "price": return nl(ax.day_pass_price_eur,ay.day_pass_price_eur)||x._d-y._d;
+      case "mprice": return nl(ax.membership_month_eur,ay.membership_month_eur)||x._d-y._d;
+      case "session": return nl(ax.session_minutes,ay.session_minutes)||x._d-y._d;
+      case "book": return d*(x._book-y._book)||x._d-y._d;
+      case "kind": return d*((KINDS[x.kind]||[""])[0].localeCompare((KINDS[y.kind]||[""])[0]))||x._d-y._d;
+      case "dist": return d*(x._d-y._d);
+      case "sea": return nl(x.sea_distance_m,y.sea_distance_m);
+      case "name": return d*x.name.localeCompare(y.name);
+      default: return d*(x._score-y._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
     }
   });
 }
 
 const tbody=document.getElementById("tbody");
+let lastAreaKey="";
 function render(){
-  priceOut.textContent = st.price>=+priceEl.max ? "любая" : "€"+st.price;
-  const nf=st.area.size+st.type.size+st.access.size+st.ext.size+(st.price<+priceEl.max?1:0); ft.textContent = nf?`Фильтры · ${nf}`:"Фильтры";
+  renderHead();
   const list=filtered(); const vis=new Set(list.map(p=>p._i));
   Object.entries(markers).forEach(([i,m])=>{ const on=vis.has(+i); if(on&&!cluster.hasLayer(m)) cluster.addLayer(m); if(!on&&cluster.hasLayer(m)) cluster.removeLayer(m); });
+  const ak=st.scope+"|"+[...st.area].sort().join(","); if(ak!==lastAreaKey){ lastAreaKey=ak; const pts=list.filter(p=>p.lat!=null).map(p=>[p.lat,p.lon]); if((st.area.size||st.scope==="all")&&pts.length) map.fitBounds(pts,{padding:[30,30],maxZoom:14}); else fitDefault(); }
   document.getElementById("empty").hidden = list.length>0;
-  tbody.innerHTML = list.map(p=>{const a=p.access||{}; const t=TYPES[p.type]||TYPES.other;
-    const sa=(p.sauna_types||[]).filter(s=>s!=="other").slice(0,3).map(s=>`<span class="tag heat">${esc(SAUNA_RU[s]||s)}</span>`).join("");
-    const ex=["cold_plunge","ice_bath","sea_view","indoor_pool","outdoor_pool"].filter(e=>(p.extras||[]).includes(e)).slice(0,3).map(e=>`<span class="tag">${esc(EXT_RU[e])}</span>`).join("");
-    const row=`<tr class="row${st.open===p._i?" active":""}" data-i="${p._i}" tabindex="0" aria-expanded="${st.open===p._i}">
-      <td><div class="name"><i style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${t[1]};margin-right:6px"></i>${esc(p.name)}</div>${p.subtitle?`<div class="sub">${esc(p.subtitle)}</div>`:""}<div class="sub">${esc(t[0])} · ${esc(AREA_RU[p.area]||p.area||"")}${p._d<900?` · ${p._d<1?"меньше 1":Math.round(p._d)} км`:""}</div><div class="tags">${sa}${ex}</div></td>
-      <td>${dayCell(p)}<div class="sub" style="display:none"></div></td>
-      <td class="hide-m">${sessCell(a)}</td>
-      <td>${bookPill(a)}</td>
+  tbody.innerHTML = list.map(p=>{const a=p.access||{};
+    const am=amen(p);
+    const k=KINDS[p.kind]||KINDS.sauna; const open=st.open===p._i;
+    const row=`<tr class="row${open?" active":""}" data-i="${p._i}" tabindex="0" aria-expanded="${open}">
+      <td>${photoCell(p)}</td>
+      <td><div class="name">${esc(p.name)}</div>${p.subtitle?`<div class="sub">${esc(p.subtitle)}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(AREA_RU[p.area]||p.area||"")}${p._d<900?` · ${kmTxt(p._d)} км`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
+      <td class="hide-m">${kindCell(p)}</td>
+      <td>${dayCell(p)}</td>
+      <td>${bookCell(a)}</td>
       <td class="hide-m">${memCell(p)}</td>
-      <td class="hide-m">${rateCell(p.ratings)}</td></tr>`;
-    const det = st.open===p._i ? `<tr class="detail"><td colspan="6">${mobileExtra(p)}${detail(p)}</td></tr>` : "";
-    return row+det;}).join("");
-  const n=list.length, nd=list.filter(p=>(p.access||{}).day_pass_price_eur!=null).length, nm=list.filter(p=>p._mem).length;
-  document.getElementById("stats").innerHTML=`<span><b>${n}</b> мест</span><span><b>${nd}</b> с ценой разового входа</span><span><b>${nm}</b> с абонементом</span>`;
+      <td class="hide-m hrs">${p.hours_short?esc(p.hours_short):NA}</td>
+      <td class="hide-m">${rateCell(p.ratings)}</td>
+</tr>`;
+    return row+(open?`<tr class="detail"><td colspan="${COLS.length}">${mobileExtra(p)}${detail(p)}</td></tr>`:"");}).join("");
+  const n=list.length, nd=list.filter(p=>(p.access||{}).day_pass_price_eur!=null).length, nm=list.filter(p=>(p.access||{}).membership_month_eur!=null).length;
+  document.getElementById("stats").innerHTML=`<span><b>${n}</b> из ${P.length} мест</span><span><b>${nd}</b> с ценой разового входа</span><span><b>${nm}</b> с ценой абонемента</span>`;
+  const nf=st.area.size+st.kind.size+st.access.size+st.ext.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0);
+  ft.textContent = nf?`Фильтры · ${nf}`:"Фильтры";
 }
 function mobileExtra(p){ if(!matchMedia("(max-width:900px)").matches) return ""; const a=p.access||{};
-  return `<div class="frow" style="margin-bottom:10px;gap:14px;font-size:13px"><span><span class="dim">Сеанс:</span> ${sessCell(a)}</span><span><span class="dim">Абонемент:</span> ${memCell(p)}</span><span><span class="dim">Рейтинг:</span> ${rateCell(p.ratings).replace(/<br>/g," ")}</span></div>`; }
+  const parts=[]; const mc=memCell(p); if(mc) parts.push(`<span><span class="dim">Абонемент:</span> ${mc}</span>`); if(p.hours_short) parts.push(`<span><span class="dim">Часы:</span> ${esc(p.hours_short)}</span>`);
+  return parts.length?`<div class="frow" style="margin-bottom:10px;gap:6px 14px;font-size:13px">${parts.join("")}</div>`:""; }
+const isPhone=()=>matchMedia("(max-width:900px)").matches;
 function openRow(i,fromMap){
+  const before=tbody.querySelector(`tr.row[data-i="${i}"]`); const y0=before?before.getBoundingClientRect().top:null;
   st.open = (st.open===i && !fromMap) ? null : i; render();
   document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active"));
-  if(st.open!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active");
-    const p=P[i]; if(!fromMap && p.lat!=null && markers[i]){ cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); }
-    if(fromMap){ const r=tbody.querySelector(`tr.row[data-i="${i}"]`); r&&r.scrollIntoView({block:"nearest",behavior:"smooth"}); } }
+  const r=tbody.querySelector(`tr.row[data-i="${i}"]`);
+  if(fromMap){ if(document.documentElement.classList.contains("mapfull")) closeFull(); map.closePopup(); r&&r.scrollIntoView({block:"start",behavior:"smooth"}); }
+  else if(r&&y0!=null){ window.scrollBy(0, r.getBoundingClientRect().top-y0); }
+  if(st.open==null) return;
+  const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active");
+  try{ history.replaceState(null,"","#p-"+P[i].id); }catch(e){}
+  if(!fromMap && !isPhone() && markers[i]){ cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); }
 }
-tbody.addEventListener("click",e=>{const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) openRow(+r.dataset.i,false);});
-tbody.addEventListener("keydown",e=>{ if(e.key==="Enter"||e.key===" "){const r=e.target.closest("tr.row"); if(r){e.preventDefault(); openRow(+r.dataset.i,false);} }});
+function showOnMap(i){ if(isPhone()) openFull(); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); },80); }
+const fab=document.getElementById("fab");
+function openFull(){ document.documentElement.classList.add("mapfull"); try{history.pushState({mapfull:1},"");}catch(e){} setTimeout(()=>map.invalidateSize(),60); }
+function closeFull(fromPop){ if(!document.documentElement.classList.contains("mapfull")) return; document.documentElement.classList.remove("mapfull"); setTimeout(()=>map.invalidateSize(),60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
+fab.onclick=openFull; document.getElementById("mapfull-x").onclick=()=>closeFull();
+window.addEventListener("popstate",()=>closeFull(true));
+// near me
+let ME=null;
+document.getElementById("near").onclick=()=>{ const b=document.getElementById("near");
+  if(!navigator.geolocation){ b.textContent="Геолокация недоступна"; return; }
+  b.textContent="Определяю…";
+  navigator.geolocation.getCurrentPosition(pos=>{ ME=[pos.coords.latitude,pos.coords.longitude]; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); b.textContent="Рядом со мной ✓"; setSort("dist",1); L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1}).addTo(map); map.setView(ME,12); },
+    ()=>{ b.textContent="Нет доступа к геолокации"; }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
+tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
+  const sm=e.target.closest("[data-showmap]"); if(sm){ showOnMap(+sm.dataset.showmap); return; }
+  const sh=e.target.closest("[data-share]"); if(sh){ const u=location.origin+location.pathname+"#p-"+P[+sh.dataset.share].id; const done=()=>{sh.textContent="Ссылка скопирована";}; (navigator.clipboard?navigator.clipboard.writeText(u).then(done,()=>{prompt("Ссылка",u)}):prompt("Ссылка",u)); return; }
+  const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) openRow(+r.dataset.i,false);});
+tbody.addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.matches("tr.row")){ e.preventDefault(); openRow(+e.target.dataset.i,false);} });
+
+// lightbox
+const lb=document.getElementById("lb"); const lbImg=document.createElement("img"); lbImg.alt=""; document.getElementById("lb-imgslot").appendChild(lbImg);
+let lbP=null, lbJ=0, lastFocus=null;
+function lbShow(){ const x=lbP._ph[lbJ]; lbImg.src=x.u; lbImg.alt=lbP.name;
+  document.getElementById("lb-title").textContent=lbP.name;
+  document.getElementById("lb-count").textContent=`${lbJ+1} из ${lbP._ph.length}`;
+  const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
+  const many=lbP._ph.length>1; document.getElementById("lb-prev").hidden=!many; document.getElementById("lb-next").hidden=!many;
+  const nx=lbP._ph[(lbJ+1)%lbP._ph.length]; if(nx){ const im=new Image(); im.referrerPolicy="no-referrer"; im.src=nx.u; } }
+function openLB(i,j){ lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbShow(); document.getElementById("lb-x").focus(); }
+function closeLB(){ lb.hidden=true; document.body.style.overflow=""; lbImg.removeAttribute("src"); lastFocus&&lastFocus.focus&&lastFocus.focus(); }
+const step=d=>{ if(!lbP) return; lbJ=(lbJ+d+lbP._ph.length)%lbP._ph.length; lbShow(); };
+lbImg.referrerPolicy="no-referrer";
+document.getElementById("lb-x").onclick=closeLB;
+document.getElementById("lb-prev").onclick=()=>step(-1);
+document.getElementById("lb-next").onclick=()=>step(1);
+document.getElementById("lb-stage").addEventListener("click",e=>{ if(e.target.id==="lb-stage") closeLB(); });
+document.addEventListener("keydown",e=>{ if(lb.hidden) return; if(e.key==="Escape") closeLB(); if(e.key==="ArrowLeft") step(-1); if(e.key==="ArrowRight") step(1); });
+let tx=null, ty=null;
+lb.addEventListener("touchstart",e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
+lb.addEventListener("touchend",e=>{ if(tx==null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)) step(dx<0?1:-1); else if(dy>90) closeLB(); tx=null; },{passive:true});
+lbImg.onerror=()=>{ if(lbP && lbP._ph.length>1){ lbP._ph.splice(lbJ,1); if(lbJ>=lbP._ph.length) lbJ=0; lbShow(); } };
+document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; } },true);
+
 render();
-map.fitBounds([[38.68,-9.49],[38.80,-9.13]],{padding:[10,10]});
+(function(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]); if(!p) return;
+  if(!NEAR.has(p.area)){ st.scope="all"; document.querySelectorAll("#f-scope .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k==="all"))); drawAreas(); }
+  openRow(p._i,false); const r=tbody.querySelector(`tr.row[data-i="${p._i}"]`); r&&r.scrollIntoView({block:"start"}); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); })();
 const m=D.meta||{};
-document.getElementById("foot").innerHTML = `Данные собраны ${esc(m.updated||"")}: официальные сайты, Google Maps и Booking. Цены и правила меняются, перед походом лучше уточнить по телефону или на сайте. Рейтинг: G это Google, B это Booking, в скобках число отзывов. Сортировка по рейтингу учитывает число отзывов. «н/д» значит, что данных нет. Расстояние считается по прямой от центра Кашкайша.`;
+document.getElementById("foot").innerHTML = `Данные собраны ${esc(m.updated||"")}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить по телефону или на сайте. Рейтинг: оценка Google (B это Booking), в скобках число отзывов; сортировка по рейтингу учитывает число отзывов. Расстояние по прямой от центра Кашкайша. Фото принадлежат их авторам, у каждого есть ссылка на источник.`;
 })();
 </script>
 </body>
