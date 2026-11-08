@@ -120,6 +120,17 @@ tr.detail td{background:var(--bg);padding:10px 12px 12px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:78ch}
 .show-m{display:none}
+.ofgt{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:6px 0 3px}
+.ofgt.top{margin:0 0 2px;font-weight:600;color:var(--ink)}
+.prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 22px;margin-bottom:10px}
+.ofg{min-width:0}
+.ofl{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px;padding:3px 0;font-size:13px;align-items:baseline}
+.ofl.trial .ofp{color:var(--ok)}
+.ofp{font-weight:600;text-align:right;white-space:nowrap}
+.ofm{min-width:0}
+.ofs{display:flex;flex-wrap:wrap;gap:3px 4px;margin-top:2px}
+.ofs i{font-style:normal;font-size:11px;padding:0 6px;border-radius:5px;background:var(--chip);color:var(--muted)}
+.ofs em{font-style:normal;font-size:11.5px;color:var(--muted)}
 .toprow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .langsw{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:0 0 auto;margin-top:4px}
 .langsw button{all:unset;cursor:pointer;font-size:12px;font-weight:600;padding:5px 10px;color:var(--muted)}
@@ -332,6 +343,19 @@ Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Pen
 Object.assign(I18N.ru,{hs_open:"Открыто",hs_soon:"Скоро закроется",hs_closed:"Закрыто",hs_until:"до {0}",hs_opens:"откроется в {0}",hs_opens_day:"откроется {0} в {1}",today:"сегодня"});
 Object.assign(I18N.en,{hs_open:"Open",hs_soon:"Closes soon",hs_closed:"Closed",hs_until:"until {0}",hs_opens:"opens at {0}",hs_opens_day:"opens {0} at {1}",today:"today"});
 Object.assign(I18N.pt,{hs_open:"Aberto",hs_soon:"Fecha em breve",hs_closed:"Fechado",hs_until:"até às {0}",hs_opens:"abre às {0}",hs_opens_day:"abre {0} às {1}",today:"hoje"});
+Object.assign(I18N.ru,{pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",pk:"€{0} за {1} · {2} за раз",per_session:"{0} за раз",in_pack:"в пакете",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",join:"+ {0} вступ.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",dayu:"день",p_pack:"Пакет",acc_private:"Аренда для компании",
+ inc:{sauna:"сауна",infrared:"ИК-сауна",steam:"парная",hammam:"хаммам",banya:"баня",venik:"веники",pool:"бассейн",sea_pool:"морская вода",outdoor_pool:"уличный бассейн",jacuzzi:"джакузи",hot_tub:"чан",cold_plunge:"купель",ice_bath:"ледяная ванна",gym:"зал",classes:"занятия",guide:"ведущий",sound:"музыка",towel:"полотенце",robe:"халат",tea:"чай",coffee:"кофе",food:"еда",massage:"массаж",compression:"компрессия"},
+ cond:{booking_required:"бронь",booking_recommended:"лучше бронь",age_16_plus:"с 16 лет",age_18_plus:"с 18 лет",under_18_with_adult:"до 18 с родителями",under_16_from_12_with_adult:"с 12 лет со взрослым",under_16_half_price:"до 16 лет за полцены",with_treatment_only:"только с процедурой",men_only:"мужской",women_only:"женский",waitlist:"лист ожидания",trial_once:"один раз",prepayment:"предоплата",voucher:"по ваучеру",swimwear_required:"купальник",bring_towels:"свои полотенца",cap_swimwear_slippers:"шапочка, купальник, шлёпанцы",private_room:"отдельная комната",sauna_after_class_only:"сауна после занятия",cancel_24h:"отмена за 24 ч",cancel_8h_50pct:"отмена позже 8 ч: 50%",sold_out:"мест нет",min_people:"от {0} чел.",joining_fee:"вступительный €{0}",min_term_months:"от {0} мес.",booking_ahead_h:"бронь за {0} ч",valid_days:"действует {0} дн.",time:"{0}"},
+ wh:{weekdays:"по будням",weekends:"по выходным",sat:"сб",sun:"вс"}});
+Object.assign(I18N.en,{pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",pk:"€{0} for {1} · {2} each",per_session:"{0} each",in_pack:"in a pack",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",join:"+ {0} joining",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",dayu:"day",p_pack:"Pack",acc_private:"Private hire",
+ inc:{sauna:"sauna",infrared:"infrared",steam:"steam room",hammam:"hammam",banya:"banya",venik:"veniki",pool:"pool",sea_pool:"seawater pool",outdoor_pool:"outdoor pool",jacuzzi:"jacuzzi",hot_tub:"hot tub",cold_plunge:"cold plunge",ice_bath:"ice bath",gym:"gym",classes:"classes",guide:"guide",sound:"live sound",towel:"towel",robe:"robe",tea:"tea",coffee:"coffee",food:"food",massage:"massage",compression:"compression"},
+ cond:{booking_required:"booking",booking_recommended:"booking advised",age_16_plus:"16+",age_18_plus:"18+",under_18_with_adult:"under 18 with a parent",under_16_from_12_with_adult:"12+ with an adult",under_16_half_price:"under 16 half price",with_treatment_only:"with a treatment only",men_only:"men only",women_only:"women only",waitlist:"waitlist",trial_once:"once",prepayment:"prepayment",voucher:"voucher",swimwear_required:"swimwear",bring_towels:"bring towels",cap_swimwear_slippers:"cap, swimwear, slippers",private_room:"private room",sauna_after_class_only:"sauna after class",cancel_24h:"cancel 24 h ahead",cancel_8h_50pct:"late cancel: 50%",sold_out:"sold out",min_people:"from {0} people",joining_fee:"joining fee €{0}",min_term_months:"min {0} months",booking_ahead_h:"book {0} h ahead",valid_days:"valid {0} days",time:"{0}"},
+ wh:{weekdays:"weekdays",weekends:"weekends",sat:"Sat",sun:"Sun"}});
+Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",pk:"€{0} por {1} · {2} cada",per_session:"{0} cada",in_pack:"em pacote",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",join:"+ {0} inscrição",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",dayu:"dia",p_pack:"Pacote",acc_private:"Aluguer privado",
+ inc:{sauna:"sauna",infrared:"infravermelhos",steam:"banho turco",hammam:"hammam",banya:"banya",venik:"veniks",pool:"piscina",sea_pool:"água do mar",outdoor_pool:"piscina exterior",jacuzzi:"jacuzzi",hot_tub:"ofurô",cold_plunge:"imersão fria",ice_bath:"banho de gelo",gym:"ginásio",classes:"aulas",guide:"guia",sound:"música",towel:"toalha",robe:"roupão",tea:"chá",coffee:"café",food:"comida",massage:"massagem",compression:"pressoterapia"},
+ cond:{booking_required:"reserva",booking_recommended:"reserva aconselhada",age_16_plus:"+16",age_18_plus:"+18",under_18_with_adult:"menores com adulto",under_16_from_12_with_adult:"+12 com adulto",under_16_half_price:"menores de 16 a meio preço",with_treatment_only:"só com tratamento",men_only:"só homens",women_only:"só mulheres",waitlist:"lista de espera",trial_once:"uma vez",prepayment:"pré-pagamento",voucher:"voucher",swimwear_required:"fato de banho",bring_towels:"traga toalhas",cap_swimwear_slippers:"touca, fato de banho, chinelos",private_room:"sala privada",sauna_after_class_only:"sauna após aula",cancel_24h:"cancelar 24 h antes",cancel_8h_50pct:"cancelamento tardio: 50%",sold_out:"esgotado",min_people:"mín. {0} pessoas",joining_fee:"inscrição €{0}",min_term_months:"mín. {0} meses",booking_ahead_h:"reservar {0} h antes",valid_days:"válido {0} dias",time:"{0}"},
+ wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
+
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
@@ -347,7 +371,7 @@ function amen(p){ const A=I18N[LANG]._am; const ex=new Set(p.extras||[]); const 
   if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?A.heated_pool:A.pool);
   ["jacuzzi","hot_tub","cold_plunge","ice_bath","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) o.push(A[k]); });
   return o; }
-const ACCESS = ()=>({day:t("acc_day"),membership:t("acc_membership"),treatment:t("acc_treatment"),walkin:t("acc_walkin")});
+const ACCESS = ()=>({day:t("acc_day"),membership:t("acc_membership"),treatment:t("acc_treatment"),private:t("acc_private"),walkin:t("acc_walkin")});
 const EXTF = ()=>({pool:t("x_pool"),cold:t("x_cold"),hammam:t("x_hammam"),sea:t("x_sea"),photo:t("x_photo")});
 const HRS = ()=>({now:t("h_now"),eve:t("h_eve"),wknd:t("h_wknd"),early:t("h_early")});
 const RATE = ()=>({"0":t("r_0"),"4":t("r_4"),"4.5":t("r_45"),"ok":t("r_ok")});
@@ -386,6 +410,8 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._cold=ex.has("cold_plunge")||ex.has("ice_bath"); p._ham=sa.has("hammam")||sa.has("steam");
   p._sea=ex.has("sea_view")||ex.has("beach_access")||p.beach||(p.sea_distance_m!=null&&p.sea_distance_m<=600);
   p._ph=(p.photos||[]).filter(x=>safeUrl(x.u));
+  const hl=p.hl||{}; p._vp=hl.visit_from_eur!=null?hl.visit_from_eur:(p.of?null:a.day_pass_price_eur); p._mp=hl.month_from_eur!=null?hl.month_from_eur:(p.of?null:a.membership_month_eur); p._sp=hl.sort_eur!=null?hl.sort_eur:p._vp;
+  if(p.of){ if(p.of.some(o=>o.kind==='membership')) p._mem=true; if(p.of.some(o=>o.kind==='treatment')) p._trt=true; if(hl.visit_from_eur!=null) p._day=true; p._grp=p.of.some(o=>o.kind==='private'&&o.per==='group'); }
   p._book={walk_in:0,recommended:1,required:2}[a.booking]; if(p._book==null) p._book=3;
   const sparse=!r.google&&!r.booking&&a.day_pass_price_eur==null&&a.membership_month_eur==null&&!p.wk;
   p._weak = p.status==="soon"||p.status==="closed" ? "status" : p.confidence==="low" ? "low" : sparse ? "sparse" : null;
@@ -440,8 +466,8 @@ function slider(id,outId,vals,anyTxt,key){
   el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; out.textContent= st[key]==null?anyTxt():"€"+st[key]; render();};
   return ()=>{el.value=el.max; st[key]=null; out.textContent=anyTxt();};
 }
-const resetPrice=slider("price","priceout",P.map(p=>(p.access||{}).day_pass_price_eur||0),()=>t("anyf"),"price");
-const resetM=slider("mprice","mpriceout",P.map(p=>(p.access||{}).membership_month_eur||0),()=>t("anym"),"mprice");
+const resetPrice=slider("price","priceout",P.map(p=>p._vp||0),()=>t("anyf"),"price");
+const resetM=slider("mprice","mpriceout",P.map(p=>p._mp||0),()=>t("anym"),"mprice");
 document.getElementById("q").oninput=e=>{st.q=e.target.value.trim().toLowerCase(); render();};
 const sortEl=document.getElementById("sort");
 function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; try{localStorage.setItem("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir}))}catch(e){} render(); }
@@ -478,7 +504,7 @@ map.addLayer(cluster);
 const markers={};
 P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=(KINDS[p.kind]||KINDS.sauna)[1];
-  const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}"><span>${(p.access||{}).day_pass_price_eur!=null?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
+  const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}"><span>${p._vp!=null?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name}); cluster.addLayer(m);
   m.bindPopup(()=>popup(p),{maxWidth:320,minWidth:280,autoPanPadding:[20,20]});
   markers[p._i]=m;
@@ -497,7 +523,7 @@ map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
 function dayTxt(p){const a=p.access||{};
   if(p.status==="soon") return t("soon");
   if(p.status==="closed") return t("closed");
-  if(p.stay && a.day_pass_price_eur==null && !p._trt) return t("guests");
+  if(p.stay && a.day_pass===false && !p._trt && !p._day) return t("guests");
   if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?" "+t("for_min",a.session_minutes):""}`;
   if(p._day) return t("yes_noprice");
   if(p._trt) return t("only_trt");
@@ -511,8 +537,8 @@ function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; cons
   const rows=[];
   const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
   const am=amen(p); if(am.length) rows.push(`<span>${esc(t("p_has"))}</span><span>${esc(am.join(", "))}</span>`);
-  const dt=dayTxt(p); if(dt) add(t("p_day"), esc(dt) + (p.confidence==="low"?` <span class="warn-i" title="${esc(t("unconf"))}">?</span>`:""));
-  add(t("p_mem"), esc(memTxt(p)||""));
+  if(p.hl&&(p.hl.visit_from_eur!=null||p.hl.month_from_eur!=null||p.hl.treatment_from_eur!=null||p.hl.group_from_eur!=null||p.hl.pack_session_from_eur!=null)){ rows.push(...popPrices(p)); } else { const dt=dayTxt(p); if(dt) add(t("p_day"), esc(dt) + (p.confidence==="low"?` <span class="warn-i" title="${esc(t("unconf"))}">?</span>`:""));
+  add(t("p_mem"), esc(memTxt(p)||"")); }
   add(t("p_book"), BOOK[a.booking]?BOOK[a.booking][0].toLowerCase():"");
   add(t("p_hours"), hoursCell(p));
   add(t("p_rate"), rb(r,true));
@@ -553,10 +579,10 @@ const bookBtn=(p,cls)=>{ const u=bookUrl(p); return u?`<a class="${cls||"bookb"}
 const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
 function photoCell(p){ if(!p._ph.length) return `<div class="nophoto">${esc(t("nophoto"))}</div>`;
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
-function dayCell(p){const a=p.access||{}; const w=warn(p);
+function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
   if(p.status==="closed") return `<span class="pill p-no">${esc(t("closed"))}</span>`;
-  if(p.stay && a.day_pass_price_eur==null && !p._trt) return `<span class="pill p-na">${esc(t("guests"))}</span>`;
+  if(p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="pill p-na">${esc(t("guests"))}</span>`;
   if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${t("min",a.session_minutes)}</div>`:""}`;
   if(p._day) return `<span class="pill p-ok">${esc(t("yes"))}</span>${w}<div class="sub">${esc(t("noprice"))}</div>`;
   if(p._trt) return `<span class="pill p-warn">${esc(t("w_trt"))}</span>${w}`;
@@ -565,11 +591,51 @@ function dayCell(p){const a=p.access||{}; const w=warn(p);
   return w;
 }
 const sessCell = a => a.session_minutes?`<span class="num">${t("min",a.session_minutes)}</span>`:NA;
-function memCell(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim">${t("per_mo")}</span>`; if(p._mem) return `<span class="dim">${esc(t("onreq"))}</span>`; if(a.membership===false) return `<span class="dim">${esc(t("no"))}</span>`; return NA;}
+function memCellOld(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim">${t("per_mo")}</span>`; if(p._mem) return `<span class="dim">${esc(t("onreq"))}</span>`; if(a.membership===false) return `<span class="dim">${esc(t("no"))}</span>`; return NA;}
 const bookCell = (a,p) => {const b=BOOK[a.booking]; return (b?`<span class="pill ${b[1]}">${b[0]}</span>`:"")+(p?bookBtn(p):"");};
 function rateCell(r){ const h=rb(r); return h?`<div class="rbs">${h}</div>`:""; }
 const kindCell = p => {const k=KINDS[p.kind]||KINDS.sauna; return `<span class="kind"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])}</span>${p.beach?`<div class="sub">${esc(t("beach"))}</div>`:""}`;};
 
+
+// ===== prices (offers model) =====
+const fmtMinU=m=>{ if(!m) return ""; if(m<=90) return t("min",m); const h=m/60; return (Number.isInteger(h)?h:String(Math.round(h*10)/10).replace(".",LANG==="en"?".":","))+" "+t("hrs_u"); };
+const D_=()=>I18N[LANG];
+function condTxt(c){ const [k,v]=String(c).split(":"); const m=D_().cond||{}; if(k==="time"&&v) return v.replace("-"," "+t("to")+" "); const w=m[k]; return w?w.replace("{0}",v||""):""; }
+const incTxt=c=>(D_().inc||{})[c]||"";
+const offLabel=o=>o["label_"+LANG]||o.label_en||o.label_ru||"";
+const pr=o=>o.price_eur==null?"":(o.price_max_eur?`${eur(o.price_eur)} ${t("to")} ${eur(o.price_max_eur).replace("€","")}`:eur(o.price_eur));
+function offGroup(o){ if(o.for==="guests") return "guest"; if(o.kind==="membership") return "mem"; if(o.kind==="pack"||o.kind==="pass") return "pack"; if(o.kind==="treatment") return "trt"; if(o.kind==="private"&&o.per==="group") return "group"; if(o.kind==="trial") return "trial"; return "visit"; }
+function priceCell(p){ const h=p.hl||{}; const w=warn(p); const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
+  if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
+  if(p.status==="closed") return `<span class="pill p-no">${esc(t("closed"))}</span>`;
+  if(h.visit_from_eur!=null){ const sub=[fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ");
+    return `<span class="price num">${vis.length>1?esc(t("from"))+" ":""}${eur(h.visit_from_eur)}</span>${w}${sub?`<div class="sub num">${esc(sub)}</div>`:""}`; }
+  if(h.pack_session_from_eur!=null) return `<span class="price num">${eur(h.pack_session_from_eur)}</span>${w}<div class="sub">${esc(t("in_pack"))}</div>`;
+  if(h.treatment_from_eur!=null) return `<span class="price num dim">${eur(h.treatment_from_eur)}</span>${w}<div class="sub">${esc(t("w_trt"))}</div>`;
+  if(h.group_from_eur!=null) return `<span class="price num">${eur(h.group_from_eur)}</span>${w}<div class="sub">${esc(t("w_group"))}</div>`;
+  return dayCellOld(p); }
+function memCellNew(p){ const h=p.hl||{}; if(h.month_from_eur!=null) return `<span class="num">${eur(h.month_from_eur)}</span><span class="dim">${h.month_per==="4weeks"?t("mo4w"):t("per_mo")}</span>${h.joining_fee_eur?`<div class="sub num">${esc(t("join",eur(h.joining_fee_eur)))}</div>`:""}`; if((p.of||[]).some(o=>o.kind==="membership")) return `<span class="dim">${esc(t("w_mem"))}</span>`; return memCellOld(p); }
+function offLine(o){ const g=offGroup(o); let price=pr(o), extra="";
+  if(g==="pack"&&o.price_eur!=null&&o.sessions){ price=eur(o.price_eur); extra=t("per_session",eur(o.per_session_eur||o.price_eur/o.sessions)); }
+  if(g==="group"&&o.price_eur!=null){ extra=o.capacity?t("grp_cap",o.capacity,eur(o.per_person_from_eur||Math.round(o.price_eur/o.capacity))):t("w_group"); }
+  if(g==="mem"&&o.price_eur!=null) price+=o.per==="4weeks"?t("mo4w"):t("per_mo");
+  if(g==="trial") price=o.price_eur?price:t("free");
+  const meta=[offLabel(o), fmtMinU(o.minutes), o.when?(D_().wh||{})[o.when]||"":"", extra].filter(Boolean).join(" · ");
+  const inc=(o.includes||[]).map(incTxt).filter(Boolean); const cond=(o.conditions||[]).map(condTxt).filter(Boolean);
+  return `<div class="ofl${g==="trial"?" trial":""}"><span class="ofp num">${esc(price)}</span><span class="ofm"><span>${esc(meta)}</span>${inc.length||cond.length?`<span class="ofs">${inc.map(x=>`<i>${esc(x)}</i>`).join("")}${cond.length?`<em>${esc(cond.join(" · "))}</em>`:""}</span>`:""}</span></div>`; }
+function pricesBlock(p){ const of=p.of||[]; if(!of.length) return ""; const G={visit:[],pack:[],mem:[],trt:[],group:[],guest:[],trial:[]}; of.forEach(o=>G[offGroup(o)].push(o));
+  Object.values(G).forEach(a=>a.sort((x,y)=>(x.price_eur??1e9)-(y.price_eur??1e9)));
+  const T={visit:"g_visit",pack:"g_pack",mem:"g_mem",trt:"g_trt",group:"g_group",guest:"g_guest"};
+  let h=""; ["visit","pack","mem","trt","group","guest"].forEach(k=>{ if(G[k].length) h+=`<div class="ofg"><div class="ofgt">${esc(t(T[k]))}</div>${G[k].map(offLine).join("")}</div>`; });
+  if(G.trial.length) h+=G.trial.map(offLine).join("");
+  return `<div class="prices">${h}</div>`; }
+function popPrices(p){ const h=p.hl||{}; const rows=[]; const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
+  if(h.visit_from_eur!=null) add(t("p_day"), `${eur(h.visit_from_eur)}${h.visit_minutes?" · "+fmtMinU(h.visit_minutes):""}`);
+  else if(h.treatment_from_eur!=null) add(t("p_day"), `${eur(h.treatment_from_eur)} · ${esc(t("w_trt"))}`);
+  else if(h.group_from_eur!=null) add(t("p_day"), `${eur(h.group_from_eur)} · ${esc(t("w_group"))}`);
+  if(h.pack_session_from_eur!=null) add(t("p_pack"), t("per_session",eur(h.pack_session_from_eur)));
+  if(h.month_from_eur!=null) add(t("p_mem"), `${eur(h.month_from_eur)}${h.month_per==="4weeks"?t("mo4w"):t("per_mo")}${h.joining_fee_eur?" · "+t("join",eur(h.joining_fee_eur)):""}`);
+  return rows; }
 function detail(p){const a=p.access||{};
   const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
   const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
@@ -577,8 +643,8 @@ function detail(p){const a=p.access||{};
   add(t("d_type"), kindCell(p));
   add(t("d_addr"), `${esc(p.address||"")} ${link(maps,t("d_gmaps"))}`);
   add(t("d_has"), esc(amen(p).join(", ")));
-  add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
-  add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". ")));
+  if(!p.of){ add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
+  add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". "))); }
   add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):"", link(a.booking_url||p.booking_url,t("d_bookpage"))].filter(Boolean).join(", "));
   add(t("d_hours"), p.wk?(statusLine(p)+weekTable(p.wk)):esc(tr(p,"hours_text")||""));
   add(t("d_phone"), p.phone?`<span style="user-select:all">${esc(p.phone)}</span>`:"");
@@ -598,7 +664,7 @@ function detail(p){const a=p.access||{};
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
   const bu=bookUrl(p);
   const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("r_google"))}</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
-  return `${acts}${gal}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${esc(t("checked",p.verified_on||""))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${t("sources")}: ${src}`:""}</div>`;
+  return `${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${esc(t("checked",p.verified_on||""))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${t("sources")}: ${src}`:""}</div>`;
 }
 
 function filtered(){
@@ -624,13 +690,14 @@ function filtered(){
     if(st.ext.has("sea") && !p._sea) return false;
     if(st.ext.has("photo") && !p._ph.length) return false;
     if(st.rate==="ok"){ if(p._weak) return false; } else if(minR && !(p._g>=minR)) return false;
-    if(st.price!=null && (a.day_pass_price_eur==null || a.day_pass_price_eur>st.price)) return false;
-    if(st.mprice!=null && (a.membership_month_eur==null || a.membership_month_eur>st.mprice)) return false;
+    if(st.price!=null && (p._vp==null || p._vp>st.price)) return false;
+    if(st.mprice!=null && (p._mp==null || p._mp>st.mprice)) return false;
+    if(st.access.has("private") && !p._grp) return false;
     return true;
   }).sort((x,y)=>{const ax=x.access||{}, ay=y.access||{}, d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
     switch(st.sort){
-      case "price": return nl(ax.day_pass_price_eur,ay.day_pass_price_eur)||x._d-y._d;
-      case "mprice": return nl(ax.membership_month_eur,ay.membership_month_eur)||x._d-y._d;
+      case "price": return nl(x._sp,y._sp)||y._score-x._score;
+      case "mprice": return nl(x._mp,y._mp)||y._score-x._score;
       case "session": return nl(ax.session_minutes,ay.session_minutes)||x._d-y._d;
       case "book": return d*(x._book-y._book)||x._d-y._d;
       case "kind": return d*((KINDS[x.kind]||[""])[0].localeCompare((KINDS[y.kind]||[""])[0]))||x._d-y._d;
@@ -658,20 +725,20 @@ function render(){
       <td>${photoCell(p)}</td>
       <td><div class="name">${esc(p.name)}${wk}</div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
       <td class="hide-m hide-l">${kindCell(p)}</td>
-      <td>${dayCell(p)}</td>
+      <td>${priceCell(p)}</td>
       <td>${bookCell(a,p)}</td>
-      <td class="hide-m">${memCell(p)}</td>
+      <td class="hide-m">${memCellNew(p)}</td>
       <td class="hide-m hrs">${hoursCell(p)}</td>
       <td class="hide-m">${rateCell(p.ratings)}</td>
 </tr>`;
     return row+(open?`<tr class="detail"><td colspan="${COLS.length}">${mobileExtra(p)}${detail(p)}</td></tr>`:"");}).join("");
-  const n=list.length, nd=list.filter(p=>(p.access||{}).day_pass_price_eur!=null).length, nm=list.filter(p=>(p.access||{}).membership_month_eur!=null).length;
+  const n=list.length, nd=list.filter(p=>p._vp!=null).length, nm=list.filter(p=>p._mp!=null).length;
   document.getElementById("stats").innerHTML=`<span><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span><b>${nd}</b> ${t("withday")}</span><span><b>${nm}</b> ${t("withmem")}</span>`;
   const nf=st.area.size+st.kind.size+st.access.size+st.ext.size+st.hrs.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0);
   ft.textContent = nf?t("filt_n",nf):t("filters");
 }
 function mobileExtra(p){ if(!matchMedia("(max-width:900px)").matches) return ""; const a=p.access||{};
-  const parts=[]; const mc=memCell(p); if(mc) parts.push(`<span><span class="dim">${t("mx_mem")}</span> ${mc}</span>`); const hc=hoursCell(p); if(hc) parts.push(`<span><span class="dim">${t("mx_hours")}</span> ${hc}</span>`);
+  const parts=[]; const mc=memCellNew(p); if(mc) parts.push(`<span><span class="dim">${t("mx_mem")}</span> ${mc}</span>`); const hc=hoursCell(p); if(hc) parts.push(`<span><span class="dim">${t("mx_hours")}</span> ${hc}</span>`);
   return parts.length?`<div class="frow" style="margin-bottom:10px;gap:6px 14px;font-size:13px">${parts.join("")}</div>`:""; }
 const isPhone=()=>matchMedia("(max-width:900px)").matches;
 function openRow(i,fromMap){
