@@ -121,6 +121,7 @@ tr.detail td{background:var(--bg);padding:10px 12px 12px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:78ch}
 .show-m{display:none}
+.price + .sub, td .sub.num{white-space:normal}
 .bk2{margin-top:4px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .bk2:empty{display:none}
 .bk2 .bookb{margin-top:0}
@@ -249,7 +250,7 @@ a.act{color:var(--ink)}
   table{table-layout:fixed}
   thead th:nth-child(1){width:62px}
   thead th:nth-child(4){width:108px}
-  thead th:nth-child(2){width:calc(100vw - 24px - 62px - 108px - 4px)}
+  thead th:nth-child(2){width:var(--namew,180px)}
   .pill{white-space:normal;font-size:11.5px;padding:2px 7px}
   .bk2 .bookb{font-size:11px;padding:3px 8px;white-space:normal;max-width:100%}
   td{overflow-wrap:anywhere}
@@ -371,6 +372,7 @@ Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_m
  cond:{booking_required:"reserva",booking_recommended:"reserva aconselhada",age_16_plus:"+16",age_18_plus:"+18",under_18_with_adult:"menores com adulto",under_16_from_12_with_adult:"+12 com adulto",under_16_half_price:"menores de 16 a meio preço",with_treatment_only:"só com tratamento",men_only:"só homens",women_only:"só mulheres",waitlist:"lista de espera",trial_once:"uma vez",prepayment:"pré-pagamento",voucher:"voucher",swimwear_required:"fato de banho",bring_towels:"traga toalhas",cap_swimwear_slippers:"touca, fato de banho, chinelos",private_room:"sala privada",sauna_after_class_only:"sauna após aula",cancel_24h:"cancelar 24 h antes",cancel_8h_50pct:"cancelamento tardio: 50%",sold_out:"esgotado",min_people:"mín. {0} pessoas",joining_fee:"inscrição €{0}",min_term_months:"mín. {0} meses",booking_ahead_h:"reservar {0} h antes",valid_days:"válido {0} dias",time:"{0}"},
  wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
 
+I18N.ru._am.ice_fountain="ледяной фонтан";I18N.ru._am.ice_room="ледяная комната";I18N.en._am.ice_fountain="ice fountain";I18N.en._am.ice_room="ice room";I18N.pt._am.ice_fountain="fonte de gelo";I18N.pt._am.ice_room="sala de gelo";I18N.ru.inc.ice_fountain="ледяной фонтан";I18N.ru.inc.ice_room="ледяная комната";I18N.en.inc.ice_fountain="ice fountain";I18N.en.inc.ice_room="ice room";I18N.pt.inc.ice_fountain="fonte de gelo";I18N.pt.inc.ice_room="sala de gelo";
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
@@ -384,7 +386,7 @@ function amen(p){ const A=I18N[LANG]._am; const ex=new Set(p.extras||[]); const 
   if(p.steam_rooms>1) o.push(A.rooms.replace("{0}",p.steam_rooms));
   if(p.capacity) o.push(A.cap.replace("{0}",p.capacity));
   if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?A.heated_pool:A.pool);
-  ["jacuzzi","hot_tub","cold_plunge","ice_bath","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) o.push(A[k]); });
+  ["jacuzzi","hot_tub","cold_plunge","ice_bath","ice_fountain","ice_room","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) o.push(A[k]||(I18N.ru._am[k])); });
   return o; }
 const ACCESS = ()=>({day:t("acc_day"),membership:t("acc_membership"),treatment:t("acc_treatment"),private:t("acc_private"),walkin:t("acc_walkin")});
 const EXTF = ()=>({pool:t("x_pool"),cold:t("x_cold"),hammam:t("x_hammam"),sea:t("x_sea"),photo:t("x_photo")});
@@ -688,11 +690,20 @@ function filtered(){
   const minR=st.rate==="ok"?0:+st.rate;
   return P.filter(p=>{const a=p.access||{};
     if(st.q && !(`${p.name} ${p.subtitle||""} ${p.address||""} ${AREA_RU[p.area]||""} ${areaName(p.area)} ${p.area||""}`.toLowerCase().includes(st.q))) return false;
-    if(st.hrs.size){ const w=p.wk; if(!w) return false; const S=openState(w);
+    if(st.hrs.size){ const w=p.wk;
+      if(!w){ const sc=p.sch||{}; const wkd=sc.week||{}; const upW=(sc.upcoming||[]).some(u=>{ const d=new Date(u.date+"T12:00:00").getDay(); return d===0||d===6; });
+        const hasWknd=!!((wkd.sat&&wkd.sat.length)||(wkd.sun&&wkd.sun.length))||upW;
+        const lateStart=Object.values(wkd).some(a=>(a||[]).some(x=>parseInt(String(x))>=20));
+        const early=Object.values(wkd).some(a=>(a||[]).some(x=>parseInt(String(x))<8));
+        if(st.hrs.has("now")) return false;
+        if(st.hrs.has("wknd")&&!hasWknd) return false;
+        if(st.hrs.has("eve")&&!lateStart) return false;
+        if(st.hrs.has("early")&&!early) return false;
+      } else { const S=openState(w);
       if(st.hrs.has("now") && !(S&&S.open)) return false;
       if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false;
       if(st.hrs.has("wknd") && !(Array.isArray(w[5])||Array.isArray(w[6]))) return false;
-      if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; }
+      if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; } }
     if(st.scope==="near" && !p._near) return false;
     if(st.area.size && !st.area.has(p.reg)) return false;
     if(st.muni.size && !st.muni.has(p.muni)) return false;
@@ -727,6 +738,8 @@ function filtered(){
 }
 
 const tbody=document.getElementById("tbody");
+function fitNameCol(){ const w=document.querySelector(".tablewrap"); if(!w) return; document.documentElement.style.setProperty("--namew", Math.max(120, w.clientWidth-62-108-2)+"px"); }
+fitNameCol(); window.addEventListener("resize",fitNameCol);
 let lastAreaKey="";
 function render(){
   renderHead();
