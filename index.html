@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Сауны у Кашкайша</title>
+<title>Сауны Португалии</title>
 <meta name="description" content="Где попариться у Кашкайша, Оэйраша, Синтры и в Лиссабоне: карта, цены, длительность сеанса, бронь.">
-<meta property="og:title" content="Сауны у Кашкайша">
+<meta property="og:title" content="Сауны Португалии">
 <meta property="og:description" content="Сауны, бани и спа вокруг Лиссабона и по Португалии: карта, цены разового входа и абонементов, бронь, фото.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://d7656520-ai.github.io/sauna/">
@@ -42,7 +42,7 @@ body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-
 a{color:var(--sea)}
 button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--sea);outline-offset:2px}
-.app{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,30vw);grid-template-rows:auto 1fr;min-height:100%}
+.app{display:grid;grid-template-columns:minmax(0,58fr) minmax(360px,42fr);grid-template-rows:auto 1fr;min-height:100%}
 .hd{grid-column:1;grid-row:1;min-width:0;padding-block:20px 0;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
 .main{grid-column:1;grid-row:2;min-width:0;padding-block:0 40px;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
 .mapwrap{grid-column:2;grid-row:1 / span 2;align-self:start;position:sticky;top:0;height:100vh;border-left:1px solid var(--line)}
@@ -84,7 +84,8 @@ tr.row{cursor:pointer}
 tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .name{font-weight:600}
-@media (min-width:901px){tbody td:nth-child(2){min-width:210px}}
+@media (min-width:901px) and (max-width:1599px){.hide-l{display:none} .m-in{display:inline}}
+@media (min-width:901px){tbody td:nth-child(2){min-width:180px} table{font-size:13.5px} td{padding:8px 7px} th button,th.nosort{padding:9px 7px}}
 .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
 .am{font-size:12.5px;color:var(--heat);margin-top:4px;line-height:1.35}
 .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
@@ -95,10 +96,10 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .kind{display:inline-flex;align-items:center;font-size:12.5px;white-space:nowrap}
 .price{font-weight:600}
 .dim{color:var(--muted)}
-.hrs{font-size:12.5px;color:var(--muted);min-width:110px;max-width:160px}
+.hrs{font-size:12.5px;color:var(--muted);min-width:118px;max-width:140px}
 .thumbs{display:flex;gap:3px;width:max-content}
 .thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:7px;overflow:hidden;background:var(--chip);width:58px;height:44px}
-.thumbs button + button{width:30px}
+.thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
 .nophoto{width:58px;height:44px;border-radius:7px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;line-height:1.1}
 tr.detail td{background:var(--bg);padding:12px 14px 16px}
@@ -114,6 +115,26 @@ tr.detail td{background:var(--bg);padding:12px 14px 16px}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:78ch}
 .show-m{display:none}
+.toprow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.langsw{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:0 0 auto;margin-top:4px}
+.langsw button{all:unset;cursor:pointer;font-size:12px;font-weight:600;padding:5px 10px;color:var(--muted)}
+.langsw button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.os{font-size:12.5px;font-weight:600;white-space:nowrap}
+.os.o{color:var(--ok)} .os.c{color:var(--muted)}
+.wk{display:inline-flex;gap:2px;margin-top:4px}
+.wk i{font-style:normal;font-size:11px;width:15px;height:17px;display:grid;place-items:center;border-radius:4px;background:var(--chip);color:var(--muted);font-weight:600}
+.wk i.on{background:var(--ok-soft);color:var(--ok)} .wk i.off{background:transparent;color:var(--line)} .wk i.td{outline:1.5px solid var(--ink);outline-offset:-1.5px}
+.wkt{border-collapse:collapse;font-size:13px;width:auto} .wkt td{padding:1px 12px 1px 0;border:0;background:none!important} .wkt tr.td td{font-weight:700}
+.rbs{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.rb{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
+.rb b{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 5px;border-radius:6px 6px 6px 0;color:#fff;font-size:12.5px;font-variant-numeric:tabular-nums}
+.rb.g1 b{background:#1e7d4a}.rb.g2 b{background:#4b8f63}.rb.g3 b{background:#7d8a84}
+.rb.bk b{background:#003580}
+.rb .st{color:#e7a300;font-size:13px;margin-left:-2px}
+.rb .rc{color:var(--muted);font-variant-numeric:tabular-nums}
+.bookb{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;color:#fff;background:var(--sea);border-radius:999px;padding:3px 10px;text-decoration:none;white-space:nowrap}
+.bookb:hover{filter:brightness(1.08)}
+a.act.prim{background:var(--sea);border-color:var(--sea);color:#fff;font-weight:600}
 .fab{display:none}
 .mapfull-x{display:none}
 html.mapfull{overflow:hidden}
@@ -133,11 +154,15 @@ a.act{color:var(--ink)}
 .mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .leaflet-popup-content-wrapper{border-radius:12px;background:var(--panel);color:var(--ink)}
 .leaflet-popup-tip{background:var(--panel)}
-.leaflet-popup-content{margin:0;width:250px!important;font-size:13px;line-height:1.35}
-.pp-img{display:flex;gap:2px;height:110px;border-radius:12px 12px 0 0;overflow:hidden;background:var(--chip)}
-.pp-img button{all:unset;cursor:zoom-in;flex:1 1 0;min-width:0}
-.pp-img button:first-child{flex:2 1 0}
-.pp-img img{width:100%;height:100%;object-fit:cover;display:block}
+.leaflet-popup-content{margin:0;width:312px!important;max-width:calc(100vw - 40px);font-size:13.5px;line-height:1.38}
+.pp-sw{position:relative;border-radius:12px 12px 0 0;overflow:hidden;background:var(--chip)}
+.pp-sl{display:flex;height:175px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
+.pp-sl::-webkit-scrollbar{display:none}
+.pp-sl button{all:unset;cursor:zoom-in;flex:0 0 100%;scroll-snap-align:center;height:100%}
+.pp-sl img{width:100%;height:100%;object-fit:cover;display:block}
+.pp-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:17px;line-height:1}
+.pp-nav.l{left:6px}.pp-nav.r{right:6px}
+.pp-cnt{position:absolute;right:8px;bottom:7px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;padding:1px 7px;border-radius:999px}
 .pp-b{padding:10px 12px 12px}
 .pp-b b.t{font-size:14px;display:block}
 .pp-grid{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin-top:8px}
@@ -196,66 +221,67 @@ a.act{color:var(--ink)}
 <body>
 <div class="app">
   <header class="hd">
-    <h1>Сауны у Кашкайша</h1>
-    <p>Куда можно прийти попариться без проживания в отеле. Кашкайш, Эшторил, Каркавелуш, Оэйраш, Синтра и Лиссабон.</p>
+    <div class="toprow"><h1 data-t="title">Сауны Португалии</h1><div class="langsw" id="langsw" role="group" aria-label="Language"><button type="button" data-l="ru">RU</button><button type="button" data-l="en">EN</button><button type="button" data-l="pt">PT</button></div></div>
+    <p data-t="intro"></p>
     <div class="stats" id="stats"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" aria-label="Карта саун"></div><button type="button" class="mapfull-x" id="mapfull-x">Список</button></div>
-  <button type="button" class="fab" id="fab">Карта на весь экран</button>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><button type="button" class="mapfull-x" id="mapfull-x" data-t="list">Список</button></div>
+  <button type="button" class="fab" id="fab" data-t="fullmap">Карта на весь экран</button>
   <main class="main">
-    <section class="filters" aria-label="Фильтры">
+    <section class="filters" data-ta="filters">
       <div class="frow">
-        <input id="q" class="search" type="search" placeholder="Поиск по названию или району" aria-label="Поиск">
-        <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false">Фильтры</button>
+        <input id="q" class="search" type="search" data-tp="search">
+        <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" data-t="filters">Фильтры</button>
       </div>
-      <div class="frow"><span class="flabel">Где</span><div class="frow" id="f-scope"></div></div>
-      <div class="frow"><span class="flabel">Район</span><div class="frow" id="f-area"></div></div>
-      <div class="frow"><span class="flabel">Тип</span><div class="frow" id="f-kind"></div></div>
-      <div class="frow"><span class="flabel">Доступ</span><div class="frow" id="f-access"></div></div>
-      <div class="frow"><span class="flabel">Есть</span><div class="frow" id="f-ext"></div></div>
-      <div class="frow"><span class="flabel">Рейтинг</span><div class="frow" id="f-rate"></div></div>
+      <div class="frow"><span class="flabel" data-t="where">Где</span><div class="frow" id="f-scope"></div></div>
+      <div class="frow"><span class="flabel" data-t="area">Район</span><div class="frow" id="f-area"></div></div>
+      <div class="frow"><span class="flabel" data-t="type">Тип</span><div class="frow" id="f-kind"></div></div>
+      <div class="frow"><span class="flabel" data-t="access">Доступ</span><div class="frow" id="f-access"></div></div>
+      <div class="frow"><span class="flabel" data-t="has">Есть</span><div class="frow" id="f-ext"></div></div>
+      <div class="frow"><span class="flabel" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"></div></div>
+      <div class="frow"><span class="flabel" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
       <div class="frow">
-        <span class="flabel">Цена</span>
-        <label class="range" for="price">разовый вход до <input id="price" type="range" min="0" max="100" step="5" value="100"><output id="priceout">любая</output></label>
-        <label class="range" for="mprice">абонемент до <input id="mprice" type="range" min="0" max="300" step="10" value="300"><output id="mpriceout">любой</output></label>
+        <span class="flabel" data-t="price">Цена</span>
+        <label class="range" for="price"><span data-t="daymax">разовый вход до</span> <input id="price" type="range" min="0" max="100" step="5" value="100"><output id="priceout" data-t="anyf">любая</output></label>
+        <label class="range" for="mprice"><span data-t="memmax">абонемент до</span> <input id="mprice" type="range" min="0" max="300" step="10" value="300"><output id="mpriceout" data-t="anym">любой</output></label>
       </div>
       <div class="frow">
-        <label class="range" for="sort">Сортировка
+        <label class="range" for="sort"><span data-t="sort">Сортировка</span>
           <select id="sort">
-            <option value="dist">Ближе к центру Кашкайша</option>
-            <option value="score">Рейтинг</option>
-            <option value="price">Цена разового входа</option>
-            <option value="mprice">Цена абонемента</option>
-            <option value="session">Длительность сеанса</option>
-            <option value="sea">Ближе к морю</option>
-            <option value="name">По названию</option>
+            <option value="dist" data-t="s_dist"></option>
+            <option value="score" data-t="s_score"></option>
+            <option value="price" data-t="s_price"></option>
+            <option value="mprice" data-t="s_mprice"></option>
+            <option value="session" data-t="s_session"></option>
+            <option value="sea" data-t="s_sea"></option>
+            <option value="name" data-t="s_name"></option>
           </select>
         </label>
-        <button class="near" id="near" type="button">Рядом со мной</button>
-        <button class="reset" id="reset" type="button">Сбросить всё</button>
+        <button class="near" id="near" type="button" data-t="nearme">Рядом со мной</button>
+        <button class="reset" id="reset" type="button" data-t="reset">Сбросить всё</button>
       </div>
     </section>
 
-    <p class="hint">Нажми на строку, чтобы открыть подробности и фото. <span class="warn-i">?</span> значит, что данные лучше уточнить.</p>
+    <p class="hint" data-th="hint"></p>
     <div class="tablewrap">
       <table>
         <thead><tr id="thead"></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
-      <div class="empty" id="empty" hidden>Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».</div>
+      <div class="empty" id="empty" hidden data-t="empty"></div>
     </div>
     <p class="foot" id="foot"></p>
   </main>
 </div>
-<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Фотографии">
-  <div class="lb-top"><b id="lb-title"></b><button class="lb-x" id="lb-x" type="button" aria-label="Закрыть">×</button></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" data-ta="photos">
+  <div class="lb-top"><b id="lb-title"></b><button class="lb-x" id="lb-x" type="button" data-ta="close">×</button></div>
   <div class="lb-stage" id="lb-stage">
     <div id="lb-imgslot" style="display:contents"></div>
-    <button class="lb-nav lb-prev" id="lb-prev" type="button" aria-label="Предыдущее фото">‹</button>
-    <button class="lb-nav lb-next" id="lb-next" type="button" aria-label="Следующее фото">›</button>
+    <button class="lb-nav lb-prev" id="lb-prev" type="button" data-ta="prev">‹</button>
+    <button class="lb-nav lb-next" id="lb-next" type="button" data-ta="next">›</button>
   </div>
-  <div class="lb-bot"><span id="lb-count"></span><a id="lb-src" target="_blank" rel="noopener">источник фото</a></div>
+  <div class="lb-bot"><span id="lb-count"></span><a id="lb-src" target="_blank" rel="noopener" data-t="photosrc">источник фото</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -269,47 +295,54 @@ const CASCAIS = [38.6968, -9.4215];
 const AREAS = ["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra","Lisboa e Setúbal","Oeste","Centro","Porto e Norte","Douro","Alentejo","Algarve","Madeira","Açores"];
 const NEAR = new Set(["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra"]);
 const AREA_RU = {Cascais:"Кашкайш",Estoril:"Эшторил",Carcavelos:"Каркавелуш",Oeiras:"Оэйраш",Sintra:"Синтра",Lisboa:"Лиссабон",Mafra:"Мафра","Lisboa e Setúbal":"Сетубал и окрестности",Oeste:"Запад, Оэште",Centro:"Центр","Porto e Norte":"Порту и север",Douro:"Долина Дору",Alentejo:"Алентежу",Algarve:"Алгарве",Madeira:"Мадейра","Açores":"Азоры"};
-const KINDS = {hotel:["Отель","#0f6b72"],spa:["Спа-центр","#7a55b0"],gym:["Фитнес-клуб","#2f6fb2"],sauna:["Сауна","#c26a12"],public:["Муниципальный","#4f7d2f"]};
+const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Больше всего мест вокруг Лиссабона и Кашкайша.", "list": "Список", "fullmap": "Карта на весь экран", "filters": "Фильтры", "search": "Поиск по названию или району", "where": "Где", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "daymax": "разовый вход до", "memmax": "абонемент до", "anyf": "любая", "anym": "любой", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_mprice": "Цена абонемента", "s_session": "Длительность сеанса", "s_sea": "Ближе к морю", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото. <span class=\"warn-i\">?</span> значит, что данные лучше уточнить.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "acc_walkin": "Без брони", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "x_photo": "С фото", "r_0": "Любой", "r_4": "От 4,0", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "h_wknd": "Работает в выходные", "h_early": "Открыто до 8:00", "sc_all": "Вся Португалия", "sc_near": "Рядом с Кашкайшем, до 55 км", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "c_book": "Бронь", "c_mem": "Абонемент", "legend_eur": "€ на метке: есть цена разового входа", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "есть, цена не указана", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "p_has": "Есть", "p_day": "Разовый", "p_mem": "Абонемент", "p_book": "Бронь", "p_hours": "Часы", "p_rate": "Рейтинг", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "o_until": "Открыто до {0}", "o_at": "Откроется в {0}", "o_next": "Закрыто, откроется {0} в {1}", "tomorrow": "завтра", "o_closed": "Сейчас закрыто", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "nophoto": "нет фото", "photo_n": "Фото {0}", "yes": "есть", "noprice": "цена не указана", "w_trt": "с процедурой", "w_mem": "абонемент", "per_mo": " /мес", "onreq": "по запросу", "beach": "на пляже", "d_type": "Тип", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_has": "На месте", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_bookpage": "страница брони", "d_hours": "Часы", "d_phone": "Телефон", "d_site": "Сайт", "d_official": "официальная страница", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_ratings": "оценок", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_cascais": "От центра Кашкайша", "straight": "по прямой", "d_rules": "Правила", "from_age": "С {0} лет", "conf_high": "высокая", "conf_medium": "средняя", "conf_low": "низкая, лучше уточнить", "showmap": "Показать на карте", "r_google": "Маршрут Google", "r_apple": "Apple Карты", "copylink": "Скопировать ссылку", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "mx_hours": "Часы:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной ✓", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places are around Lisbon and Cascais.", "list": "List", "fullmap": "Full-screen map", "filters": "Filters", "search": "Search by name or area", "where": "Where", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "daymax": "single visit up to", "memmax": "membership up to", "anyf": "any", "anym": "any", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_mprice": "Membership price", "s_session": "Session length", "s_sea": "Closest to the sea", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos. <span class=\"warn-i\">?</span> means the data is worth double-checking.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "acc_walkin": "No booking", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "x_photo": "With photos", "r_0": "Any", "r_4": "4.0+", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "h_wknd": "Open at weekends", "h_early": "Open before 8 am", "sc_all": "All Portugal", "sc_near": "Near Cascais, up to 55 km", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "c_book": "Booking", "c_mem": "Membership", "legend_eur": "€ on a pin: single-visit price known", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "yes, price not listed", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "p_has": "Has", "p_day": "Visit", "p_mem": "Membership", "p_book": "Booking", "p_hours": "Hours", "p_rate": "Rating", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "o_until": "Open until {0}", "o_at": "Opens at {0}", "o_next": "Closed, opens {0} at {1}", "tomorrow": "tomorrow", "o_closed": "Closed now", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "nophoto": "no photo", "photo_n": "Photo {0}", "yes": "yes", "noprice": "price not listed", "w_trt": "with treatment", "w_mem": "membership", "per_mo": " /mo", "onreq": "on request", "beach": "on the beach", "d_type": "Type", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_has": "On site", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_bookpage": "booking page", "d_hours": "Hours", "d_phone": "Phone", "d_site": "Website", "d_official": "official page", "d_social": "Social", "d_rate": "Rating", "d_ratings": "ratings", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_cascais": "From central Cascais", "straight": "straight line", "d_rules": "Rules", "from_age": "Age {0}+", "conf_high": "high", "conf_medium": "medium", "conf_low": "low, worth checking", "showmap": "Show on map", "r_google": "Google directions", "r_apple": "Apple Maps", "copylink": "Copy link", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "mx_hours": "Hours:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me ✓", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Rating: green badge with a star is Google, blue is Booking, with the number of ratings. Distances are straight-line. Photos belong to their authors; each links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. A maioria fica na zona de Lisboa e Cascais.", "list": "Lista", "fullmap": "Mapa em ecrã inteiro", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "where": "Onde", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "daymax": "entrada até", "memmax": "mensalidade até", "anyf": "qualquer", "anym": "qualquer", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_mprice": "Preço da mensalidade", "s_session": "Duração da sessão", "s_sea": "Mais perto do mar", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos. <span class=\"warn-i\">?</span> indica dados a confirmar.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "acc_walkin": "Sem reserva", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "x_photo": "Com fotos", "r_0": "Qualquer", "r_4": "4,0+", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "h_wknd": "Aberto ao fim de semana", "h_early": "Abre antes das 8h", "sc_all": "Todo o Portugal", "sc_near": "Perto de Cascais, até 55 km", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "c_book": "Reserva", "c_mem": "Mensalidade", "legend_eur": "€ no marcador: preço de entrada conhecido", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "sim, preço não indicado", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "p_has": "Tem", "p_day": "Entrada", "p_mem": "Mensalidade", "p_book": "Reserva", "p_hours": "Horário", "p_rate": "Avaliação", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "o_until": "Aberto até às {0}", "o_at": "Abre às {0}", "o_next": "Fechado, abre {0} às {1}", "tomorrow": "amanhã", "o_closed": "Fechado agora", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "nophoto": "sem foto", "photo_n": "Foto {0}", "yes": "sim", "noprice": "preço não indicado", "w_trt": "com tratamento", "w_mem": "mensalidade", "per_mo": " /mês", "onreq": "sob consulta", "beach": "na praia", "d_type": "Tipo", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_has": "No local", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_bookpage": "página de reserva", "d_hours": "Horário", "d_phone": "Telefone", "d_site": "Site", "d_official": "página oficial", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_ratings": "avaliações", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_cascais": "Do centro de Cascais", "straight": "em linha reta", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_high": "alta", "conf_medium": "média", "conf_low": "baixa, convém confirmar", "showmap": "Ver no mapa", "r_google": "Direções Google", "r_apple": "Apple Maps", "copylink": "Copiar link", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "mx_hours": "Horário:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim ✓", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0}: sites oficiais, sistemas de reserva, Google Maps. Preços e regras mudam, confirme antes de ir. Avaliação: o selo verde com estrela é do Google, o azul é do Booking, com o número de avaliações. Distâncias em linha reta. As fotos pertencem aos autores, cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
+
+let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
+const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
+const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
+const tr=(p,f)=>{ const x=p.tr&&p.tr[LANG]&&p.tr[LANG][f]; if(x!=null) return x; if(LANG==="ru") return p[f]; if(f==="subtitle"&&p.subtitle&&!/[А-Яа-яЁё]/.test(p.subtitle)) return p.subtitle; return (p.tr&&p.tr.en&&p.tr.en[f])||""; };
+const KCOL={hotel:"#0f6b72",spa:"#7a55b0",gym:"#2f6fb2",sauna:"#c26a12",public:"#4f7d2f"};
+const KINDS = new Proxy({}, {get:(o,k)=>KCOL[k]?[t("k_"+k),KCOL[k]]:undefined, ownKeys:()=>Object.keys(KCOL), getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
 const SAUNA_RU = {finnish:"финская",steam:"парная",hammam:"хаммам",bio:"био",infrared:"инфракрасная",banya:"баня"};
 const EXT_RU = {indoor_pool:"крытый бассейн",outdoor_pool:"открытый бассейн",heated_pool:"тёплый бассейн",jacuzzi:"джакузи",cold_plunge:"холодная купель",ice_bath:"ледяная ванна",sea_view:"вид на море",beach_access:"выход к пляжу",gym:"зал",massage:"массаж",relax_room:"зона отдыха"};
-const AM_S = {finnish:"финская сауна",banya:"русская баня",steam:"парная",hammam:"хаммам",bio:"биосауна",infrared:"инфракрасная сауна"};
-const AM_E = [["pool","бассейн"],["jacuzzi","джакузи"],["cold_plunge","купель"],["ice_bath","ледяная ванна"],["massage","массаж"],["gym","зал"],["sea_view","вид на море"],["beach_access","у пляжа"]];
-function amen(p){ const ex=new Set(p.extras||[]); const o=[];
-  (p.sauna_types||[]).forEach(s=>{ if(AM_S[s]) o.push(AM_S[s]); });
-  if(p.steam_rooms>1) o.push(`${p.steam_rooms} парных`);
-  if(p.capacity) o.push(`парная до ${p.capacity} чел.`);
-  AM_E.forEach(([k,l])=>{ if(k==="pool"){ if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?"тёплый бассейн":"бассейн"); } else if(ex.has(k)) o.push(l); });
-  if(ex.has("hot_tub")) o.push("чан");
+function amen(p){ const A=I18N[LANG]._am; const ex=new Set(p.extras||[]); const o=[];
+  ["finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if((p.sauna_types||[]).includes(s)) o.push(A[s]); });
+  if(p.steam_rooms>1) o.push(A.rooms.replace("{0}",p.steam_rooms));
+  if(p.capacity) o.push(A.cap.replace("{0}",p.capacity));
+  if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?A.heated_pool:A.pool);
+  ["jacuzzi","hot_tub","cold_plunge","ice_bath","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) o.push(A[k]); });
   return o; }
-const ACCESS = {day:"Разовый вход",membership:"Абонемент",treatment:"С процедурой",walkin:"Без брони"};
-const EXTF = {pool:"Бассейн",cold:"Холодная купель",hammam:"Хаммам или парная",sea:"Море рядом",photo:"С фото"};
-const RATE = {"0":"Любой","4":"От 4,0","4.5":"От 4,5"};
-const BOOK = {required:["Нужна","p-warn"],recommended:["Желательна","p-warn"],walk_in:["Не нужна","p-ok"]};
+const ACCESS = ()=>({day:t("acc_day"),membership:t("acc_membership"),treatment:t("acc_treatment"),walkin:t("acc_walkin")});
+const EXTF = ()=>({pool:t("x_pool"),cold:t("x_cold"),hammam:t("x_hammam"),sea:t("x_sea"),photo:t("x_photo")});
+const HRS = ()=>({now:t("h_now"),eve:t("h_eve"),wknd:t("h_wknd"),early:t("h_early")});
+const RATE = ()=>({"0":t("r_0"),"4":t("r_4"),"4.5":t("r_45")});
+const BCL={required:"p-warn",recommended:"p-warn",walk_in:"p-ok"};
+const BOOK = new Proxy({}, {get:(o,k)=>BCL[k]?[t("b_"+k),BCL[k]]:undefined});
 const COLS = [
-  {k:"photo",t:"Фото",sort:null,cls:""},
-  {k:"name",t:"Место",sort:"name",cls:""},
-  {k:"kind",t:"Тип",sort:"kind",cls:"hide-m"},
-  {k:"day",t:"Разовый вход",sort:"price",cls:""},
-  {k:"book",t:"Бронь",sort:"book",cls:""},
-  {k:"mem",t:"Абонемент",sort:"mprice",cls:"hide-m"},
-  {k:"hours",t:"Часы",sort:null,cls:"hide-m"},
-  {k:"rate",t:"Рейтинг",sort:"score",cls:"hide-m"},
+  {k:"photo",t:"c_photo",sort:null,cls:""},
+  {k:"name",t:"c_name",sort:"name",cls:""},
+  {k:"kind",t:"type",sort:"kind",cls:"hide-m hide-l"},
+  {k:"day",t:"c_day",sort:"price",cls:""},
+  {k:"book",t:"c_book",sort:"book",cls:""},
+  {k:"mem",t:"c_mem",sort:"mprice",cls:"hide-m"},
+  {k:"hours",t:"hours",sort:null,cls:"hide-m"},
+  {k:"rate",t:"rating",sort:"score",cls:"hide-m"},
 ];
 const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {scope:"near",q:"",area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:"0",price:null,mprice:null,sort:"dist",dir:1,open:null};
+const st = {hrs:new Set(),scope:"all",q:"",area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:"0",price:null,mprice:null,sort:"dist",dir:1,open:null};
 try{const s=JSON.parse(localStorage.getItem("sauna-f3")||"null"); if(s&&s.sort){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https:\/\//i.test(u||"") ? u : null;
 const km = (a,b) => {const R=6371,t=Math.PI/180,dl=(b[0]-a[0])*t,dn=(b[1]-a[1])*t;const x=Math.sin(dl/2)**2+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
-const eur = v => v==null?null:("€"+(Math.round(v*100)/100).toString().replace(".",","));
+const eur = v => v==null?null:("€"+(Math.round(v*100)/100).toString().replace(".",LANG==="en"?".":","));
 const dec = v => String(v).replace(".",",");
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
-const kmTxt = d => d<1?"меньше 1":String(Math.round(d));
+const kmTxt = d => d<1?t("lt1"):String(Math.round(d));
 
 P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
-  p._d=(p.lat!=null&&p.lon!=null)?km(CASCAIS,[p.lat,p.lon]):999;
+  p._d=(p.lat!=null&&p.lon!=null)?km(CASCAIS,[p.lat,p.lon]):999; p._near=p._d<=55;
   const g=r.google||(r.booking?r.booking/2:0), n=r.google_reviews||r.booking_reviews||(g?20:0);
   p._g=g; p._score=g?(g*n+4.3*60)/(n+60):0;
   p._day=a.day_pass===true||a.day_pass_price_eur!=null; p._mem=a.membership===true||a.membership_month_eur!=null; p._trt=a.treatment_access===true;
@@ -332,34 +365,47 @@ function chips(el,map,get,set){
   });
 }
 const toggle = s => k => s.has(k)?s.delete(k):s.add(k);
-const hasFar=P.some(p=>!NEAR.has(p.area));
-function areaMap(){const m={}; AREAS.forEach(a=>{ if((st.scope==="all"||NEAR.has(a)) && P.some(p=>p.area===a)) m[a]=AREA_RU[a]; }); return m;}
+const hasFar=P.some(p=>!p._near);
+function areaMap(){const m={}; AREAS.forEach(a=>{ if(P.some(p=>p.area===a&&(st.scope==="all"||p._near))) m[a]=areaName(a); }); return m;}
 function drawAreas(){ chips(document.getElementById("f-area"),areaMap(),k=>st.area.has(k),toggle(st.area)); }
-const kindMap={}; Object.keys(KINDS).forEach(t=>{ if(P.some(p=>p.kind===t)) kindMap[t]=KINDS[t]; });
-const extMap=Object.assign({},EXTF); if(!P.some(p=>p._ph.length)) delete extMap.photo;
-drawAreas();
-if(hasFar) chips(document.getElementById("f-scope"),{near:"Рядом с Кашкайшем и Лиссабоном",all:"Вся Португалия"},k=>st.scope===k,k=>{ if(st.scope===k) return; st.scope=k; [...st.area].forEach(a=>{ if(!NEAR.has(a)) st.area.delete(a); }); drawAreas(); lastAreaKey="*"; });
-else document.getElementById("f-scope").parentElement.hidden=true;
-chips(document.getElementById("f-kind"),kindMap,k=>st.kind.has(k),toggle(st.kind));
-chips(document.getElementById("f-access"),ACCESS,k=>st.access.has(k),toggle(st.access));
-chips(document.getElementById("f-ext"),extMap,k=>st.ext.has(k),toggle(st.ext));
-chips(document.getElementById("f-rate"),RATE,k=>st.rate===k,k=>{st.rate=k;});
-document.getElementById("legend").innerHTML = Object.values(kindMap).map(v=>`<span><i class="dot" style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("")+`<span>€ на метке: есть цена разового входа</span>`;
+const kindMap=()=>{ const m={}; Object.keys(KCOL).forEach(k=>{ if(P.some(p=>p.kind===k)) m[k]=KINDS[k]; }); return m; };
+const extMap=()=>{ const m=EXTF(); if(!P.some(p=>p._ph.length)) delete m.photo; return m; };
+function drawChips(){
+  drawAreas();
+  if(hasFar) chips(document.getElementById("f-scope"),{all:t("sc_all"),near:t("sc_near")},k=>st.scope===k,k=>{ if(st.scope===k) return; st.scope=k; st.area.clear(); drawAreas(); lastAreaKey="*"; });
+  else document.getElementById("f-scope").parentElement.hidden=true;
+  chips(document.getElementById("f-kind"),kindMap(),k=>st.kind.has(k),toggle(st.kind));
+  chips(document.getElementById("f-access"),ACCESS(),k=>st.access.has(k),toggle(st.access));
+  chips(document.getElementById("f-ext"),extMap(),k=>st.ext.has(k),toggle(st.ext));
+  chips(document.getElementById("f-hours"),HRS(),k=>st.hrs.has(k),toggle(st.hrs));
+  chips(document.getElementById("f-rate"),RATE(),k=>st.rate===k,k=>{st.rate=k;});
+  document.getElementById("legend").innerHTML = Object.values(kindMap()).map(v=>`<span><i class="dot" style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("")+`<span>${esc(t("legend_eur"))}</span>`;
+}
+function applyStatic(){ document.documentElement.lang=LANG; document.title=t("title");
+  document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+  document.querySelectorAll("[data-th]").forEach(e=>e.innerHTML=t(e.dataset.th));
+  document.querySelectorAll("[data-ta]").forEach(e=>e.setAttribute("aria-label",t(e.dataset.ta)));
+  document.querySelectorAll("[data-tp]").forEach(e=>{e.placeholder=t(e.dataset.tp); e.setAttribute("aria-label",t(e.dataset.tp));});
+  document.querySelectorAll("#langsw button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===LANG)));
+}
+applyStatic(); drawChips();
+document.getElementById("langsw").addEventListener("click",e=>{ const b=e.target.closest("button[data-l]"); if(!b||b.dataset.l===LANG) return; LANG=b.dataset.l; try{localStorage.setItem("sauna-lang",LANG);}catch(_){}
+  applyStatic(); drawChips(); map.closePopup(); document.getElementById("priceout").textContent=st.price==null?t("anyf"):"€"+st.price; document.getElementById("mpriceout").textContent=st.mprice==null?t("anym"):"€"+st.mprice; drawFoot(); render(); });
 
 function slider(id,outId,vals,anyTxt,key){
   const el=document.getElementById(id), out=document.getElementById(outId);
   const mx=Math.max(50,...vals); el.max=Math.ceil(mx/10)*10; el.value=el.max;
-  el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; out.textContent= st[key]==null?anyTxt:"€"+st[key]; render();};
-  return ()=>{el.value=el.max; st[key]=null; out.textContent=anyTxt;};
+  el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; out.textContent= st[key]==null?anyTxt():"€"+st[key]; render();};
+  return ()=>{el.value=el.max; st[key]=null; out.textContent=anyTxt();};
 }
-const resetPrice=slider("price","priceout",P.map(p=>(p.access||{}).day_pass_price_eur||0),"любая","price");
-const resetM=slider("mprice","mpriceout",P.map(p=>(p.access||{}).membership_month_eur||0),"любой","mprice");
+const resetPrice=slider("price","priceout",P.map(p=>(p.access||{}).day_pass_price_eur||0),()=>t("anyf"),"price");
+const resetM=slider("mprice","mpriceout",P.map(p=>(p.access||{}).membership_month_eur||0),()=>t("anym"),"mprice");
 document.getElementById("q").oninput=e=>{st.q=e.target.value.trim().toLowerCase(); render();};
 const sortEl=document.getElementById("sort");
 function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; try{localStorage.setItem("sauna-f3",JSON.stringify({sort:st.sort,dir:st.dir}))}catch(e){} render(); }
 sortEl.onchange=()=>setSort(sortEl.value);
 sortEl.value=st.sort;
-document.getElementById("reset").onclick=()=>{st.scope="near"; document.querySelectorAll("#f-scope .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k==="near"))); st.q="";document.getElementById("q").value="";[st.area,st.kind,st.access,st.ext].forEach(s=>s.clear());st.rate="0";
+document.getElementById("reset").onclick=()=>{st.scope="all"; document.querySelectorAll("#f-scope .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k==="all"))); st.q="";document.getElementById("q").value="";[st.area,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear());st.rate="0";
   document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed",String(b.dataset.k==="0"&&b.parentElement.id==="f-rate")); });
   resetPrice(); resetM(); drawAreas(); lastAreaKey="*"; render();};
 const ft=document.getElementById("ftoggle"), fbox=document.querySelector(".filters");
@@ -370,19 +416,19 @@ ft.onclick=()=>{const o=fbox.classList.toggle("open"); ft.setAttribute("aria-exp
 const thead=document.getElementById("thead");
 function renderHead(){
   thead.innerHTML=COLS.map(c=>{ const s=c.sort; const on=s&&s===st.sort;
-    if(!s) return `<th class="nosort ${c.cls}" scope="col">${esc(c.t)}</th>`;
-    return `<th class="${c.cls}" scope="col"${on?` aria-sort="${st.dir>0?"ascending":"descending"}"`:""}><button type="button" data-s="${s}">${esc(c.t)}</button></th>`; }).join("");
+    if(!s) return `<th class="nosort ${c.cls}" scope="col">${esc(t(c.t))}</th>`;
+    return `<th class="${c.cls}" scope="col"${on?` aria-sort="${st.dir>0?"ascending":"descending"}"`:""}><button type="button" data-s="${s}">${esc(t(c.t))}</button></th>`; }).join("");
 }
 thead.addEventListener("click",e=>{const b=e.target.closest("button[data-s]"); if(!b) return; const k=b.dataset.s; setSort(k, st.sort===k?-st.dir:DEFDIR[k]);});
 
 // map
-const map = L.map("map",{zoomControl:true,scrollWheelZoom:true,tapTolerance:12,zoomSnap:0.25});
+const map = L.map("map",{zoomControl:true,scrollWheelZoom:true,tapTolerance:12});
 // one-finger drag must move only the map, never the page
 (function(){const el=document.getElementById("map");
-  ["touchstart","touchmove"].forEach(t=>el.addEventListener(t,e=>{ if(t==="touchmove"&&e.cancelable) e.preventDefault(); },{passive:false}));
+  el.addEventListener("touchmove",e=>{ if(e.target.closest&&e.target.closest(".pp-sl")) return; if(e.cancelable) e.preventDefault(); },{passive:false});
   el.addEventListener("wheel",e=>e.preventDefault(),{passive:false});
 })();
-const fitDefault=()=>map.fitBounds(matchMedia("(max-width:900px)").matches?[[38.68,-9.49],[38.76,-9.24]]:[[38.68,-9.49],[38.79,-9.13]],{padding:[0,0]});
+const fitDefault=()=>{ if(st.scope==="all"&&!st.area.size) map.fitBounds([[36.95,-9.55],[42.15,-6.25]],{padding:[6,6]}); else map.fitBounds(matchMedia("(max-width:900px)").matches?[[38.68,-9.49],[38.76,-9.24]]:[[38.68,-9.49],[38.79,-9.13]],{padding:[0,0]}); };
 fitDefault();
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
 const cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:14,iconCreateFunction:c=>L.divIcon({className:"",html:`<div class="mcl">${c.getChildCount()}</div>`,iconSize:[34,34]})});
@@ -392,91 +438,128 @@ P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=(KINDS[p.kind]||KINDS.sauna)[1];
   const icon=L.divIcon({className:"",html:`<div class="mk" data-i="${p._i}" style="background:${col}"><span>${(p.access||{}).day_pass_price_eur!=null?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name}); cluster.addLayer(m);
-  m.bindPopup(()=>popup(p),{maxWidth:260,minWidth:250,autoPanPadding:[20,20]});
+  m.bindPopup(()=>popup(p),{maxWidth:320,minWidth:280,autoPanPadding:[20,20]});
   markers[p._i]=m;
 });
 map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
+  const sl=el.querySelector(".pp-sl"); if(sl){ L.DomEvent.disableClickPropagation(sl.parentElement); L.DomEvent.disableScrollPropagation(sl.parentElement);
+    ["touchstart","pointerdown","mousedown"].forEach(t=>sl.addEventListener(t,ev=>ev.stopPropagation()));
+    const cnt=el.querySelector(".pp-cnt"); const n=sl.children.length; const cur=()=>Math.round(sl.scrollLeft/sl.clientWidth);
+    sl.addEventListener("scroll",()=>{ if(cnt) cnt.textContent=t("n_of",cur()+1,n); },{passive:true});
+    const go=d=>sl.scrollTo({left:((cur()+d+n)%n)*sl.clientWidth,behavior:"smooth"});
+    const l=el.querySelector(".pp-nav.l"), r=el.querySelector(".pp-nav.r"); if(l) l.onclick=ev=>{ev.stopPropagation();go(-1);}; if(r) r.onclick=ev=>{ev.stopPropagation();go(1);}; }
   el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
   const mb=el.querySelector(".pp-more"); if(mb) mb.onclick=()=>openRow(+mb.dataset.i,true);
 });
 
 function dayTxt(p){const a=p.access||{};
-  if(p.status==="soon") return "ещё не открыто";
-  if(p.stay && a.day_pass_price_eur==null && !p._trt) return "для гостей отеля";
-  if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?` за ${a.session_minutes} мин`:""}`;
-  if(p._day) return "есть, цена не указана";
-  if(p._trt) return "только с процедурой";
-  if(p._mem&&a.day_pass!==true) return "только абонемент";
-  if(a.day_pass===false) return "нет";
-  return "уточнить";
+  if(p.status==="soon") return t("soon");
+  if(p.status==="closed") return t("closed");
+  if(p.stay && a.day_pass_price_eur==null && !p._trt) return t("guests");
+  if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?" "+t("for_min",a.session_minutes):""}`;
+  if(p._day) return t("yes_noprice");
+  if(p._trt) return t("only_trt");
+  if(p._mem&&a.day_pass!==true) return t("only_mem");
+  if(a.day_pass===false) return t("no");
+  return "";
 }
-function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `${eur(a.membership_month_eur)} в месяц`; if(p._mem) return "есть, цена по запросу"; if(a.membership===false) return "нет"; return null;}
+function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return t("per_month",eur(a.membership_month_eur)); if(p._mem) return t("mem_req"); if(a.membership===false) return t("no"); return null;}
 function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; const r=p.ratings||{};
-  const ph=p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="Открыть фото"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("");
+  const ph=p._ph.slice(0,8).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("openphoto"))}"><img src="${esc(x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("");
   const rows=[];
   const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
-  const am=amen(p); if(am.length) rows.push(`<span>Есть</span><span>${esc(am.join(", "))}</span>`);
-  add("Разовый", esc(dayTxt(p)) + (p.confidence==="low"?' <span class="warn-i" title="не подтверждено">?</span>':""));
-  add("Абонемент", esc(memTxt(p)||""));
-  add("Бронь", BOOK[a.booking]?BOOK[a.booking][0].toLowerCase():"");
-  add("Часы", esc(p.hours_short||""));
-  add("Рейтинг", [r.google?`Google ${dec(r.google)}${r.google_reviews?` (${r.google_reviews})`:""}`:"", r.booking?`Booking ${dec(r.booking)}${r.booking_reviews?` (${r.booking_reviews})`:""}`:""].filter(Boolean).join("<br>"));
-  return `${ph?`<div class="pp-img">${ph}</div>`:""}<div class="pp-b"><b class="t">${esc(p.name)}</b><div class="sub"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])} · ${esc(AREA_RU[p.area]||p.area||"")}${p._d<900?` · ${kmTxt(p._d)} км`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap"><button type="button" class="pp-more" data-i="${p._i}">Подробнее</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Маршрут</a>`:""}</div></div>`;
+  const am=amen(p); if(am.length) rows.push(`<span>${esc(t("p_has"))}</span><span>${esc(am.join(", "))}</span>`);
+  const dt=dayTxt(p); if(dt) add(t("p_day"), esc(dt) + (p.confidence==="low"?` <span class="warn-i" title="${esc(t("unconf"))}">?</span>`:""));
+  add(t("p_mem"), esc(memTxt(p)||""));
+  add(t("p_book"), BOOK[a.booking]?BOOK[a.booking][0].toLowerCase():"");
+  add(t("p_hours"), hoursCell(p));
+  add(t("p_rate"), rb(r,true));
+  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">‹</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">›</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}</div>`:""}<div class="pp-b"><b class="t">${esc(p.name)}</b><div class="sub"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])} · ${esc(areaName(p.area)||"")}${p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">${bookBtn(p)}<button type="button" class="pp-more" data-i="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("route"))}</a>`:""}</div></div>`;
 }
 
 // cells
 const NA = ``;
-const warn = p => p.confidence==="low"?`<span class="warn-i" title="не подтверждено официальным сайтом">?</span>`:"";
-function photoCell(p){ if(!p._ph.length) return `<div class="nophoto">нет фото</div>`;
-  return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="Фото ${j+1}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
+const TZ="Europe/Lisbon"; const DN=()=>I18N[LANG]._dn; const DL=()=>I18N[LANG]._dl;
+function nowL(){ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:TZ,weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()); const g=t=>parts.find(x=>x.type===t).value; return {d:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(g("weekday")), m:(+g("hour"))*60+(+g("minute"))}; }
+const NOW=nowL();
+const fmtT=m=>{ m=m%1440; return `${Math.floor(m/60)}:${String(m%60).padStart(2,"0")}`; };
+function openState(wk){ if(!wk) return null; const {d,m}=NOW; const tt=wk[d];
+  if(Array.isArray(tt)&&m>=tt[0]&&m<tt[1]) return {open:true,txt:t("o_until",fmtT(tt[1]))};
+  if(Array.isArray(tt)&&m<tt[0]) return {open:false,txt:t("o_at",fmtT(tt[0]))};
+  if(tt===null) return null;
+  for(let k=1;k<=7;k++){ const dd=(d+k)%7, x=wk[dd]; if(Array.isArray(x)) return {open:false,txt:t("o_next",k===1?t("tomorrow"):DN()[dd],fmtT(x[0]))}; if(x===null) return {open:false,txt:t("o_closed")}; }
+  return null; }
+function weekStrip(wk){ return `<span class="wk" aria-hidden="true">${wk.map((x,i)=>`<i class="${Array.isArray(x)?"on":x==="x"?"off":"unk"}${i===NOW.d?" td":""}">${DL()[i]}</i>`).join("")}</span>`; }
+function hoursCell(p){ const s=openState(p.wk); if(s) return `<div class="os ${s.open?"o":"c"}">${esc(s.txt)}</div>${weekStrip(p.wk)}`; if(p.wk) return weekStrip(p.wk); const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
+function weekTable(wk){ return `<table class="wkt">${wk.map((x,i)=>`<tr class="${i===NOW.d?"td":""}"><td>${DN()[i]}</td><td>${Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:x==="x"?t("dayoff"):""}</td></tr>`).join("")}</table>`; }
+const n1=v=>Number(v).toFixed(1).replace(".",LANG==="en"?".":",");
+const nfmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,LANG==="en"?",":" ");
+function rb(r,compact){ if(!r) return ""; const o=[];
+  if(r.google){ const c=r.google>=4.6?"g1":r.google>=4.2?"g2":"g3"; o.push(`<span class="rb ${c}" title="Google"><b>${n1(r.google)}</b><span class="st">★</span>${r.google_reviews?`<span class="rc">${nfmt(r.google_reviews)}</span>`:""}</span>`); }
+  if(r.booking){ o.push(`<span class="rb bk" title="Booking"><b>${n1(r.booking)}</b>${r.booking_reviews?`<span class="rc">${nfmt(r.booking_reviews)}</span>`:""}</span>`); }
+  return o.join(compact?" ":""); }
+const bookUrl=p=>{ const u=(p.access||{}).booking_url||p.booking_url; return safeUrl(u); };
+const bookBtn=(p,cls)=>{ const u=bookUrl(p); return u?`<a class="${cls||"bookb"}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""; };
+const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
+function photoCell(p){ if(!p._ph.length) return `<div class="nophoto">${esc(t("nophoto"))}</div>`;
+  return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCell(p){const a=p.access||{}; const w=warn(p);
-  if(p.status==="soon") return `<span class="pill p-na">ещё не открыто</span>`;
-  if(p.stay && a.day_pass_price_eur==null && !p._trt) return `<span class="pill p-na">для гостей отеля</span>`;
-  if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${a.session_minutes} мин</div>`:""}`;
-  if(p._day) return `<span class="pill p-ok">есть</span>${w}<div class="sub">цена не указана</div>`;
-  if(p._trt) return `<span class="pill p-warn">с процедурой</span>${w}`;
-  if(p._mem&&a.day_pass!==true) return `<span class="pill p-na">абонемент</span>${w}`;
-  if(a.day_pass===false) return `<span class="pill p-no">нет</span>`;
+  if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
+  if(p.status==="closed") return `<span class="pill p-no">${esc(t("closed"))}</span>`;
+  if(p.stay && a.day_pass_price_eur==null && !p._trt) return `<span class="pill p-na">${esc(t("guests"))}</span>`;
+  if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${t("min",a.session_minutes)}</div>`:""}`;
+  if(p._day) return `<span class="pill p-ok">${esc(t("yes"))}</span>${w}<div class="sub">${esc(t("noprice"))}</div>`;
+  if(p._trt) return `<span class="pill p-warn">${esc(t("w_trt"))}</span>${w}`;
+  if(p._mem&&a.day_pass!==true) return `<span class="pill p-na">${esc(t("w_mem"))}</span>${w}`;
+  if(a.day_pass===false) return `<span class="pill p-no">${esc(t("no"))}</span>`;
   return w;
 }
-const sessCell = a => a.session_minutes?`<span class="num">${a.session_minutes} мин</span>`:NA;
-function memCell(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim"> /мес</span>`; if(p._mem) return `<span class="dim">по запросу</span>`; if(a.membership===false) return `<span class="dim">нет</span>`; return NA;}
-const bookCell = a => {const b=BOOK[a.booking]; return b?`<span class="pill ${b[1]}">${b[0]}</span>`:NA;};
-function rateCell(r){ if(!r||(!r.google&&!r.booking)) return NA; const o=[]; if(r.google) o.push(`<span class="num">${dec(r.google)}</span>${r.google_reviews?`<span class="dim num"> (${r.google_reviews})</span>`:""}`); if(r.booking) o.push(`<span class="num">B ${dec(r.booking)}</span>${r.booking_reviews?`<span class="dim num"> (${r.booking_reviews})</span>`:""}`); return o.join("<br>"); }
-const kindCell = p => {const k=KINDS[p.kind]||KINDS.sauna; return `<span class="kind"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])}</span>${p.beach?`<div class="sub">на пляже</div>`:""}`;};
+const sessCell = a => a.session_minutes?`<span class="num">${t("min",a.session_minutes)}</span>`:NA;
+function memCell(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim">${t("per_mo")}</span>`; if(p._mem) return `<span class="dim">${esc(t("onreq"))}</span>`; if(a.membership===false) return `<span class="dim">${esc(t("no"))}</span>`; return NA;}
+const bookCell = (a,p) => {const b=BOOK[a.booking]; return (b?`<span class="pill ${b[1]}">${b[0]}</span>`:"")+(p?bookBtn(p):"");};
+function rateCell(r){ const h=rb(r); return h?`<div class="rbs">${h}</div>`:""; }
+const kindCell = p => {const k=KINDS[p.kind]||KINDS.sauna; return `<span class="kind"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])}</span>${p.beach?`<div class="sub">${esc(t("beach"))}</div>`:""}`;};
 
 function detail(p){const a=p.access||{};
   const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
   const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
   const it=[]; const add=(k,v)=>{ if(v) it.push(`<div><dt>${k}</dt><dd>${v}</dd></div>`); };
-  add("Тип", kindCell(p));
-  add("Адрес", `${esc(p.address||"")} ${link(maps,"открыть в Google Maps")}`);
-  add("На месте", esc(amen(p).join(", ")));
-  add("Разовый вход", esc([cap(dayTxt(p)), cap(a.day_pass_price_note||"")].filter(Boolean).join(". ")));
-  add("Абонемент", esc([cap(memTxt(p)||""), cap(a.membership_note||"")].filter(Boolean).join(". ")));
-  add("Бронь", [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", a.booking_how?esc("через: "+a.booking_how):"", link(a.booking_url||p.booking_url,"страница брони")].filter(Boolean).join(", "));
-  add("Часы", esc(p.hours||p.hours_short||""));
-  add("Телефон", p.phone?`<span style="user-select:all">${esc(p.phone)}</span>`:"");
-  add("Сайт", link(p.website,"официальная страница"));
-  add("Рейтинг Google", p.ratings&&p.ratings.google?`${dec(p.ratings.google)}${p.ratings.google_reviews?`, отзывов: ${p.ratings.google_reviews}`:""}`:"");
-  add("Рейтинг Booking", p.ratings&&p.ratings.booking?`${dec(p.ratings.booking)}${p.ratings.booking_reviews?`, отзывов: ${p.ratings.booking_reviews}`:""}`:"");
-  add("В подборках", esc((p.lists||[]).join(", ")));
-  add("До моря", p.sea_distance_m!=null?`≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" км":p.sea_distance_m+" м"}`:"");
-  add("От центра Кашкайша", p._d<900?`≈ ${kmTxt(p._d)} км по прямой`:"");
-  add("Правила", esc([p.min_age?`С ${p.min_age} лет`:"", cap(p.rules||"")].filter(Boolean).join(". ")));
+  add(t("d_type"), kindCell(p));
+  add(t("d_addr"), `${esc(p.address||"")} ${link(maps,t("d_gmaps"))}`);
+  add(t("d_has"), esc(amen(p).join(", ")));
+  add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
+  add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". ")));
+  add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):"", link(a.booking_url||p.booking_url,t("d_bookpage"))].filter(Boolean).join(", "));
+  add(t("d_hours"), p.wk?(()=>{const s=openState(p.wk); return (s?`<div class="os ${s.open?"o":"c"}">${esc(s.txt)}</div>`:"")+weekTable(p.wk);})():esc(tr(p,"hours_text")||""));
+  add(t("d_phone"), p.phone?`<span style="user-select:all">${esc(p.phone)}</span>`:"");
+  add(t("d_site"), link(p.website,t("d_official")));
+  const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
+  const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
+  add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
+  add(t("d_rate"), (p.ratings&&(p.ratings.google||p.ratings.booking))?`${rb(p.ratings,true)}<div class="sub">${[p.ratings.google?"Google"+(p.ratings.google_reviews?`, ${nfmt(p.ratings.google_reviews)} ${t("d_ratings")}`:""):"",p.ratings.booking?"Booking"+(p.ratings.booking_reviews?`, ${nfmt(p.ratings.booking_reviews)} ${t("d_ratings")}`:""):""].filter(Boolean).join("; ")}</div>`:"");
+  if(LANG==="ru") add(t("d_lists"), esc((p.lists||[]).join(", ")));
+  add(t("d_sea"), p.sea_distance_m!=null?`≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" "+t("km"):p.sea_distance_m+" "+t("m")}`:"");
+  add(t("d_cascais"), p._d<900?`≈ ${kmTxt(p._d)} ${t("km")}, ${t("straight")}`:"");
+  add(t("d_rules"), esc([p.min_age?t("from_age",p.min_age):"", cap(tr(p,"rules")||"")].filter(Boolean).join(". ")));
   const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).slice(0,4).map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">${i+1}</a>`).join(" ");
-  const gal=p._ph.length?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="Фото ${j+1}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
-  const conf={high:"высокая",medium:"средняя",low:"низкая, лучше уточнить"}[p.confidence];
+  const gal=p._ph.length?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
+  const conf=p.confidence?t("conf_"+p.confidence):"";
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
-  const acts=`<div class="acts"><button type="button" class="act" data-showmap="${p._i}">Показать на карте</button>${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Маршрут Google</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">Apple Карты</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">Скопировать ссылку</button></div>`;
-  return `${acts}${gal}<dl class="dgrid">${it.join("")}</dl>${p.notes?`<p class="note">${esc(p.notes)}</p>`:""}<div class="src">Проверено ${esc(p.verified_on||"")}${conf?`, надёжность данных: ${conf}`:""}${src?`. Источники: ${src}`:""}</div>`;
+  const bu=bookUrl(p);
+  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("r_google"))}</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
+  return `${acts}${gal}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${esc(t("checked",p.verified_on||""))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${t("sources")}: ${src}`:""}</div>`;
 }
 
 function filtered(){
   const minR=+st.rate;
   return P.filter(p=>{const a=p.access||{};
-    if(st.q && !(`${p.name} ${p.subtitle||""} ${p.address||""} ${AREA_RU[p.area]||""} ${p.area||""}`.toLowerCase().includes(st.q))) return false;
-    if(st.scope==="near" && !NEAR.has(p.area)) return false;
+    if(st.q && !(`${p.name} ${p.subtitle||""} ${p.address||""} ${AREA_RU[p.area]||""} ${areaName(p.area)} ${p.area||""}`.toLowerCase().includes(st.q))) return false;
+    if(st.hrs.size){ const w=p.wk; if(!w) return false; const S=openState(w);
+      if(st.hrs.has("now") && !(S&&S.open)) return false;
+      if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false;
+      if(st.hrs.has("wknd") && !(Array.isArray(w[5])||Array.isArray(w[6]))) return false;
+      if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; }
+    if(st.scope==="near" && !p._near) return false;
     if(st.area.size && !st.area.has(p.area)) return false;
     if(st.kind.size && !st.kind.has(p.kind)) return false;
     if(st.access.has("day") && !p._day) return false;
@@ -513,29 +596,29 @@ function render(){
   renderHead();
   const list=filtered(); const vis=new Set(list.map(p=>p._i));
   Object.entries(markers).forEach(([i,m])=>{ const on=vis.has(+i); if(on&&!cluster.hasLayer(m)) cluster.addLayer(m); if(!on&&cluster.hasLayer(m)) cluster.removeLayer(m); });
-  const ak=st.scope+"|"+[...st.area].sort().join(","); if(ak!==lastAreaKey){ lastAreaKey=ak; const pts=list.filter(p=>p.lat!=null).map(p=>[p.lat,p.lon]); if((st.area.size||st.scope==="all")&&pts.length) map.fitBounds(pts,{padding:[30,30],maxZoom:14}); else fitDefault(); }
+  const ak=st.scope+"|"+[...st.area].sort().join(","); if(ak!==lastAreaKey){ lastAreaKey=ak; const pts=list.filter(p=>p.lat!=null).map(p=>[p.lat,p.lon]); if(st.area.size&&pts.length) map.fitBounds(pts,{padding:[30,30],maxZoom:14}); else fitDefault(); }
   document.getElementById("empty").hidden = list.length>0;
   tbody.innerHTML = list.map(p=>{const a=p.access||{};
     const am=amen(p);
     const k=KINDS[p.kind]||KINDS.sauna; const open=st.open===p._i;
     const row=`<tr class="row${open?" active":""}" data-i="${p._i}" tabindex="0" aria-expanded="${open}">
       <td>${photoCell(p)}</td>
-      <td><div class="name">${esc(p.name)}</div>${p.subtitle?`<div class="sub">${esc(p.subtitle)}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(AREA_RU[p.area]||p.area||"")}${p._d<900?` · ${kmTxt(p._d)} км`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
-      <td class="hide-m">${kindCell(p)}</td>
+      <td><div class="name">${esc(p.name)}</div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(areaName(p.area)||"")}${p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
+      <td class="hide-m hide-l">${kindCell(p)}</td>
       <td>${dayCell(p)}</td>
-      <td>${bookCell(a)}</td>
+      <td>${bookCell(a,p)}</td>
       <td class="hide-m">${memCell(p)}</td>
-      <td class="hide-m hrs">${p.hours_short?esc(p.hours_short):NA}</td>
+      <td class="hide-m hrs">${hoursCell(p)}</td>
       <td class="hide-m">${rateCell(p.ratings)}</td>
 </tr>`;
     return row+(open?`<tr class="detail"><td colspan="${COLS.length}">${mobileExtra(p)}${detail(p)}</td></tr>`:"");}).join("");
   const n=list.length, nd=list.filter(p=>(p.access||{}).day_pass_price_eur!=null).length, nm=list.filter(p=>(p.access||{}).membership_month_eur!=null).length;
-  document.getElementById("stats").innerHTML=`<span><b>${n}</b> из ${P.length} мест</span><span><b>${nd}</b> с ценой разового входа</span><span><b>${nm}</b> с ценой абонемента</span>`;
-  const nf=st.area.size+st.kind.size+st.access.size+st.ext.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0);
-  ft.textContent = nf?`Фильтры · ${nf}`:"Фильтры";
+  document.getElementById("stats").innerHTML=`<span><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span><b>${nd}</b> ${t("withday")}</span><span><b>${nm}</b> ${t("withmem")}</span>`;
+  const nf=st.area.size+st.kind.size+st.access.size+st.ext.size+st.hrs.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0);
+  ft.textContent = nf?t("filt_n",nf):t("filters");
 }
 function mobileExtra(p){ if(!matchMedia("(max-width:900px)").matches) return ""; const a=p.access||{};
-  const parts=[]; const mc=memCell(p); if(mc) parts.push(`<span><span class="dim">Абонемент:</span> ${mc}</span>`); if(p.hours_short) parts.push(`<span><span class="dim">Часы:</span> ${esc(p.hours_short)}</span>`);
+  const parts=[]; const mc=memCell(p); if(mc) parts.push(`<span><span class="dim">${t("mx_mem")}</span> ${mc}</span>`); const hc=hoursCell(p); if(hc) parts.push(`<span><span class="dim">${t("mx_hours")}</span> ${hc}</span>`);
   return parts.length?`<div class="frow" style="margin-bottom:10px;gap:6px 14px;font-size:13px">${parts.join("")}</div>`:""; }
 const isPhone=()=>matchMedia("(max-width:900px)").matches;
 function openRow(i,fromMap){
@@ -559,13 +642,13 @@ window.addEventListener("popstate",()=>closeFull(true));
 // near me
 let ME=null;
 document.getElementById("near").onclick=()=>{ const b=document.getElementById("near");
-  if(!navigator.geolocation){ b.textContent="Геолокация недоступна"; return; }
-  b.textContent="Определяю…";
-  navigator.geolocation.getCurrentPosition(pos=>{ ME=[pos.coords.latitude,pos.coords.longitude]; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); b.textContent="Рядом со мной ✓"; setSort("dist",1); L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1}).addTo(map); map.setView(ME,12); },
-    ()=>{ b.textContent="Нет доступа к геолокации"; }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
+  if(!navigator.geolocation){ b.textContent=t("geo_na"); return; }
+  b.textContent=t("geo_wait");
+  navigator.geolocation.getCurrentPosition(pos=>{ ME=[pos.coords.latitude,pos.coords.longitude]; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); b.textContent=t("geo_ok"); setSort("dist",1); L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1}).addTo(map); map.setView(ME,12); },
+    ()=>{ b.textContent=t("geo_no"); }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
 tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
   const sm=e.target.closest("[data-showmap]"); if(sm){ showOnMap(+sm.dataset.showmap); return; }
-  const sh=e.target.closest("[data-share]"); if(sh){ const u=location.origin+location.pathname+"#p-"+P[+sh.dataset.share].id; const done=()=>{sh.textContent="Ссылка скопирована";}; (navigator.clipboard?navigator.clipboard.writeText(u).then(done,()=>{prompt("Ссылка",u)}):prompt("Ссылка",u)); return; }
+  const sh=e.target.closest("[data-share]"); if(sh){ const u=location.origin+location.pathname+"#p-"+P[+sh.dataset.share].id; const done=()=>{sh.textContent=t("copied");}; (navigator.clipboard?navigator.clipboard.writeText(u).then(done,()=>{prompt("Link",u)}):prompt("Link",u)); return; }
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) openRow(+r.dataset.i,false);});
 tbody.addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.matches("tr.row")){ e.preventDefault(); openRow(+e.target.dataset.i,false);} });
 
@@ -574,7 +657,7 @@ const lb=document.getElementById("lb"); const lbImg=document.createElement("img"
 let lbP=null, lbJ=0, lastFocus=null;
 function lbShow(){ const x=lbP._ph[lbJ]; lbImg.src=x.u; lbImg.alt=lbP.name;
   document.getElementById("lb-title").textContent=lbP.name;
-  document.getElementById("lb-count").textContent=`${lbJ+1} из ${lbP._ph.length}`;
+  document.getElementById("lb-count").textContent=t("n_of",lbJ+1,lbP._ph.length);
   const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
   const many=lbP._ph.length>1; document.getElementById("lb-prev").hidden=!many; document.getElementById("lb-next").hidden=!many;
   const nx=lbP._ph[(lbJ+1)%lbP._ph.length]; if(nx){ const im=new Image(); im.referrerPolicy="no-referrer"; im.src=nx.u; } }
@@ -595,10 +678,10 @@ document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IM
 
 render();
 (function(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]); if(!p) return;
-  if(!NEAR.has(p.area)){ st.scope="all"; document.querySelectorAll("#f-scope .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k==="all"))); drawAreas(); }
+  if(!p._near){ st.scope="all"; document.querySelectorAll("#f-scope .chip").forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k==="all"))); drawAreas(); }
   openRow(p._i,false); const r=tbody.querySelector(`tr.row[data-i="${p._i}"]`); r&&r.scrollIntoView({block:"start"}); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); })();
 const m=D.meta||{};
-document.getElementById("foot").innerHTML = `Данные собраны ${esc(m.updated||"")}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить по телефону или на сайте. Рейтинг: оценка Google (B это Booking), в скобках число отзывов; сортировка по рейтингу учитывает число отзывов. Расстояние по прямой от центра Кашкайша. Фото принадлежат их авторам, у каждого есть ссылка на источник.`;
+const drawFoot=()=>{ document.getElementById("foot").textContent = t("foot",t("updated")); }; drawFoot();
 })();
 </script>
 </body>
