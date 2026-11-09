@@ -19,17 +19,20 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f6b72'/%3E%3Cpath d='M22 44c-4-6 4-10 0-17M32 44c-4-6 4-10 0-17M42 44c-4-6 4-10 0-17' fill='none' stroke='%23fff' stroke-width='4.5' stroke-linecap='round'/%3E%3Crect x='14' y='47' width='36' height='5' rx='2.5' fill='%23f0a24a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
 <style>
-/* Layout: split screen. Left: header, filters, sortable table. Right: sticky map. Phone: header, map, filters (collapsible), compact rows. */
+/* Layout: split screen. Left: header, filters, sortable table. Right: sticky map. Phone: header, map preview, sticky search bar, compact rows, bottom sheets. */
+/* Type scale: 15/600 names and prices, 13/400 body and controls, 11.5/400 captions; display face only for the title. Spacing on a 4/8 grid. Radii: 6 tags, 8 buttons and thumbs, 12 cards and popups, 16 sheets, 999 pills. */
 :root{
   --bg:#f4f6f5; --panel:#ffffff; --ink:#18201d; --muted:#5d6a65; --line:#dde3e0;
   --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf;
   --ok:#276b43; --ok-soft:#e3f2e8; --warn:#7a5400; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
-  --on-sea:#fff; --heat-text:#9a5410;
+  --on-sea:#fff; --heat-text:#9a5410; --star:#e7a300;
+  --g1:#1e7d4a; --g2:#3d7a53; --g3:#5f6d67; --bk:#003580;
   --chip:#eef2f0; --scrim:rgba(8,14,12,.985); --tilefilter:none;
+  --sel-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%235d6a65' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   --f-display:"Unbounded","Onest",system-ui,sans-serif;
   --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   color-scheme:light;
@@ -39,7 +42,9 @@
   --sea:#5cc0c6; --sea-soft:#15302f; --heat:#f0a24a; --heat-soft:#3a2810;
   --ok:#6fcf93; --ok-soft:#173326; --warn:#e5bf55; --warn-soft:#3a3010; --no:#ef8a8a; --no-soft:#3d1c1c;
   --chip:#1d2723; --scrim:rgba(0,0,0,.99);
-  --on-sea:#0f1513; --heat-text:#f0a24a;
+  --on-sea:#0f1513; --heat-text:#f0a24a; --star:#f2b53a;
+  --g1:#2a8f58; --g2:#3f8a5c; --g3:#6b7a74; --bk:#1d5bbf;
+  --sel-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%2397a6a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   --tilefilter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6);
   color-scheme:dark;
 }}
@@ -50,137 +55,138 @@ html{overscroll-behavior-y:none}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-font-smoothing:antialiased}
 a{color:var(--sea)}
 button,input,select{font:inherit;color:inherit}
+b,strong{font-weight:600}
+::placeholder{color:var(--muted);opacity:1}
+::selection{background:var(--sea-soft);color:var(--ink)}
 :focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+/* one icon family: 24 grid, 2px round strokes (the four type glyphs use the same stroke) */
+.ic{width:18px;height:18px;flex:0 0 auto;vertical-align:-4px;display:inline-block}
+.ic-s{width:14px;height:14px;vertical-align:-2px}
+.ki{width:14px;height:14px;flex:0 0 auto;vertical-align:-2px;margin-right:4px}
+.chip .ki{margin-right:0}
+.legend .ki{margin-right:3px}
 .app{display:grid;grid-template-columns:minmax(0,58fr) minmax(360px,42fr);grid-template-rows:auto 1fr;min-height:100%}
 .hd{grid-column:1;grid-row:1;min-width:0;padding-block:20px 0;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
 .main{grid-column:1;grid-row:2;min-width:0;padding-block:0 40px;padding-left:max(20px,env(safe-area-inset-left));padding-right:20px}
 .mapwrap{grid-column:2;grid-row:1 / span 2;align-self:start;position:sticky;top:0;height:100vh;border-left:1px solid var(--line)}
 #map{position:absolute;inset:0;background:var(--chip)}
 .leaflet-tile-pane{filter:var(--tilefilter)}
-.hd h1{font:700 clamp(22px,3vw,30px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
+.hd h1{font:600 clamp(22px,3vw,30px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
 .hd p{margin:0;color:var(--muted);max-width:66ch}
 .stats{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 2px;color:var(--muted);font-size:13px}
 .stats b{color:var(--ink);font-variant-numeric:tabular-nums}
-.legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0}
+.legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:8px 0 0}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
-.fwrap{display:grid;gap:10px;margin:16px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
-.filters{display:grid;gap:10px}
-.mapbtn{display:none}
-.frow{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
-.flabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:84px}
-.chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;white-space:nowrap;line-height:1.2}
+.fwrap{display:grid;gap:8px;margin:16px 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.filters{display:grid;gap:8px}
+.frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.flabel{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:84px}
+/* chips: soft fill, no outline (the outline appears on hover and for the open state only) */
+.chip{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid transparent;background:var(--chip);border-radius:999px;padding:5px 12px;font-size:13px;line-height:1.2;cursor:pointer;white-space:nowrap;color:var(--ink)}
+.chip:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 .chip[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
+.chip[aria-pressed="true"] .ki{color:var(--on-sea)!important}
 .chip[aria-expanded="true"]{background:var(--sea-soft);border-color:var(--sea);color:var(--sea)}
 .chip:hover{border-color:var(--sea)}
+.chip.mapbtn{display:none}
 /* filter toggles with active filters: filled accent + count badge */
 .chip.on,.chip.on[aria-expanded="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
-.fcnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:var(--on-sea);color:var(--sea);font-size:11px;font-weight:700;line-height:1;vertical-align:-4px;font-variant-numeric:tabular-nums}
-.fhead{display:none;justify-content:space-between;align-items:center;gap:12px;font-size:12.5px;color:var(--muted)}
+.fcnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--on-sea);color:var(--sea);font-size:11.5px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.fhead{display:none;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
 .fhead b{color:var(--ink);font-variant-numeric:tabular-nums}
-.fhead .reset{margin-left:auto;padding:6px 8px;text-decoration:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12.5px}
-.fhead .reset:hover{border-color:var(--sea);color:var(--sea)}
+.fhead .reset{margin-left:auto;padding:6px 12px;min-height:32px;text-decoration:none;background:var(--chip);border-radius:999px;color:var(--ink);font-size:13px}
+.fhead .reset:hover{color:var(--sea)}
 .fhead .reset[hidden]{display:none}
 /* region filter: collapsed <details> at the bottom */
 .fd{display:block}
-.fd > summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;width:auto}
+.fd > summary{list-style:none;cursor:pointer;width:auto}
 .fd > summary::-webkit-details-marker{display:none}
-.fd > summary .car{font-size:11px;line-height:1;transition:transform .15s}
-/* bottom sheet chrome (full-screen map): backdrop, grab handle, close */
+.fd > summary .car{display:inline-flex;transition:transform .15s}
+.fd[open] > summary .car{transform:rotate(180deg)}
+.fd > .frow{margin-top:8px}
+/* bottom sheet chrome (filters): backdrop, grab handle, close */
 .fscrim,.fgrab,.fx{display:none}
 html.fpanel .fscrim{display:block;position:fixed;inset:0;z-index:1650;background:rgba(0,0,0,.28)}
-html.fpanel .fgrab{display:block;width:40px;height:4px;border-radius:2px;background:var(--line);margin:-2px auto 0;position:relative}
+html.fpanel .fgrab{display:block;width:36px;height:4px;border-radius:2px;background:var(--line);margin:-2px auto 0;position:relative}
 html.fpanel .fgrab::before{content:"";position:absolute;inset:-12px -40px}
-html.fpanel .fx{all:unset;display:grid;place-items:center;cursor:pointer;width:32px;height:32px;border-radius:50%;font-size:22px;line-height:1;color:var(--muted);margin-left:4px}
+html.fpanel .fx{all:unset;display:grid;place-items:center;cursor:pointer;width:32px;height:32px;border-radius:50%;color:var(--muted);margin-left:4px}
+html.fpanel .fx .ic{width:20px;height:20px}
 html.fpanel .fx:hover{background:var(--chip);color:var(--ink)}
-/* type icons: white glyph on the pin, coloured glyph next to the type tag */
-.ki{width:13px;height:13px;flex:0 0 auto;vertical-align:-2px;margin-right:4px}
-.chip .ki{margin-right:5px;vertical-align:-2px}
-.legend .ki{margin-right:3px}
-.empty{display:grid;gap:10px;justify-items:center}
+.empty{display:grid;gap:12px;justify-items:center;padding:28px;text-align:center;color:var(--muted)}
 .empty p{margin:0}
-.fd[open] > summary .car{transform:rotate(180deg)}
-.fd > summary .fcnt{margin-left:0}
-.fd > .frow{margin-top:8px}
-.search{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 11px}
+.search{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 12px;min-height:32px}
 .range{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-select{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 8px;font-size:13px}
+select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--bg) var(--sel-chev) no-repeat right 8px center/16px 16px;border-radius:10px;padding:5px 30px 5px 10px;font-size:13px;min-height:32px;cursor:pointer}
 .reset{background:none;border:none;color:var(--sea);cursor:pointer;font-size:13px;padding:4px 2px;text-decoration:underline}
-.maptoggle{display:none}
-.hint{font-size:12.5px;color:var(--muted);margin:0 0 8px}
-.warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:700;vertical-align:1px;margin-left:4px}
-.tablewrap{overflow:visible;overflow:clip;background:var(--panel);border:1px solid var(--line);border-radius:14px}
-table{width:100%;border-collapse:collapse;font-size:14px}
-th{position:sticky;top:0;z-index:1;background:var(--panel);text-align:left;font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
-th button{all:unset;cursor:pointer;display:block;padding:10px 9px}
+.hint{font-size:13px;color:var(--muted);margin:0 0 8px}
+.warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:600;vertical-align:1px;margin-left:4px}
+.tablewrap{overflow:visible;overflow:clip;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{position:sticky;top:0;z-index:1;background:var(--panel);text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
+th button{all:unset;cursor:pointer;display:block;padding:10px 8px}
+th button .ic{margin-left:2px}
 th button:focus-visible{outline:2px solid var(--sea)}
-th[aria-sort] button::after{content:"";display:inline-block;margin-left:4px;border:4px solid transparent;vertical-align:1px}
-th[aria-sort="ascending"] button::after{border-bottom-color:currentColor;border-top-width:0}
-th[aria-sort="descending"] button::after{border-top-color:currentColor;border-bottom-width:0}
-th[aria-sort] {color:var(--ink)}
-th.nosort{padding:10px 9px}
-td{padding:9px;border-bottom:1px solid var(--line);vertical-align:top}
+th[aria-sort]{color:var(--ink)}
+th.nosort{padding:10px 8px}
+td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
 tr.row{cursor:pointer}
 tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .num{font-variant-numeric:tabular-nums;white-space:nowrap}
-.name{font-weight:600}
-.wtag{display:inline-block;margin-left:6px;font-size:11px;font-weight:500;padding:0 6px;border:1px dashed var(--warn);color:var(--warn);border-radius:6px;vertical-align:1px;white-space:nowrap}
-.wtag.sparse{border-color:var(--muted);color:var(--muted)}
+.name{display:flex;align-items:flex-start;gap:2px 6px;flex-wrap:wrap}
+.name .nmb{flex:0 1 auto;min-width:0;font-size:15px;line-height:1.3}
+.name .wtag{flex:0 0 auto;margin:2px 0 0}
+.wtag{display:inline-block;font-size:11.5px;line-height:1.5;padding:0 7px;background:var(--warn-soft);color:var(--warn);border-radius:6px;white-space:nowrap}
+.wtag.sparse{background:var(--chip);color:var(--muted)}
 tr.row.w-status td:not(:first-child){opacity:.78}
 tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .mk.weak{opacity:.6;filter:grayscale(.4)}
 @media (min-width:901px) and (max-width:2099px){.hide-l{display:none!important} .m-in{display:inline!important}}
 @media (min-width:901px) and (max-width:1399px){#tbody td.nm{min-width:140px!important}}
-@media (min-width:901px){#tbody td.nm{min-width:165px} table{font-size:13.5px} td{padding:8px 7px} th button,th.nosort{padding:9px 7px} .filters:not(.open) > .more{display:none} .m-only{display:none!important}}
-.sub{color:var(--muted);font-size:12.5px;margin-top:2px}
-.am{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.35}
-.tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
-.tag{font-size:11.5px;padding:1px 7px;border-radius:6px;background:var(--chip);color:var(--muted);white-space:nowrap}
-.tag.heat{background:var(--heat-soft);color:var(--heat-text)}
-.pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:500}
-.p-ok{background:var(--ok-soft);color:var(--ok)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-no{background:var(--no-soft);color:var(--no)}.p-na{background:var(--chip);color:var(--muted)}
-.kind{display:inline-flex;align-items:center;font-size:12.5px;white-space:nowrap}
-.price{font-weight:600}
+@media (min-width:901px){#tbody td.nm{min-width:165px} .filters:not(.open) > .more{display:none} .m-only{display:none!important}}
+.sub{color:var(--muted);font-size:13px;margin-top:2px}
+.am{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.35}
+.pill{display:inline-block;font-size:13px;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.p-ok{background:var(--ok-soft);color:var(--ok)}
+.kind{display:inline-flex;align-items:center;font-size:13px;white-space:nowrap}
+.price{font-weight:600;font-size:15px;line-height:1.3}
 .dim{color:var(--muted)}
-.hrs{font-size:12.5px;color:var(--muted);min-width:108px;max-width:130px}
+.hrs{font-size:13px;color:var(--muted);min-width:108px;max-width:130px}
 .thumbs{display:flex;gap:3px;width:max-content}
-.thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:7px;overflow:hidden;background:var(--chip);width:58px;height:44px}
+.thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:8px;overflow:hidden;background:var(--chip);width:58px;height:44px}
 .thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
-tr.detail > td{background:var(--bg);padding:10px 12px 12px;max-width:0}
-.gallery{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;max-width:var(--detw,100%);width:100%;scroll-snap-type:x proximity;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
+tr.detail > td{background:var(--bg);padding:12px;max-width:0}
+.gallery{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;max-width:var(--detw,100%);width:100%;scroll-snap-type:x proximity;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
 .gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip);scroll-snap-align:start}
 .gallery img{width:100%;height:100%;object-fit:cover;display:block}
-.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px 18px;font-size:13px;line-height:1.4;margin:0}
-.dgrid dt{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px 20px;font-size:13px;line-height:1.4;margin:0}
+.dgrid dt{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
 .dgrid dd{margin:0;overflow-wrap:anywhere}
 .note{margin:8px 0 0;font-size:13px;max-width:80ch}
-.src{margin-top:6px;font-size:11.5px;color:var(--muted)}
+.src{margin-top:8px;font-size:11.5px;color:var(--muted)}
 .src a{color:var(--muted)}
-.empty{padding:28px;text-align:center;color:var(--muted)}
-.foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:78ch}
+.foot{margin-top:20px;font-size:13px;color:var(--muted);max-width:78ch}
 .show-m{display:none}
-.cpl{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:22px;height:22px;margin-left:4px;border-radius:6px;color:var(--muted);vertical-align:-5px}
+/* share button next to a title (popup and preview sheet) */
+.cpl{all:unset;cursor:pointer;display:inline-grid;place-items:center;flex:0 0 auto;width:32px;height:32px;margin:-6px -6px 0 4px;border-radius:8px;color:var(--muted)}
 .cpl:hover,.cpl:focus-visible{background:var(--chip);color:var(--sea)}
 .cpl.ok{color:var(--ok)}
-/* row title: name wraps inside its box, link icon stays on the first line (buttons are atomic inlines, so a plain inline flow would push the icon to its own line) */
-.name{display:flex;align-items:flex-start;gap:2px;flex-wrap:wrap}
-.name .nmb{flex:0 1 auto;min-width:0}
-.name .cpl{flex:0 0 auto;width:20px;height:20px;margin:0 0 0 2px}
-.name .wtag{flex:0 0 auto;margin-left:2px}
 .meta{display:flex;align-items:center;gap:0 4px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .meta > span{overflow:hidden;text-overflow:ellipsis;min-width:0}
-.meta .dot{flex:0 0 auto;margin-right:1px}
 .meta .mk-k{flex:0 0 auto}
 .meta .mk-t{flex:0 1 auto}
-.cptoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px;z-index:3000}
-/* full-screen map: one bottom bar "List · Filters" (never over the popup close button) */
-.mapbar,.mapfilt,.mapfull-x{display:none}
-html.mapfull .mapbar{display:flex;gap:6px;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px))}
-html.mapfull .mapfull-x{all:unset;display:block;cursor:pointer;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap}
-html.mapfull .mapfilt{all:unset;display:block;cursor:pointer;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:999px;font-weight:600;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.25);white-space:nowrap}
-html.mapfull .mapfilt.on{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
+.cptoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:3000}
+/* floating pills over the map: "Open map" cue on the preview, "List · Filters" bar on the full-screen map */
+.pillb{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:36px;padding:0 14px;border-radius:999px;font-weight:600;font-size:13px;white-space:nowrap;border:1px solid transparent;box-shadow:0 4px 16px rgba(0,0,0,.22)}
+.pillb.dark{background:var(--ink);color:var(--bg)}
+.pillb.light{background:var(--panel);color:var(--ink);border-color:var(--line)}
+.pillb.on{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
+.pillb .fcnt{margin-left:-2px}
+.mapbar,.mapcue{display:none}
+html.mapfull .mapbar{display:flex;gap:8px;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+html.mapfull.psopen .mapbar{display:none}
 /* one filter sheet for list and map modes (phone): fixed bottom sheet, live filtering, sticky "Show N" footer, reset + close in the header */
-html.fpanel .filters{display:grid;gap:7px;position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:76vh;max-height:76svh;overflow:auto;overscroll-behavior:contain;margin:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding:8px 12px 0;background:var(--panel)}
+html.fpanel .filters{display:grid;gap:8px;position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:76vh;max-height:76svh;overflow:auto;overscroll-behavior:contain;margin:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding:8px 16px 0;background:var(--panel)}
 html.fpanel .filters > .frow:not([hidden]):not(.fdrow){display:flex!important}
 html.fpanel .filters > .fd{display:block!important}
 html.fpanel .filters > .fhead{display:flex!important}
@@ -188,39 +194,39 @@ html.fpanel .filters > .fgrab{order:-3}
 html.fpanel .filters > .fhead{order:-2}
 html.fpanel .filters > .sortrow{order:-1}
 .fdrow{display:none}
-html.fpanel .fdrow{display:flex!important;justify-content:center;position:sticky;bottom:0;z-index:2;margin:4px -12px 0;padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line)}
+html.fpanel .fdrow{display:flex!important;justify-content:center;position:sticky;bottom:0;z-index:2;margin:4px -16px 0;padding:8px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line)}
 .fdone{display:none}
-html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);color:var(--on-sea);padding:8px 22px;border-radius:999px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums}
+html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);color:var(--on-sea);padding:10px 24px;border-radius:999px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums}
 .price + .sub, td .sub.num{white-space:normal}
-.bk2{margin-top:4px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
-.bk2:empty{display:none}
-.bk2 .bookb{margin-top:0}
-.ofgt{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:6px 0 3px}
-.ofgt.top{margin:0 0 2px;font-weight:600;color:var(--ink)}
-.prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 22px;margin-bottom:10px}
+.ofgt{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px}
+.ofgt.top{margin:0 0 4px;font-weight:600;color:var(--ink)}
+.prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 24px;margin-bottom:12px}
 .ofg{min-width:0}
 .ofl{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px;padding:3px 0;font-size:13px;align-items:baseline}
 .ofl.trial .ofp{color:var(--ok)}
 .ofp{font-weight:600;text-align:right;white-space:nowrap}
 .ofm{min-width:0}
 .ofs{display:flex;flex-wrap:wrap;gap:3px 4px;margin-top:2px}
-.ofs i{font-style:normal;font-size:11px;padding:0 6px;border-radius:5px;background:var(--chip);color:var(--muted)}
+.ofs i{font-style:normal;font-size:11.5px;padding:0 6px;border-radius:6px;background:var(--chip);color:var(--muted)}
 .ofs em{font-style:normal;font-size:11.5px;color:var(--muted)}
 .toprow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
-.langsw{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;flex:0 0 auto;margin-top:4px}
-.langsw button{all:unset;cursor:pointer;font-size:12px;font-weight:600;padding:5px 10px;color:var(--muted)}
-.langsw button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
-.hs{display:flex;align-items:center;gap:5px;font-size:12.5px;line-height:1.3;flex-wrap:wrap}
+/* language: one compact button, the list opens in the shared popover / sheet */
+.langb{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:4px;cursor:pointer;flex:0 0 auto;min-height:32px;padding:0 10px 0 8px;border-radius:999px;background:var(--chip);color:var(--ink);font-size:13px;font-weight:600;margin-top:4px}
+.langb:hover,.langb[aria-expanded="true"]{background:var(--sea-soft);color:var(--sea)}
+.langb:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.langb .ic-s{color:var(--muted)}
+.langb:hover .ic-s,.langb[aria-expanded="true"] .ic-s{color:inherit}
+.hs{display:flex;align-items:center;gap:5px;font-size:13px;line-height:1.3;flex-wrap:wrap}
 .hs .hdot{width:7px;height:7px;border-radius:50%;flex:0 0 7px}
 .hs b{font-weight:600} .hs span{color:var(--muted)}
 .hs.open .hdot{background:var(--ok)} .hs.open b{color:var(--ok)}
 .hs.soon .hdot{background:var(--warn)} .hs.soon b{color:var(--warn)}
 .hs.closed .hdot{background:var(--no)} .hs.closed b{color:var(--no)}
 .hs.sched .hdot{background:var(--sea)} .hs.sched b{color:var(--sea)}
-.sgrid{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12.5px;margin:6px 0}
-.sgrid .tm{display:flex;flex-wrap:wrap;gap:3px}.sgrid .tm i{font-style:normal;background:var(--chip);border-radius:5px;padding:0 5px;font-variant-numeric:tabular-nums}
-.sfm{font-size:12.5px;margin:6px 0 0}.sfm div{display:flex;gap:8px;justify-content:space-between}
-.sup{font-size:12px;color:var(--muted);margin-top:6px}.sup b{color:var(--ink);font-weight:600}
+.sgrid{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin:8px 0}
+.sgrid .tm{display:flex;flex-wrap:wrap;gap:3px}.sgrid .tm i{font-style:normal;background:var(--chip);border-radius:6px;padding:0 6px;font-variant-numeric:tabular-nums}
+.sfm{font-size:13px;margin:8px 0 0}.sfm div{display:flex;gap:8px;justify-content:space-between}
+.sup{font-size:13px;color:var(--muted);margin-top:8px}.sup b{color:var(--ink);font-weight:600}
 .hpop.wide{max-width:320px}
 .tb{position:relative;display:block;width:104px;max-width:100%;height:6px;border-radius:3px;background:var(--line);margin:5px 0 3px;overflow:visible}
 .tb-on{position:absolute;top:0;bottom:0;border-radius:3px;background:var(--ok);opacity:.85}
@@ -230,108 +236,131 @@ html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);
 .hbtn{all:unset;cursor:pointer;display:block;border-radius:6px}
 .hbtn:hover .wkmore,.hbtn:focus-visible .wkmore{color:var(--sea);text-decoration:underline}
 .wkmore{color:var(--sea)}
-.hpop{position:fixed;z-index:2500;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.18);padding:10px 12px;font-size:13px;min-width:190px;max-width:260px}
-.hpop .hpt{font-weight:600;font-size:12.5px;margin-bottom:6px;color:var(--muted)}
+.wkmore .ic-s{width:12px;height:12px;vertical-align:-1px}
+/* popover (desktop) / bottom sheet (phone): hours, schedule, route, language, feedback */
+.hpop{position:fixed;z-index:2500;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.18);padding:12px;font-size:13px;min-width:190px;max-width:260px}
+.hpop .hpt{font-weight:600;font-size:13px;margin-bottom:8px;color:var(--muted);padding-right:36px}
 .hpop .wkt td{padding:2px 14px 2px 0!important}
+.menu{display:flex;flex-direction:column;margin:0 -4px}
+.mi{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:40px;padding:0 10px;border-radius:8px;color:var(--ink);text-decoration:none;cursor:pointer;font-size:13px}
+.mi .mi-c{margin-left:auto;color:var(--muted)}
+.mi[aria-current="true"]{font-weight:600}
+.mi[aria-current="true"] .mi-c{color:var(--sea)}
+.mi:hover,.mi:focus-visible{background:var(--sea-soft)}
 .os.o{color:var(--ok)} .os.c{color:var(--muted)}
-.wk{display:inline-flex;gap:2px;margin-top:4px}
-.wk i{font-style:normal;font-size:11px;width:15px;height:17px;display:grid;place-items:center;border-radius:4px;background:var(--chip);color:var(--muted);font-weight:600}
-.wk i.on{background:var(--ok-soft);color:var(--ok)} .wk i.off{background:transparent;color:var(--line)} .wk i.td{outline:1.5px solid var(--ink);outline-offset:-1.5px}
-.wkt{border-collapse:collapse;font-size:13px;width:auto;table-layout:auto;margin-top:2px} tr.detail .wkt td,.wkt td{padding:1px 14px 1px 0;border:0;background:none!important;line-height:1.45;max-width:none;overflow-wrap:normal;white-space:nowrap} .wkt tr.td td{font-weight:700}
+.wkt{border-collapse:collapse;font-size:13px;width:auto;table-layout:auto;margin-top:2px} tr.detail .wkt td,.wkt td{padding:1px 14px 1px 0;border:0;background:none!important;line-height:1.45;max-width:none;overflow-wrap:normal;white-space:nowrap} .wkt tr.td td{font-weight:600}
+/* rating badges (Booking style, square with one sharp corner): green = Google, blue = Booking, grey = under 50 ratings; star, count and platform caption inline */
 .rbs{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-.rb{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
-.rb b{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 5px;border-radius:6px 6px 6px 0;color:#fff;font-size:12.5px;font-variant-numeric:tabular-nums}
-.rb.g1 b{background:#1e7d4a}.rb.g2 b{background:#3d7a53}.rb.g3 b{background:#5f6d67}
-.rb.bk b{background:#003580}
-.rb .st{color:#e7a300;font-size:13px;margin-left:-2px}
-.rb .rc{color:var(--muted);font-variant-numeric:tabular-nums}
-.rbw{display:inline-flex;flex-direction:column;gap:1px;margin-right:8px;vertical-align:top}
-.rcap{font-size:11px;color:var(--muted);letter-spacing:.02em}
-.bookb,.bookb:visited{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;color:var(--on-sea)!important;background:var(--sea);border-radius:999px;padding:3px 10px;text-decoration:none;white-space:nowrap}
-.bookb:hover{filter:brightness(1.08)}
-.leaflet-container a.bookb,.leaflet-container a.bookb:visited{color:var(--on-sea)}
-.leaflet-popup-content .bookb{margin-top:0}
-a.act.prim,a.act.prim:visited{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
+.rbw{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.rb{display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
+.rb b{display:inline-grid;place-items:center;min-width:30px;height:20px;padding:0 5px;border-radius:6px 6px 6px 0;color:#fff;font-size:13px;font-weight:600;line-height:1}
+.rb.g1 b{background:var(--g1)}.rb.g2 b{background:var(--g2)}.rb.g3 b{background:var(--g3)}.rb.bk b{background:var(--bk)}
+.rb .st{color:var(--star);width:14px;height:14px;margin-left:-1px}
+.rb .rc{color:var(--muted)}
+.rcap{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+a.act.prim,a.act.prim:visited,.act.prim{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
 html.mapfull{overflow:hidden}
 html.mapfull .mapwrap{position:fixed!important;inset:0;height:100%!important;z-index:1500;border:none}
-.acts{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
-.act{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--ink);text-decoration:none}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.act{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink);text-decoration:none;white-space:nowrap}
 a.act{color:var(--ink)}
 .act:hover{border-color:var(--sea)}
+.act:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.act .ic{width:16px;height:16px;color:var(--muted)}
+.act.prim .ic{color:inherit}
 .near{all:unset;cursor:pointer;color:var(--sea);font-size:13px;text-decoration:underline;padding:4px 2px}
+.near .ic-s{color:var(--ok);margin-left:2px}
 .m-in{display:none}
 /* map */
 .leaflet-container{font:inherit}
 .mk{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center}
-.mk svg{transform:rotate(45deg);width:14px;height:14px;display:block}
+.mk svg{transform:rotate(45deg);width:15px;height:15px;display:block}
 .mk.active{outline:3px solid var(--heat)}
-.mk.hover{transform:rotate(-45deg) scale(1.3);box-shadow:0 0 0 3px var(--heat),0 2px 8px rgba(0,0,0,.35)}
-.leaflet-marker-icon:has(.mk.hover){z-index:100000!important}
-.mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:var(--on-sea);font-weight:700;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.mk.hover,.mk.sel{transform:rotate(-45deg) scale(1.3);box-shadow:0 0 0 3px var(--heat),0 2px 8px rgba(0,0,0,.35)}
+.leaflet-marker-icon:has(.mk.hover),.leaflet-marker-icon:has(.mk.sel){z-index:100000!important}
+.mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:var(--on-sea);font-weight:600;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.leaflet-control-attribution{font-size:11px}
 .leaflet-popup-content-wrapper{border-radius:12px;background:var(--panel);color:var(--ink)}
 .leaflet-popup-tip{background:var(--panel)}
-.leaflet-popup-content{margin:0;width:312px!important;max-width:calc(100vw - 40px);font-size:13.5px;line-height:1.38}
+.leaflet-popup-content{margin:0;width:312px!important;max-width:calc(100vw - 40px);font-size:13px;line-height:1.38;position:relative}
+/* place preview: photo strip + facts, shared by the desktop popup and the phone sheet */
 .pp-sw{position:relative;border-radius:12px 12px 0 0;overflow:hidden;background:var(--chip)}
-.pp-sl{display:flex;height:175px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
+.pp-sl{display:flex;height:176px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
 .pp-sl::-webkit-scrollbar{display:none}
 .pp-sl button{all:unset;cursor:zoom-in;flex:0 0 100%;scroll-snap-align:center;height:100%}
 .pp-sl img{width:100%;height:100%;object-fit:cover;display:block}
-.pp-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center;font-size:17px;line-height:1}
-.pp-nav.l{left:6px}.pp-nav.r{right:6px}
-.pp-cnt{position:absolute;right:8px;bottom:7px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;padding:1px 7px;border-radius:999px}
-.pp-b{padding:10px 12px 12px}
-.pp-b b.t{font-size:14px;display:block}
-.wnote{font-size:12px;color:var(--warn);margin:2px 0 2px}
-.pp-grid{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin-top:8px}
-.pp-grid span:nth-child(odd){color:var(--muted)}
-.pp-more{all:unset;cursor:pointer;color:var(--sea);margin-top:8px;display:inline-block;text-decoration:underline}
-.leaflet-container a.leaflet-popup-close-button{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);font-size:20px;width:26px;height:26px}
+.pp-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center}
+.pp-nav.l{left:8px}.pp-nav.r{right:8px}
+.pp-cnt{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.5);color:#fff;font-size:11.5px;padding:1px 8px;border-radius:999px;font-variant-numeric:tabular-nums}
+.pv-x{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;top:8px;right:8px;z-index:3;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center}
+.pv-x:focus-visible{outline:2px solid #fff}
+.pp-b{padding:12px 14px 14px}
+.pp-b.nop{padding-right:52px}
+.pp-b .pv-h{display:flex;align-items:flex-start;gap:4px}
+.pp-b b.t{font-size:15px;line-height:1.3;flex:1 1 auto;min-width:0}
+.pp-b .m-in{display:inline}
+.pv-l{margin-top:6px}
+.pv-l.pv-p{font-size:15px;font-weight:600;line-height:1.3}
+.pv-l .tb{display:none}
+.pv-l .tdy{font-size:13px;margin-top:2px}
+.pp-b .am{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px;margin-top:6px}
+.pp-b .rbm{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-top:6px}
+.pp-b .rbm .rbw{margin-right:0}
+.pv-acts{margin:12px 0 0}
+.pv-acts .act{flex:1 1 auto;justify-content:center;min-height:36px}
+.wnote{font-size:13px;color:var(--warn);margin:2px 0}
+.leaflet-container a.leaflet-popup-close-button{display:none}
+/* phone place preview: bottom sheet over the full-screen map (tap the map, swipe down or the close button to dismiss) */
+.ps{position:fixed;z-index:1600;left:0;right:0;bottom:0;background:var(--panel);color:var(--ink);border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);max-height:72vh;max-height:72svh;overflow:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom,0px);font-size:13px;line-height:1.38}
+.ps .pp-sw{border-radius:16px 16px 0 0}
+.ps .pp-sl{height:200px}
+.ps-grab{position:absolute;z-index:3;left:50%;top:8px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:rgba(255,255,255,.9);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+.ps > .pv-x + .pp-b{padding-top:20px}
+.ps > .pv-x ~ .ps-grab,.ps:not(:has(.pp-sw)) .ps-grab{background:var(--line);box-shadow:none}
+.ps .pp-b{padding:12px 16px 16px}
+.ps .pv-acts .act{min-height:40px}
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:2000;background:var(--scrim);display:grid;grid-template-rows:auto 1fr auto;color:#fff;touch-action:pan-y}
-.lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));font-size:14px}
-.lb-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
-.lb-top .lbc{color:rgba(255,255,255,.7);flex:0 0 auto;font-variant-numeric:tabular-nums}
-.lb-top .lbl{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto}
-.lb-x{all:unset;cursor:pointer;font-size:28px;line-height:1;padding:4px 8px}
+.lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));font-size:15px}
+.lb-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-weight:600}
+.lb-top .lbc{color:rgba(255,255,255,.7);flex:0 0 auto;font-variant-numeric:tabular-nums;font-size:13px}
+.lb-top .lbl{display:flex;align-items:baseline;gap:8px;min-width:0;flex:1 1 auto}
+.lb-x{all:unset;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
+.lb-x .ic{width:24px;height:24px}
+.lb-x:hover,.lb-x:focus-visible{background:rgba(255,255,255,.14)}
 .lb-stage{position:relative;min-height:0;display:grid;overflow:hidden}
 /* native swipe: one slide per viewport, photo follows the finger and snaps */
 .lb-track{display:flex;width:100%;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch}
 .lb-track::-webkit-scrollbar{display:none}
 .lb-slide{flex:0 0 100%;width:100%;height:100%;scroll-snap-align:center;scroll-snap-stop:always;display:grid;place-items:center}
 .lb-slide img{max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
-.lb-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:22px}
+.lb-nav{all:unset;cursor:pointer;position:absolute;z-index:2;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center}
+.lb-nav .ic{width:24px;height:24px}
 .lb-nav:hover{background:rgba(255,255,255,.26)}
 .lb-prev{left:max(10px,env(safe-area-inset-left,0px))}.lb-next{right:max(10px,env(safe-area-inset-right,0px))}
-.lb-bot{display:flex;justify-content:space-between;gap:12px;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));font-size:13px;color:rgba(255,255,255,.75)}
+.lb-bot{display:flex;justify-content:space-between;gap:12px;padding:8px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));font-size:13px;color:rgba(255,255,255,.75)}
 .lb-bot a{color:rgba(255,255,255,.85)}
 /* skip link, a11y helpers */
 .skip{position:absolute;left:8px;top:-60px;z-index:4000;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600}
 .skip:focus{top:8px}
 .nmb{all:unset;cursor:pointer;font-weight:600;overflow-wrap:anywhere}
 .nmb:focus-visible{outline:2px solid var(--sea);outline-offset:2px;border-radius:4px}
-.sv{color:var(--ink);font-weight:500}
 .rbm{display:none}
 .mline{white-space:normal}
-.mapcue{display:none}
 .fintro,.flegend,.fhint{display:none}
 .rbm:empty{display:none}
 tr.row{scroll-margin-top:44px}
 .hpop-x{display:none}
-.rt{display:inline-block;position:relative}
-.rt > summary{list-style:none}
-.rt > summary::-webkit-details-marker{display:none}
-.rt[open] > summary{border-color:var(--sea)}
-.rtm{position:absolute;z-index:20;top:calc(100% + 4px);left:0;display:flex;flex-direction:column;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px}
-.rtm a{display:block;padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
-.rtm a:hover,.rtm a:focus-visible{background:var(--sea-soft)}
 .src a.sd{display:inline-block;padding:1px 7px;margin:2px 2px 0 0;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--muted)}
 .src a.sd:hover{border-color:var(--sea);color:var(--sea)}
-.ovb{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:2px 9px;margin:0 0 8px}
-.fbl{margin-top:6px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;line-height:1.4}
-.fbb{all:unset;cursor:pointer;color:var(--muted)}
+.ovb{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:3px 10px 3px 8px;margin:0 0 8px}
+.ovb .ic{width:16px;height:16px}
+.fbl{margin-top:8px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;line-height:1.4}
+.fbb{all:unset;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
+.fbb .ic,.fbl .fbo .ic{width:16px;height:16px}
 .fbb:hover,.fbb:focus-visible{color:var(--ink);text-decoration:underline dotted}
 .fbb:disabled,.fbb[aria-disabled="true"]{cursor:default;color:var(--ok);text-decoration:none}
-.fbl a.fbo{color:var(--muted);text-decoration:none}
+.fbl a.fbo{color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:2px}
 .fbl a.fbo:hover{color:var(--ink);text-decoration:underline dotted}
 .fbl .sep{opacity:.6}
 .fbf{display:grid;gap:6px;font-size:13px;min-width:220px}
@@ -340,94 +369,102 @@ tr.row{scroll-margin-top:44px}
 .fbf .fbsend{all:unset;cursor:pointer;justify-self:start;background:var(--sea);color:var(--on-sea);font-weight:600;padding:7px 16px;border-radius:999px}
 .fbf .fbsend:disabled{opacity:.5;cursor:default}
 .fbstars{display:flex;gap:2px}
-.fbstars button{all:unset;cursor:pointer;font-size:26px;line-height:1;padding:4px 3px;color:var(--line)}
-.fbstars button:hover,.fbstars button:focus-visible,.fbstars button.on{color:#e7a300}
-.fbaf{display:block;margin-top:8px;font-size:11.5px;color:var(--muted)}
-.lb-nav{z-index:2}
+.fbstars button{all:unset;cursor:pointer;display:grid;place-items:center;width:36px;height:36px;color:var(--line)}
+.fbstars button .ic{width:28px;height:28px}
+.fbstars button:hover,.fbstars button:focus-visible,.fbstars button.on{color:var(--star)}
 #more-sentinel{height:1px}
 @media (max-width:900px){
   .app{display:block}
-  .hd{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-block:8px 6px}
-  .hd h1{font-size:18px;margin:0}
+  .hd{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-block:8px}
+  .hd h1{font-size:18px;margin:0;line-height:1.2}
   .toprow{align-items:center}
-  .langsw{margin-top:0}
+  .langb{margin-top:0}
   .hd p,.hd .legend{display:none}
   .fintro{display:block}
-  .flegend{display:flex;margin-top:10px}
-  .stats{margin:3px 0 0;font-size:12px;gap:2px 12px}
-  .stats .s-m{display:none}
+  .flegend{display:flex;margin-top:12px}
+  .stats{display:none}
   .mapwrap{position:relative;height:36vh;height:36svh;min-height:210px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
   html:not(.mapfull) #map{touch-action:pan-y;cursor:pointer}
   html.mapfull #map{touch-action:none}
-  html:not(.mapfull) .leaflet-control-zoom{display:none}
-  html:not(.mapfull) .mapcue{display:block;position:absolute;z-index:1000;top:8px;right:max(8px,env(safe-area-inset-right,0px));pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:5px 11px;border-radius:999px;font-weight:600;font-size:12.5px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+  .leaflet-control-zoom{display:none}
+  html:not(.mapfull) .mapcue{display:inline-flex;position:absolute;z-index:1000;top:8px;right:max(8px,env(safe-area-inset-right,0px));pointer-events:none}
   .mapwrap.collapsed{height:0;border:none}
   .main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:0;padding-bottom:40px}
-  .ftoggle,.maptoggle{display:inline-block}
-  .mapbtn{display:inline-flex}
+  .chip.mapbtn{display:inline-flex}
+  .r-search .search{flex:1 1 120px}
   input,select,textarea{font-size:16px!important}
   /* phone: sticky search bar (search · Filters · Map); the filter rows live only in the bottom sheet */
-  .fwrap{position:sticky;top:0;z-index:5;display:block;margin:0 -12px 6px;padding:6px 12px;background:var(--bg);border:0;border-radius:0}
+  .fwrap{position:sticky;top:0;z-index:5;display:block;margin:0 -12px 8px;padding:8px 12px;background:var(--bg);border:0;border-radius:0}
   html.fpanel .fwrap{z-index:1700}
   html:not(.fpanel) .filters{display:none}
-  .stats{display:none}
   /* header row stays in the layout (it defines the fixed column widths) but is invisible and zero-height */
   thead{visibility:hidden} thead th{height:0;padding:0;border:0;line-height:0;font-size:0;overflow:hidden} thead th button,thead th.nosort{padding:0;height:0;line-height:0;overflow:hidden}
   tr.row{scroll-margin-top:58px}
   .sortrow .reset{display:none}
-  .search{padding:6px 10px}
-  .flabel{min-width:100%;font-size:11px;margin-bottom:-3px}
-  .chip{padding:5px 10px;font-size:13px;min-height:32px;display:inline-flex;align-items:center}
-  .frow{gap:6px}
+  .search{padding:6px 12px}
+  .flabel{min-width:100%;margin-bottom:-4px}
   .hide-m{display:none}
   .show-m{display:block}
   .m-in{display:inline}
-  .hint{margin:0 0 6px;font-size:12px}
-  table{table-layout:fixed;font-size:13.5px}
-  thead th.c-photo{width:62px}
-  thead th.c-day{width:126px}
-  td{overflow-wrap:anywhere;padding:7px 5px}
+  .hint{margin:0 0 8px}
+  table{table-layout:fixed}
+  thead th.c-photo{width:68px}
+  thead th.c-day{width:98px}
+  td{overflow-wrap:anywhere;padding:8px 6px}
+  td:first-child{padding-left:10px}
+  td:last-child{padding-right:10px}
   th{top:env(safe-area-inset-top,0px)}
-  th button,th.nosort{padding:8px 5px}
-  .pill{white-space:normal;font-size:11.5px;padding:2px 7px;hyphens:auto}
-  .bk2 .bookb{font-size:11.5px;padding:4px 10px;white-space:nowrap;max-width:100%;position:relative}
-  .bk2 .bookb::after{content:"";position:absolute;inset:-8px -4px}
+  .pill{white-space:normal;font-size:11.5px;padding:2px 8px;hyphens:auto}
   .thumbs button{width:52px;height:52px}
-  .cpl{position:relative}
-  .cpl::before{content:"";position:absolute;inset:-9px}
-  .am{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-top:3px;color:var(--muted)}
+  .am{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-top:3px;font-size:11.5px}
   tr.row.active .am{-webkit-line-clamp:unset}
+  .c-day .sub{font-size:11.5px}
   .sub{margin-top:1px}
   .rbm{margin-top:4px;align-items:center}
-  .rbm .hs{font-size:12px;flex-wrap:nowrap;white-space:nowrap}
-  .act{padding:5px 11px;min-height:32px;display:inline-flex;align-items:center}
+  .rbm .hs{flex-wrap:nowrap;white-space:nowrap}
   .near,.reset{padding:6px 4px;display:inline-block;min-height:32px;box-sizing:border-box}
-  select{min-height:34px;padding:4px 6px}
-  .langsw button{padding:4px 7px;min-height:28px;font-size:11px;box-sizing:border-box}
+  select{min-height:36px}
   #sort{max-width:56vw}
   .main > .hint{display:none}
   .fhint{display:block;margin-top:12px}
-  .pp-more{display:inline-block;padding:9px 0}
-  .leaflet-container a.leaflet-popup-close-button{width:40px;height:40px;font-size:24px;line-height:40px}
   .src a.sd{padding:6px 9px}
   .fbb{padding:9px 0}
   .fbl a.fbo{padding:9px 0}
-  .lb-nav{width:36px;height:36px;font-size:18px;background:rgba(255,255,255,.1)}
-  .hpop,.hpop.wide{left:0!important;right:0;top:auto!important;bottom:0;max-width:none;min-width:0;max-height:70vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.25);font-size:14px}
-  .hpop-x{all:unset;display:grid;place-items:center;cursor:pointer;float:right;width:40px;height:40px;margin:-8px -8px 0 8px;font-size:24px;line-height:1;color:var(--muted)}
+  .lb-nav{width:40px;height:40px;background:rgba(255,255,255,.1)}
+  .hpop,.hpop.wide{left:0!important;right:0;top:auto!important;bottom:0;max-width:none;min-width:0;max-height:70vh;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.25);border:0}
+  .hpop-x{all:unset;display:grid;place-items:center;cursor:pointer;float:right;width:40px;height:40px;margin:-10px -10px 0 8px;color:var(--muted)}
+  .hpop-x .ic{width:22px;height:22px}
+  .mi{min-height:48px;font-size:15px}
+  .hpop .hpt{font-size:15px;color:var(--ink);margin-bottom:4px}
+  /* card actions: Book full width, then one row of icon tiles (route, call, website, share, on map) */
+  .acts{gap:0;margin:0 0 12px}
+  .acts .act:not(.prim){flex:1 1 0;min-width:52px;max-width:88px;flex-direction:column;gap:6px;padding:4px 0;min-height:0;border:0;background:none;border-radius:8px;font-size:11.5px;letter-spacing:-.01em;line-height:1.2;color:var(--ink);text-align:center}
+  .acts .act:not(.prim) .ic{width:20px;height:20px;padding:10px;box-sizing:content-box;border-radius:50%;background:var(--panel);border:1px solid var(--line);color:var(--sea)}
+  .acts .act:not(.prim):active .ic{background:var(--sea-soft)}
+  .acts .act:not(.prim) .al{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .acts .act.prim{flex:1 0 100%;justify-content:center;min-height:44px;font-size:15px;margin-bottom:8px}
+  .pv-acts .act:not(.prim){flex:1 1 auto;flex-direction:row;gap:6px;padding:5px 12px;min-height:40px;max-width:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;font-size:13px;letter-spacing:0}
+  .pv-acts .act:not(.prim) .ic{width:16px;height:16px;padding:0;border:0;background:none;color:var(--muted)}
+  .pv-acts .act.prim{flex:1 1 auto;margin:0;font-size:13px;min-height:40px}
 }
 @media (min-width:601px) and (max-width:900px){
-  thead th.c-day{width:122px}
+  thead th.c-day{width:112px}
   thead th.c-hrs{width:126px}
-  thead th.c-rate{width:96px}
+  thead th.c-rate{width:110px}
   .hrs{min-width:0;max-width:none}
 }
 @media (max-width:600px){
   .hide-s{display:none}
   .rbm{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px}
-  .rbm .rbw{margin-right:0;flex-direction:row;align-items:center;gap:5px;flex-wrap:nowrap}
-  .rbm .rcap{font-size:11.5px;white-space:nowrap}
-  .rbm .rb b{height:20px;min-width:28px}
+  .rbm .rbw{margin-right:0}
+}
+@media (max-width:360px){
+  thead th.c-day{width:88px}
+  thead th.c-photo{width:64px}
+  .thumbs button{width:48px;height:48px}
+  .r-search .chip .ic{display:none}
+  .acts .act:not(.prim){font-size:11px;letter-spacing:-.02em}
+  .acts .act:not(.prim) .al{overflow:visible}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
@@ -436,23 +473,23 @@ tr.row{scroll-margin-top:44px}
 <a class="skip" href="#list" data-t="tolist">К списку</a>
 <div class="app">
   <header class="hd">
-    <div class="toprow"><h1 data-t="title">Сауны Португалии</h1><div class="langsw" id="langsw" role="group" aria-label="Language"><button type="button" data-l="ru">RU</button><button type="button" data-l="en">EN</button><button type="button" data-l="pt">PT</button></div></div>
+    <div class="toprow"><h1 data-t="title">Сауны Португалии</h1><button type="button" class="langb" id="langsw" aria-haspopup="dialog" aria-expanded="false" data-ta="lang">RU</button></div>
     <p data-t="intro"></p>
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="mapfull-x" id="mapfull-x" data-t="list">Список</button><button type="button" class="mapfilt" id="mapfilt" data-t="filters">Фильтры</button></div><span class="mapcue" aria-hidden="true" data-t="openmap">Открыть карту</span></div>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
   <main class="main">
     <section class="fwrap" data-ta="filters">
     <div class="fscrim" id="fscrim" aria-hidden="true"></div>
     <div class="frow r-search" id="searchbar">
       <input id="q" class="search" type="search" data-tp="search" autocomplete="off">
-      <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" aria-controls="f-more" data-t="filters">Фильтры</button>
-      <button class="chip mapbtn" id="mapbtn" type="button" data-t="map">Карта</button>
+      <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" aria-controls="f-more">Фильтры</button>
+      <button class="chip mapbtn" id="mapbtn" type="button">Карта</button>
     </div>
     <div class="filters" id="filters">
       <div class="fgrab" id="fgrab" aria-hidden="true"></div>
-      <div class="fhead" id="fhead"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset">Сбросить всё</button><button class="fx" id="fclose" type="button" data-ta="close">×</button></div>
+      <div class="fhead" id="fhead"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset">Сбросить всё</button><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
       <div class="frow" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
       <div class="frow" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Вход</span><div class="frow" id="f-access"></div></div>
       <div class="frow" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
@@ -461,7 +498,7 @@ tr.row{scroll-margin-top:44px}
       <div class="frow more" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
       <div class="frow more" role="group" aria-labelledby="lab-hours"><span class="flabel" id="lab-hours" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
       <details class="fd" id="area-d">
-        <summary class="chip" id="area-sum"><span data-t="area">Район</span><b class="fcnt" id="area-n" hidden></b><span class="car" aria-hidden="true">▾</span></summary>
+        <summary class="chip" id="area-sum"><span data-t="area">Район</span><b class="fcnt" id="area-n" hidden></b><span class="car" aria-hidden="true"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span></summary>
         <div class="frow" id="f-area" role="group" data-ta="area"></div>
         <div class="frow" id="muni-row" role="group" aria-labelledby="lab-muni" hidden><span class="flabel" id="lab-muni" data-t="muni">Город</span><div class="frow" id="f-muni"></div></div>
       </details>
@@ -498,13 +535,14 @@ tr.row{scroll-margin-top:44px}
     <p class="foot" id="foot"></p>
   </main>
 </div>
+<div class="ps" id="ps" hidden role="dialog"></div>
 <div class="hpop" id="hpop" hidden role="dialog" tabindex="-1"></div>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" data-ta="photos">
-  <div class="lb-top"><span class="lbl"><b id="lb-title"></b><span class="lbc" id="lb-count"></span></span><button class="lb-x" id="lb-x" type="button" data-ta="close">×</button></div>
+  <div class="lb-top"><span class="lbl"><b id="lb-title"></b><span class="lbc" id="lb-count"></span></span><button class="lb-x" id="lb-x" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
   <div class="lb-stage" id="lb-stage">
     <div class="lb-track" id="lb-track"></div>
-    <button class="lb-nav lb-prev" id="lb-prev" type="button" data-ta="prev">‹</button>
-    <button class="lb-nav lb-next" id="lb-next" type="button" data-ta="next">›</button>
+    <button class="lb-nav lb-prev" id="lb-prev" type="button" data-ta="prev"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></svg></button>
+    <button class="lb-nav lb-next" id="lb-next" type="button" data-ta="next"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/></svg></button>
   </div>
   <div class="lb-bot"><span></span><a id="lb-src" target="_blank" rel="noopener" data-t="photosrc">источник фото</a></div>
 </div>
@@ -524,7 +562,7 @@ const CASCAIS = [38.6968, -9.4215];
 const AREAS = ["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra","Lisboa e Setúbal","Oeste","Centro","Porto e Norte","Douro","Alentejo","Algarve","Madeira","Açores"];
 const NEAR = new Set(["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra"]);
 const AREA_RU = {Cascais:"Кашкайш",Estoril:"Эшторил",Carcavelos:"Каркавелуш",Oeiras:"Оэйраш",Sintra:"Синтра",Lisboa:"Лиссабон",Mafra:"Мафра","Lisboa e Setúbal":"Сетубал и окрестности",Oeste:"Запад, Оэште",Centro:"Центр","Porto e Norte":"Порту и север",Douro:"Долина Дору",Alentejo:"Алентежу",Algarve:"Алгарве",Madeira:"Мадейра","Açores":"Азоры"};
-const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.", "list": "Список", "fullmap": "Карта на весь экран", "filters": "Фильтры", "search": "Поиск по названию или району", "where": "Где", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "daymax": "разовый вход до", "memmax": "абонемент до", "anyf": "любая", "anym": "любой", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_mprice": "Цена абонемента", "s_session": "Длительность сеанса", "s_sea": "Ближе к морю", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото. <span class=\"warn-i\">?</span> значит, что данные лучше уточнить.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "acc_walkin": "Без брони", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "x_photo": "С фото", "r_0": "Любой", "r_4": "От 4,0", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "h_wknd": "Работает в выходные", "h_early": "Открыто до 8:00", "sc_all": "Вся Португалия", "sc_near": "Рядом с Кашкайшем, до 55 км", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "c_book": "Бронь", "c_mem": "Абонемент", "legend_eur": "€ на метке: есть цена разового входа", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "есть, цена не указана", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "p_has": "Есть", "p_day": "Разовый", "p_mem": "Абонемент", "p_book": "Бронь", "p_hours": "Часы", "p_rate": "Рейтинг", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "o_until": "Открыто до {0}", "o_at": "Откроется в {0}", "o_next": "Закрыто, откроется {0} в {1}", "tomorrow": "завтра", "o_closed": "Сейчас закрыто", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "nophoto": "нет фото", "photo_n": "Фото {0}", "yes": "есть", "noprice": "цена не указана", "w_trt": "с процедурой", "w_mem": "абонемент", "per_mo": " /мес", "onreq": "по запросу", "beach": "на пляже", "d_type": "Тип", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_has": "На месте", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_bookpage": "страница брони", "d_hours": "Часы", "d_phone": "Телефон", "d_site": "Сайт", "d_official": "официальная страница", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_ratings": "оценок", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_cascais": "От центра Кашкайша", "straight": "по прямой", "d_rules": "Правила", "from_age": "С {0} лет", "conf_high": "высокая", "conf_medium": "средняя", "conf_low": "низкая, лучше уточнить", "showmap": "Показать на карте", "r_google": "Маршрут Google", "r_apple": "Apple Карты", "copylink": "Скопировать ссылку", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "mx_hours": "Часы:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной ✓", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.", "list": "List", "fullmap": "Full-screen map", "filters": "Filters", "search": "Search by name or area", "where": "Where", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "daymax": "single visit up to", "memmax": "membership up to", "anyf": "any", "anym": "any", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_mprice": "Membership price", "s_session": "Session length", "s_sea": "Closest to the sea", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos. <span class=\"warn-i\">?</span> means the data is worth double-checking.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "acc_walkin": "No booking", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "x_photo": "With photos", "r_0": "Any", "r_4": "4.0+", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "h_wknd": "Open at weekends", "h_early": "Open before 8 am", "sc_all": "All Portugal", "sc_near": "Near Cascais, up to 55 km", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "c_book": "Booking", "c_mem": "Membership", "legend_eur": "€ on a pin: single-visit price known", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "yes, price not listed", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "p_has": "Has", "p_day": "Visit", "p_mem": "Membership", "p_book": "Booking", "p_hours": "Hours", "p_rate": "Rating", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "o_until": "Open until {0}", "o_at": "Opens at {0}", "o_next": "Closed, opens {0} at {1}", "tomorrow": "tomorrow", "o_closed": "Closed now", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "nophoto": "no photo", "photo_n": "Photo {0}", "yes": "yes", "noprice": "price not listed", "w_trt": "with treatment", "w_mem": "membership", "per_mo": " /mo", "onreq": "on request", "beach": "on the beach", "d_type": "Type", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_has": "On site", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_bookpage": "booking page", "d_hours": "Hours", "d_phone": "Phone", "d_site": "Website", "d_official": "official page", "d_social": "Social", "d_rate": "Rating", "d_ratings": "ratings", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_cascais": "From central Cascais", "straight": "straight line", "d_rules": "Rules", "from_age": "Age {0}+", "conf_high": "high", "conf_medium": "medium", "conf_low": "low, worth checking", "showmap": "Show on map", "r_google": "Google directions", "r_apple": "Apple Maps", "copylink": "Copy link", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "mx_hours": "Hours:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me ✓", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Rating: green badge with a star is Google, blue is Booking, with the number of ratings. Distances are straight-line. Photos belong to their authors; each links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.", "list": "Lista", "fullmap": "Mapa em ecrã inteiro", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "where": "Onde", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "daymax": "entrada até", "memmax": "mensalidade até", "anyf": "qualquer", "anym": "qualquer", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_mprice": "Preço da mensalidade", "s_session": "Duração da sessão", "s_sea": "Mais perto do mar", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos. <span class=\"warn-i\">?</span> indica dados a confirmar.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "acc_walkin": "Sem reserva", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "x_photo": "Com fotos", "r_0": "Qualquer", "r_4": "4,0+", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "h_wknd": "Aberto ao fim de semana", "h_early": "Abre antes das 8h", "sc_all": "Todo o Portugal", "sc_near": "Perto de Cascais, até 55 km", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "c_book": "Reserva", "c_mem": "Mensalidade", "legend_eur": "€ no marcador: preço de entrada conhecido", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "sim, preço não indicado", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "p_has": "Tem", "p_day": "Entrada", "p_mem": "Mensalidade", "p_book": "Reserva", "p_hours": "Horário", "p_rate": "Avaliação", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "o_until": "Aberto até às {0}", "o_at": "Abre às {0}", "o_next": "Fechado, abre {0} às {1}", "tomorrow": "amanhã", "o_closed": "Fechado agora", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "nophoto": "sem foto", "photo_n": "Foto {0}", "yes": "sim", "noprice": "preço não indicado", "w_trt": "com tratamento", "w_mem": "mensalidade", "per_mo": " /mês", "onreq": "sob consulta", "beach": "na praia", "d_type": "Tipo", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_has": "No local", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_bookpage": "página de reserva", "d_hours": "Horário", "d_phone": "Telefone", "d_site": "Site", "d_official": "página oficial", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_ratings": "avaliações", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_cascais": "Do centro de Cascais", "straight": "em linha reta", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_high": "alta", "conf_medium": "média", "conf_low": "baixa, convém confirmar", "showmap": "Ver no mapa", "r_google": "Direções Google", "r_apple": "Apple Maps", "copylink": "Copiar link", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "mx_hours": "Horário:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim ✓", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0}: sites oficiais, sistemas de reserva, Google Maps. Preços e regras mudam, confirme antes de ir. Avaliação: o selo verde com estrela é do Google, o azul é do Booking, com o número de avaliações. Distâncias em linha reta. As fotos pertencem aos autores, cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
+const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.", "list": "Список", "filters": "Фильтры", "search": "Поиск по названию или району", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото. <span class=\"warn-i\">?</span> значит, что данные лучше уточнить.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "есть, цена не указана", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "tomorrow": "завтра", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "photo_n": "Фото {0}", "yes": "есть", "w_trt": "с процедурой", "per_mo": " /мес", "beach": "на пляже", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_hours": "Часы", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_rules": "Правила", "from_age": "С {0} лет", "conf_low": "низкая, лучше уточнить", "showmap": "На карте", "r_apple": "Apple Карты", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.", "list": "List", "filters": "Filters", "search": "Search by name or area", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos. <span class=\"warn-i\">?</span> means the data is worth double-checking.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "yes, price not listed", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "tomorrow": "tomorrow", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "photo_n": "Photo {0}", "yes": "yes", "w_trt": "with treatment", "per_mo": " /mo", "beach": "on the beach", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_hours": "Hours", "d_social": "Social", "d_rate": "Rating", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_rules": "Rules", "from_age": "Age {0}+", "conf_low": "low, worth checking", "showmap": "On map", "r_apple": "Apple Maps", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.", "list": "Lista", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos. <span class=\"warn-i\">?</span> indica dados a confirmar.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "sim, preço não indicado", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "tomorrow": "amanhã", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "photo_n": "Foto {0}", "yes": "sim", "w_trt": "com tratamento", "per_mo": " /mês", "beach": "na praia", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_hours": "Horário", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_low": "baixa, convém confirmar", "showmap": "No mapa", "r_apple": "Apple Maps", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
 
 Object.assign(I18N.ru,{sch_weekly:"По расписанию",sch_calendar:"По датам",sch_on_request:"По записи",sch_open:"расписание",sch_t:"Расписание",sch_up:"Ближайшие",sch_win:"Свободные окна на этой неделе"});Object.assign(I18N.en,{sch_weekly:"Scheduled sessions",sch_calendar:"Dated sessions",sch_on_request:"By appointment",sch_open:"schedule",sch_t:"Schedule",sch_up:"Upcoming",sch_win:"Free slots this week"});Object.assign(I18N.pt,{sch_weekly:"Sessões com horário",sch_calendar:"Sessões por data",sch_on_request:"Por marcação",sch_open:"horário",sch_t:"Horário",sch_up:"Próximas",sch_win:"Horários livres esta semana"});
 Object.assign(I18N.ru,{showres:"Показать"});Object.assign(I18N.en,{showres:"Show results"});Object.assign(I18N.pt,{showres:"Ver resultados"});
@@ -533,36 +571,36 @@ Object.assign(I18N.ru,{fb_err:"Не отправилось, попробуйте
 Object.assign(I18N.ru,{per_yr:" /год",per_wk:" /нед."});Object.assign(I18N.en,{per_yr:" /yr",per_wk:" /wk"});Object.assign(I18N.pt,{per_yr:" /ano",per_wk:" /sem."});
 Object.assign(I18N.ru,{few:"мало оценок"});Object.assign(I18N.en,{few:"few ratings"});Object.assign(I18N.pt,{few:"poucas avaliações"});
 Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"неделя"});Object.assign(I18N.en,{weekhrs:"Opening hours by day",weekshort:"week"});Object.assign(I18N.pt,{weekhrs:"Horário por dia",weekshort:"semana"});
-Object.assign(I18N.ru,{r_ok:"Только проверенные",wt_status:"не открыто",wt_low:"не подтверждено",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Данные не подтверждены официальным сайтом, лучше уточнить",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
-Object.assign(I18N.en,{r_ok:"Verified only",wt_status:"not open",wt_low:"unconfirmed",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site, check before going",wt_sparse_h:"Little info so far: no price, hours or reviews"});
-Object.assign(I18N.pt,{r_ok:"Só verificados",wt_status:"fechado",wt_low:"por confirmar",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial, confirme antes de ir",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
-Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_region:"Где",d_fromme:"От тебя"});
-Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_region:"Location",d_fromme:"From you"});
-Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Península de Setúbal",rg_oeste:"Oeste",rg_centro:"Centro",rg_norte:"Porto e Norte",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Açores",s_dist:"Mais perto de mim",d_region:"Localização",d_fromme:"De si"});
-Object.assign(I18N.ru,{hs_open:"Открыто",hs_soon:"Скоро закроется",hs_closed:"Закрыто",hs_until:"до {0}",hs_opens:"откроется в {0}",hs_opens_day:"откроется {0} в {1}",today:"сегодня"});
-Object.assign(I18N.en,{hs_open:"Open",hs_soon:"Closes soon",hs_closed:"Closed",hs_until:"until {0}",hs_opens:"opens at {0}",hs_opens_day:"opens {0} at {1}",today:"today"});
-Object.assign(I18N.pt,{hs_open:"Aberto",hs_soon:"Fecha em breve",hs_closed:"Fechado",hs_until:"até às {0}",hs_opens:"abre às {0}",hs_opens_day:"abre {0} às {1}",today:"hoje"});
-Object.assign(I18N.ru,{pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",pk:"€{0} за {1} · {2} за раз",per_session:"{0} за раз",in_pack:"в пакете",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",join:"+ {0} вступ.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",dayu:"день",p_pack:"Пакет",acc_private:"Аренда для компании",
+Object.assign(I18N.ru,{r_ok:"Только проверенные",wt_low:"не подтверждено",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Данные не подтверждены официальным сайтом, лучше уточнить",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
+Object.assign(I18N.en,{r_ok:"Verified only",wt_low:"unconfirmed",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site, check before going",wt_sparse_h:"Little info so far: no price, hours or reviews"});
+Object.assign(I18N.pt,{r_ok:"Só verificados",wt_low:"por confirmar",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial, confirme antes de ir",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
+Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
+Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
+Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Península de Setúbal",rg_oeste:"Oeste",rg_centro:"Centro",rg_norte:"Porto e Norte",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Açores",s_dist:"Mais perto de mim",d_fromme:"De si"});
+Object.assign(I18N.ru,{hs_open:"Открыто",hs_soon:"Скоро закроется",hs_closed:"Закрыто",hs_until:"до {0}",hs_opens:"откроется в {0}",hs_opens_day:"откроется {0} в {1}"});
+Object.assign(I18N.en,{hs_open:"Open",hs_soon:"Closes soon",hs_closed:"Closed",hs_until:"until {0}",hs_opens:"opens at {0}",hs_opens_day:"opens {0} at {1}"});
+Object.assign(I18N.pt,{hs_open:"Aberto",hs_soon:"Fecha em breve",hs_closed:"Fechado",hs_until:"até às {0}",hs_opens:"abre às {0}",hs_opens_day:"abre {0} às {1}"});
+Object.assign(I18N.ru,{pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",per_session:"{0} за раз",in_pack:"в пакете",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",acc_private:"Аренда для компании",
  inc:{sauna:"сауна",infrared:"ИК-сауна",steam:"парная",hammam:"хаммам",banya:"баня",venik:"веники",pool:"бассейн",sea_pool:"морская вода",outdoor_pool:"уличный бассейн",jacuzzi:"джакузи",hot_tub:"чан",cold_plunge:"купель",ice_bath:"ледяная ванна",gym:"зал",classes:"занятия",guide:"ведущий",sound:"музыка",towel:"полотенце",robe:"халат",tea:"чай",coffee:"кофе",food:"еда",massage:"массаж",compression:"компрессия"},
  cond:{booking_required:"бронь",booking_recommended:"лучше бронь",age_16_plus:"с 16 лет",age_18_plus:"с 18 лет",under_18_with_adult:"до 18 с родителями",under_16_from_12_with_adult:"с 12 лет со взрослым",under_16_half_price:"до 16 лет за полцены",with_treatment_only:"только с процедурой",men_only:"мужской",women_only:"женский",waitlist:"лист ожидания",trial_once:"один раз",prepayment:"предоплата",voucher:"по ваучеру",swimwear_required:"купальник",bring_towels:"свои полотенца",cap_swimwear_slippers:"шапочка, купальник, шлёпанцы",private_room:"отдельная комната",sauna_after_class_only:"сауна после занятия",cancel_24h:"отмена за 24 ч",cancel_8h_50pct:"отмена позже 8 ч: 50%",sold_out:"мест нет",min_people:"от {0} чел.",joining_fee:"вступительный €{0}",min_term_months:"от {0} мес.",booking_ahead_h:"бронь за {0} ч",valid_days:"действует {0} дн.",time:"{0}"},
  wh:{weekdays:"по будням",weekends:"по выходным",sat:"сб",sun:"вс"}});
-Object.assign(I18N.en,{pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",pk:"€{0} for {1} · {2} each",per_session:"{0} each",in_pack:"in a pack",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",join:"+ {0} joining",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",dayu:"day",p_pack:"Pack",acc_private:"Private hire",
+Object.assign(I18N.en,{pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",per_session:"{0} each",in_pack:"in a pack",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",acc_private:"Private hire",
  inc:{sauna:"sauna",infrared:"infrared",steam:"steam room",hammam:"hammam",banya:"banya",venik:"veniki",pool:"pool",sea_pool:"seawater pool",outdoor_pool:"outdoor pool",jacuzzi:"jacuzzi",hot_tub:"hot tub",cold_plunge:"cold plunge",ice_bath:"ice bath",gym:"gym",classes:"classes",guide:"guide",sound:"live sound",towel:"towel",robe:"robe",tea:"tea",coffee:"coffee",food:"food",massage:"massage",compression:"compression"},
  cond:{booking_required:"booking",booking_recommended:"booking advised",age_16_plus:"16+",age_18_plus:"18+",under_18_with_adult:"under 18 with a parent",under_16_from_12_with_adult:"12+ with an adult",under_16_half_price:"under 16 half price",with_treatment_only:"with a treatment only",men_only:"men only",women_only:"women only",waitlist:"waitlist",trial_once:"once",prepayment:"prepayment",voucher:"voucher",swimwear_required:"swimwear",bring_towels:"bring towels",cap_swimwear_slippers:"cap, swimwear, slippers",private_room:"private room",sauna_after_class_only:"sauna after class",cancel_24h:"cancel 24 h ahead",cancel_8h_50pct:"late cancel: 50%",sold_out:"sold out",min_people:"from {0} people",joining_fee:"joining fee €{0}",min_term_months:"min {0} months",booking_ahead_h:"book {0} h ahead",valid_days:"valid {0} days",time:"{0}"},
  wh:{weekdays:"weekdays",weekends:"weekends",sat:"Sat",sun:"Sun"}});
-Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",pk:"€{0} por {1} · {2} cada",per_session:"{0} cada",in_pack:"em pacote",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",join:"+ {0} inscrição",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",dayu:"dia",p_pack:"Pacote",acc_private:"Aluguer privado",
+Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",per_session:"{0} cada",in_pack:"em pacote",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",acc_private:"Aluguer privado",
  inc:{sauna:"sauna",infrared:"infravermelhos",steam:"banho turco",hammam:"hammam",banya:"banya",venik:"veniks",pool:"piscina",sea_pool:"água do mar",outdoor_pool:"piscina exterior",jacuzzi:"jacuzzi",hot_tub:"ofurô",cold_plunge:"imersão fria",ice_bath:"banho de gelo",gym:"ginásio",classes:"aulas",guide:"guia",sound:"música",towel:"toalha",robe:"roupão",tea:"chá",coffee:"café",food:"comida",massage:"massagem",compression:"pressoterapia"},
  cond:{booking_required:"reserva",booking_recommended:"reserva aconselhada",age_16_plus:"+16",age_18_plus:"+18",under_18_with_adult:"menores com adulto",under_16_from_12_with_adult:"+12 com adulto",under_16_half_price:"menores de 16 a meio preço",with_treatment_only:"só com tratamento",men_only:"só homens",women_only:"só mulheres",waitlist:"lista de espera",trial_once:"uma vez",prepayment:"pré-pagamento",voucher:"voucher",swimwear_required:"fato de banho",bring_towels:"traga toalhas",cap_swimwear_slippers:"touca, fato de banho, chinelos",private_room:"sala privada",sauna_after_class_only:"sauna após aula",cancel_24h:"cancelar 24 h antes",cancel_8h_50pct:"cancelamento tardio: 50%",sold_out:"esgotado",min_people:"mín. {0} pessoas",joining_fee:"inscrição €{0}",min_term_months:"mín. {0} meses",booking_ahead_h:"reservar {0} h antes",valid_days:"válido {0} dias",time:"{0}"},
  wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
 
-Object.assign(I18N.ru,{tolist:"К списку",openmap:"Открыть карту",fromcascais:"Считать от центра Кашкайша",radius:"Радиус",rad:"до {0} км",hrs_known:"часы известны для {0} мест",sv_session:"сеанс {0}",sv_sea:"до моря ≈ {0}",morefilt:"Ещё фильтры",morefilt_n:"Ещё фильтры · {0}",
- fb_q:"Всё верно?",fb_ok:"👍 Да",fb_flag:"⚑ Есть ошибка",fb_rate:"★ Оценить",fb_own:"Вы владелец? Обновить данные",fb_own_h:"Владелец или менеджер места может прислать цены, часы, описание и фото; после проверки карточка получает отметку «Подтверждено владельцем»",fb_p_closed:"Закрыто",fb_p_hours:"Другие часы",fb_p_price:"Другая цена",fb_p_nosauna:"Сауны нет",fb_p_other:"Другое",fb_comment:"Что не так? (необязательно)",fb_send:"Отправить",fb_thanks:"✓ Спасибо, проверим",fb_thx:"✓ Спасибо",fb_asform:"Открыть как форму",fb_star_n:"Оценка {0} из 5",ov_badge:"Подтверждено владельцем",ov_line:"Подтверждено владельцем {0}",d_visitors:"Посетители",v_ok:"✓ {0} подтвердили, что всё верно",v_rate:"★ {0} по {1} оценкам посетителей"});
-Object.assign(I18N.en,{tolist:"Skip to list",openmap:"Open map",fromcascais:"Measure from central Cascais",radius:"Radius",rad:"within {0} km",hrs_known:"hours known for {0} places",sv_session:"session {0}",sv_sea:"to the sea ≈ {0}",morefilt:"More filters",morefilt_n:"More filters · {0}",
- fb_q:"Is this correct?",fb_ok:"👍 Yes",fb_flag:"⚑ Report a problem",fb_rate:"★ Rate",fb_own:"Are you the owner? Update this listing",fb_own_h:"The owner or manager can send prices, hours, description and photos; after review the listing is marked \"Verified by owner\"",fb_p_closed:"Closed",fb_p_hours:"Wrong hours",fb_p_price:"Wrong price",fb_p_nosauna:"No sauna here",fb_p_other:"Other",fb_comment:"What's wrong? (optional)",fb_send:"Send",fb_thanks:"✓ Thanks, we'll check",fb_thx:"✓ Thanks",fb_asform:"Open as a form",fb_star_n:"Rating {0} of 5",ov_badge:"Verified by owner",ov_line:"Verified by owner {0}",d_visitors:"Visitors",v_ok:"✓ {0} confirmed it's correct",v_rate:"★ {0} from {1} visitor ratings"});
-Object.assign(I18N.pt,{tolist:"Ir para a lista",openmap:"Abrir mapa",fromcascais:"Medir a partir do centro de Cascais",radius:"Raio",rad:"até {0} km",hrs_known:"horário conhecido em {0} locais",sv_session:"sessão {0}",sv_sea:"até ao mar ≈ {0}",morefilt:"Mais filtros",morefilt_n:"Mais filtros · {0}",
- fb_q:"Está correto?",fb_ok:"👍 Sim",fb_flag:"⚑ Reportar um erro",fb_rate:"★ Avaliar",fb_own:"É o proprietário? Atualize esta ficha",fb_own_h:"O proprietário ou gerente pode enviar preços, horário, descrição e fotos; após revisão a ficha recebe a marca \"Confirmado pelo proprietário\"",fb_p_closed:"Fechado",fb_p_hours:"Horário errado",fb_p_price:"Preço errado",fb_p_nosauna:"Não tem sauna",fb_p_other:"Outro",fb_comment:"O que está errado? (opcional)",fb_send:"Enviar",fb_thanks:"✓ Obrigado, vamos verificar",fb_thx:"✓ Obrigado",fb_asform:"Abrir como formulário",fb_star_n:"Avaliação {0} de 5",ov_badge:"Confirmado pelo proprietário",ov_line:"Confirmado pelo proprietário em {0}",d_visitors:"Visitantes",v_ok:"✓ {0} confirmaram que está correto",v_rate:"★ {0} em {1} avaliações de visitantes"});
+Object.assign(I18N.ru,{tolist:"К списку",openmap:"Открыть карту",fromcascais:"Считать от центра Кашкайша",radius:"Радиус",rad:"до {0} км",hrs_known:"часы известны для {0} мест",morefilt:"Ещё фильтры",
+ fb_q:"Всё верно?",fb_ok:"Да",fb_flag:"Есть ошибка",fb_rate:"Оценить",fb_own:"Вы владелец? Обновить данные",fb_own_h:"Владелец или менеджер места может прислать цены, часы, описание и фото; после проверки карточка получает отметку «Подтверждено владельцем»",fb_p_closed:"Закрыто",fb_p_hours:"Другие часы",fb_p_price:"Другая цена",fb_p_nosauna:"Сауны нет",fb_p_other:"Другое",fb_comment:"Что не так? (необязательно)",fb_send:"Отправить",fb_thanks:"Спасибо, проверим",fb_thx:"Спасибо",fb_star_n:"Оценка {0} из 5",ov_badge:"Подтверждено владельцем",ov_line:"Подтверждено владельцем {0}",d_visitors:"Посетители",v_ok:"{0} подтвердили, что всё верно",v_rate:"{0} по {1} оценкам посетителей"});
+Object.assign(I18N.en,{tolist:"Skip to list",openmap:"Open map",fromcascais:"Measure from central Cascais",radius:"Radius",rad:"within {0} km",hrs_known:"hours known for {0} places",morefilt:"More filters",
+ fb_q:"Is this correct?",fb_ok:"Yes",fb_flag:"Report a problem",fb_rate:"Rate",fb_own:"Are you the owner? Update this listing",fb_own_h:"The owner or manager can send prices, hours, description and photos; after review the listing is marked \"Verified by owner\"",fb_p_closed:"Closed",fb_p_hours:"Wrong hours",fb_p_price:"Wrong price",fb_p_nosauna:"No sauna here",fb_p_other:"Other",fb_comment:"What's wrong? (optional)",fb_send:"Send",fb_thanks:"Thanks, we'll check",fb_thx:"Thanks",fb_star_n:"Rating {0} of 5",ov_badge:"Verified by owner",ov_line:"Verified by owner {0}",d_visitors:"Visitors",v_ok:"{0} confirmed it's correct",v_rate:"{0} from {1} visitor ratings"});
+Object.assign(I18N.pt,{tolist:"Ir para a lista",openmap:"Abrir mapa",fromcascais:"Medir a partir do centro de Cascais",radius:"Raio",rad:"até {0} km",hrs_known:"horário conhecido em {0} locais",morefilt:"Mais filtros",
+ fb_q:"Está correto?",fb_ok:"Sim",fb_flag:"Reportar um erro",fb_rate:"Avaliar",fb_own:"É o proprietário? Atualize esta ficha",fb_own_h:"O proprietário ou gerente pode enviar preços, horário, descrição e fotos; após revisão a ficha recebe a marca \"Confirmado pelo proprietário\"",fb_p_closed:"Fechado",fb_p_hours:"Horário errado",fb_p_price:"Preço errado",fb_p_nosauna:"Não tem sauna",fb_p_other:"Outro",fb_comment:"O que está errado? (opcional)",fb_send:"Enviar",fb_thanks:"Obrigado, vamos verificar",fb_thx:"Obrigado",fb_star_n:"Avaliação {0} de 5",ov_badge:"Confirmado pelo proprietário",ov_line:"Confirmado pelo proprietário em {0}",d_visitors:"Visitantes",v_ok:"{0} confirmaram que está correto",v_rate:"{0} em {1} avaliações de visitantes"});
 I18N.ru._am.ice_fountain="ледяной фонтан";I18N.ru._am.ice_room="ледяная комната";I18N.en._am.ice_fountain="ice fountain";I18N.en._am.ice_room="ice room";I18N.pt._am.ice_fountain="fonte de gelo";I18N.pt._am.ice_room="sala de gelo";I18N.ru.inc.ice_fountain="ледяной фонтан";I18N.ru.inc.ice_room="ледяная комната";I18N.en.inc.ice_fountain="ice fountain";I18N.en.inc.ice_room="ice room";I18N.pt.inc.ice_fountain="fonte de gelo";I18N.pt.inc.ice_room="sala de gelo";
-const TFX={"en": {"has": "Features", "p_has": "On site", "x_hammam": "Hammam or steam room", "acc_walkin": "Walk-in", "b_recommended": "Recommended", "guests": "hotel guests only", "only_trt": "only with a treatment", "p_day": "Single visit", "s_price": "Single-visit price", "empty": "Nothing matches these filters. Loosen them or tap “Reset all”.", "d_social": "Social media", "d_via": "via {0}", "join": "+ {0} joining fee", "grp_cap": "per group up to {0} · from {1} per person", "sch_calendar": "Sessions on set dates", "sch_win": "Available slots this week", "rg_centro": "Central Portugal", "_area.Centro": "Central Portugal", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "_am.rooms": "{0} saunas", "inc.infrared": "infrared sauna", "cond.booking_required": "booking required", "cond.booking_recommended": "booking recommended", "cond.min_term_months": "{0}-month minimum term", "cond.sauna_after_class_only": "sauna after class only", "cond.trial_once": "one time only", "cond.cancel_24h": "cancel up to 24 h ahead"}, "pt": {"has": "Características", "p_has": "No local", "b_walk_in": "Sem reserva", "guests": "só para hóspedes", "x_cold": "Imersão em água fria", "_am.cold_plunge": "imersão em água fria", "inc.cold_plunge": "imersão em água fria", "_am.hot_tub": "hot tub", "inc.hot_tub": "hot tub", "_am.infrared": "sauna de infravermelhos", "inc.infrared": "sauna de infravermelhos", "empty": "Nada corresponde a estes filtros. Alargue-os ou toque em “Limpar tudo”.", "d_via": "via {0}", "d_fromme": "Distância", "reliab": "fiabilidade dos dados: {0}", "grp_cap": "por grupo até {0} · desde {1} por pessoa", "sch_calendar": "Sessões em datas marcadas", "sch_win": "Horários disponíveis esta semana", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "cond.booking_required": "reserva obrigatória", "cond.booking_recommended": "reserva recomendada", "cond.min_term_months": "fidelização de {0} meses", "cond.cancel_24h": "cancelamento até 24 h antes", "cond.sauna_after_class_only": "sauna só após a aula", "cond.trial_once": "só uma vez"}};
+const TFX={"en": {"has": "Features", "x_hammam": "Hammam or steam room", "b_recommended": "Recommended", "guests": "hotel guests only", "only_trt": "only with a treatment", "s_price": "Single-visit price", "empty": "Nothing matches these filters. Loosen them or tap “Reset all”.", "d_social": "Social media", "d_via": "via {0}", "grp_cap": "per group up to {0} · from {1} per person", "sch_calendar": "Sessions on set dates", "sch_win": "Available slots this week", "rg_centro": "Central Portugal", "_area.Centro": "Central Portugal", "_am.rooms": "{0} saunas", "inc.infrared": "infrared sauna", "cond.booking_required": "booking required", "cond.booking_recommended": "booking recommended", "cond.min_term_months": "{0}-month minimum term", "cond.sauna_after_class_only": "sauna after class only", "cond.trial_once": "one time only", "cond.cancel_24h": "cancel up to 24 h ahead"}, "pt": {"has": "Características", "b_walk_in": "Sem reserva", "guests": "só para hóspedes", "x_cold": "Imersão em água fria", "_am.cold_plunge": "imersão em água fria", "inc.cold_plunge": "imersão em água fria", "_am.hot_tub": "hot tub", "inc.hot_tub": "hot tub", "_am.infrared": "sauna de infravermelhos", "inc.infrared": "sauna de infravermelhos", "empty": "Nada corresponde a estes filtros. Alargue-os ou toque em “Limpar tudo”.", "d_via": "via {0}", "d_fromme": "Distância", "reliab": "fiabilidade dos dados: {0}", "grp_cap": "por grupo até {0} · desde {1} por pessoa", "sch_calendar": "Sessões em datas marcadas", "sch_win": "Horários disponíveis esta semana", "cond.booking_required": "reserva obrigatória", "cond.booking_recommended": "reserva recomendada", "cond.min_term_months": "fidelização de {0} meses", "cond.cancel_24h": "cancelamento até 24 h antes", "cond.sauna_after_class_only": "sauna só após a aula", "cond.trial_once": "só uma vez"}};
 for(const L in TFX){ for(const k in TFX[L]){ const parts=k.split("."); let o=I18N[L]; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]=o[parts[i]]||{}; } o[parts[parts.length-1]]=TFX[L][k]; } }
 // 09.11.2026 filter redesign: sauna-first groups ("where the sauna is"), entry / extras / rating / price / hours, hammam = steam room (one facility)
 Object.assign(I18N.ru,{type:"Где сауна",kf_sauna:"Отдельная сауна",kf_spa:"В спа-центре",kf_hotel:"В отеле",kf_fit:"В фитнес-клубе",k_sauna:"Сауна",k_spa:"Спа-центр",k_hotel:"Отель",k_fit:"Фитнес/бассейн",access:"Вход",acc_day:"Разовый вход",acc_treatment:"С процедурой",acc_membership:"Абонемент",acc_private:"Аренда для компании",has:"Ещё есть",x_cold:"Холодная купель",x_pool:"Бассейн",x_hammam:"Хаммам",x_sea:"Море рядом",x_banya:"Русская баня",x_ir:"Инфракрасная",hours:"Часы",h_now:"Открыто сейчас",h_eve:"После 21:00",rating:"Рейтинг",r_45:"От 4,5",r_ok:"Только проверенные",price:"Цена входа",upto:"до €{0}",s_price:"Цена входа",showres_n:"Показать · {0}",fh_n:"{0} из {1} мест",filt_n:"Фильтры · {0}"});
@@ -572,9 +610,10 @@ I18N.en._am.steam="hammam"; I18N.en._am.rooms="{0} saunas"; I18N.en.inc.steam="h
 Object.assign(I18N.pt,{type:"Sauna em",kf_sauna:"Independente",kf_spa:"Spa",kf_hotel:"Hotel",kf_fit:"Ginásio ou piscina",k_sauna:"Sauna",k_spa:"Spa",k_hotel:"Hotel",k_fit:"Ginásio/piscina",access:"Acesso",acc_day:"Entrada avulsa",acc_treatment:"Com tratamento",acc_membership:"Mensalidade",acc_private:"Aluguer privado",has:"Tem também",x_cold:"Imersão em água fria",x_pool:"Piscina",x_hammam:"Banho turco",x_sea:"Perto do mar",x_banya:"Banya russa",x_ir:"Infravermelhos",hours:"Horário",h_now:"Aberto agora",h_eve:"Depois das 21h",rating:"Avaliação",r_45:"4,5+",r_ok:"Só verificados",price:"Preço da entrada",upto:"até €{0}",s_price:"Preço da entrada",showres_n:"Ver · {0}",fh_n:"{0} de {1} locais",filt_n:"Filtros · {0}"});
 I18N.pt._am.steam="banho turco"; I18N.pt._am.hammam="banho turco"; I18N.pt._am.rooms="{0} saunas"; I18N.pt.inc.steam="banho turco"; I18N.pt.inc.hammam="banho turco";
 I18N.ru._am.sauna="сауна"; I18N.en._am.sauna="sauna"; I18N.pt._am.sauna="sauna";
-Object.assign(I18N.ru,{heat:"Жар",x_sauna:"Сауна",map:"Карта",acc_rent:"аренда бани",share:"Поделиться",call:"Позвонить",site:"Сайт",empty:"Под эти фильтры ничего не нашлось. Ослабь фильтры или сбрось их.",sort_in:"Сортировка"});
-Object.assign(I18N.en,{heat:"Heat",x_sauna:"Sauna",map:"Map",acc_rent:"private rental",share:"Share",call:"Call",site:"Website",empty:"Nothing matches these filters. Loosen or reset them.",sort_in:"Sort"});
-Object.assign(I18N.pt,{heat:"Calor",x_sauna:"Sauna",map:"Mapa",acc_rent:"aluguer privado",share:"Partilhar",call:"Ligar",site:"Site",empty:"Nada corresponde a estes filtros. Alargue-os ou limpe-os.",sort_in:"Ordenar"});
+Object.assign(I18N.ru,{heat:"Жар",x_sauna:"Сауна",map:"Карта",acc_rent:"аренда бани",share:"Поделиться",call:"Позвонить",site:"Сайт",empty:"Под эти фильтры ничего не нашлось. Ослабь фильтры или сбрось их.",lang:"Язык"});
+Object.assign(I18N.en,{heat:"Heat",x_sauna:"Sauna",map:"Map",acc_rent:"private rental",share:"Share",call:"Call",site:"Website",empty:"Nothing matches these filters. Loosen or reset them.",lang:"Language"});
+Object.assign(I18N.pt,{heat:"Calor",x_sauna:"Sauna",map:"Mapa",acc_rent:"aluguer privado",share:"Partilhar",call:"Ligar",site:"Site",empty:"Nada corresponde a estes filtros. Alargue-os ou limpe-os.",lang:"Idioma"});
+const LANGN={ru:"Русский",en:"English",pt:"Português"};
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
@@ -585,13 +624,19 @@ const KG={sauna:"sauna",spa:"spa",hotel:"hotel",gym:"fit",public:"fit"};
 const kg=p=>KG[p.kind]||"sauna";
 const KINDS = new Proxy({}, {get:(o,k)=>KCOL[k]?[t("k_"+k),KCOL[k],k]:undefined, ownKeys:()=>Object.keys(KCOL), getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
 const KFILT=()=>{ const m={}; Object.keys(KCOL).forEach(k=>{ if(P.some(p=>kg(p)===k)) m[k]=[t("kf_"+k),KCOL[k],k]; }); return m; };
-const starsOf=p=>{ const m=/(\d)★/.exec(tr(p,"subtitle")||""); return m?m[1]+"★":""; };
+const starsOf=p=>{ const m=/(\d)★/.exec(tr(p,"subtitle")||""); return m?m[1]+ico("star","ic-s st"):""; };
 // type glyphs (24-grid, 2px round strokes): heat waves = standalone sauna, droplet = day spa, bed = hotel, dumbbell = gym or pool
 const KICO={sauna:"M8 18c-3-3.5 3-6.5 0-10M12 18c-3-3.5 3-6.5 0-10M16 18c-3-3.5 3-6.5 0-10",spa:"M12 3.5C12 3.5 6 10 6 14.2a6 6 0 0 0 12 0C18 10 12 3.5 12 3.5Z",hotel:"M3 19V9M3 15h18M21 19v-6a2 2 0 0 0-2-2h-9v4M7 11h.01",fit:"M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"};
-const kico=(k,cls)=>`<svg class="ki ${cls||""}" viewBox="0 0 24 24" aria-hidden="true" style="color:${KCOL[k]}"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
-const pinIco=k=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
-const SAUNA_RU = {finnish:"финская",steam:"парная",hammam:"хаммам",bio:"био",infrared:"инфракрасная",banya:"баня"};
-const EXT_RU = {indoor_pool:"крытый бассейн",outdoor_pool:"открытый бассейн",heated_pool:"тёплый бассейн",jacuzzi:"джакузи",cold_plunge:"холодная купель",ice_bath:"ледяная ванна",sea_view:"вид на море",beach_access:"выход к пляжу",gym:"зал",massage:"массаж",relax_room:"зона отдыха"};
+const kico=(k,cls)=>`<svg class="ki ${cls||""}" viewBox="0 0 24 24" aria-hidden="true" style="color:${KCOL[k]}"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
+const pinIco=k=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
+// UI icon set: 24 grid, 2px round strokes, same family as the type glyphs (chevrons, close, route, phone, share, globe, external, sort, map, list, check, flag, thumb, star, sliders)
+const ICO={cl:"M15 18l-6-6 6-6",cr:"M9 18l6-6-6-6",cd:"M6 9l6 6 6-6",cu:"M18 15l-6-6-6 6",x:"M18 6 6 18M6 6l12 12",nav:"M3 11l19-9-9 19-2-8z",
+  phone:"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z",
+  share:"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13",globe:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
+  ext:"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",sort:"m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16",map:"M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zM8 2v16M16 6v16",list:"M4 6h16M4 12h16M4 18h16",
+  check:"M20 6 9 17l-5-5",flag:"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7",thumb:"M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3",
+  star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",sliders:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"};
+const ico=(k,cls)=>`<svg class="ic${cls?" "+cls:""}" viewBox="0 0 24 24" aria-hidden="true"><path ${k==="star"?'fill="currentColor" stroke="none"':'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'} d="${ICO[k]}"/></svg>`;
 function amen(p,LG){ const A=I18N[LG||LANG]._am; const ex=new Set(p.extras||[]); const o=[];
   const sts=new Set(p.sauna_types||[]); if(sts.has("hammam")) sts.delete("steam"); // steam room and hammam are the same facility, show it once
   ["sauna","finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if(sts.has(s)) o.push(A[s]||I18N.ru._am[s]); });
@@ -710,12 +755,16 @@ function applyStatic(){ document.documentElement.lang=LANG; document.title=t("ti
   document.querySelectorAll("[data-th]").forEach(e=>e.innerHTML=t(e.dataset.th));
   document.querySelectorAll("[data-ta]").forEach(e=>e.setAttribute("aria-label",t(e.dataset.ta)));
   document.querySelectorAll("[data-tp]").forEach(e=>{e.placeholder=t(e.dataset.tp); e.setAttribute("aria-label",t(e.dataset.tp));});
-  document.querySelectorAll("#langsw button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===LANG)));
+  document.getElementById("langsw").innerHTML=ico("globe","ic-s")+`<span>${LANG.toUpperCase()}</span>`+ico("cd","ic-s");
+  document.getElementById("mapcue").innerHTML=ico("map","ic-s")+esc(t("openmap"));
+  document.getElementById("mapfull-x").innerHTML=ico("list","ic-s")+esc(t("list"));
+  document.getElementById("mapbtn").innerHTML=ico("map","ic-s")+esc(t("map"));
 }
 applyStatic(); drawChips();
-document.getElementById("langsw").addEventListener("click",e=>{ const b=e.target.closest("button[data-l]"); if(!b||b.dataset.l===LANG) return; LANG=b.dataset.l; lsSet("sauna-lang",LANG);
+function setLang(l){ if(!I18N[l]||l===LANG) return; LANG=l; lsSet("sauna-lang",LANG);
   try{ const u=new URL(location.href); u.searchParams.set("lang",LANG); history.replaceState(history.state,"",u); }catch(_){}
-  applyStatic(); drawChips(); map.closePopup(); hpop.hidden=true; drawFoot(); renderHead(); render(true); });
+  applyStatic(); drawChips(); map.closePopup(); closePreview(); hpop.hidden=true; drawFoot(); renderHead(); render(true); }
+function showLang(btn){ popShow(btn,`<div class="hpt">${esc(t("lang"))}</div><div class="menu">${Object.keys(LANGN).map(l=>`<button type="button" class="mi" data-l="${l}"${l===LANG?' aria-current="true"':""}>${LANGN[l]}${l===LANG?ico("check","ic-s mi-c"):""}</button>`).join("")}</div>`,{label:t("lang")}); }
 
 const qEl=document.getElementById("q"); let qTimer=0;
 const applyQ=()=>{ clearTimeout(qTimer); st.q=norm(qEl.value.trim()); st.qt=st.q.split(/\s+/).filter(Boolean); render(); };
@@ -740,8 +789,8 @@ function updateFtoggle(){ const nArea=st.area.size+st.muni.size; const nMore=st.
   const nAll=nArea+st.kind.size+st.access.size+st.ext.size+st.rate.size+nMore+(st.rad?1:0);
   const badge=n=>n?`<b class="fcnt">${n}</b>`:"";
   const n=isPhone()?nAll:nMore; const lab=isPhone()?t("filters"):t("morefilt");
-  ft.innerHTML=esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
-  const mf=document.getElementById("mapfilt"); mf.innerHTML=esc(t("filters"))+badge(nAll); mf.classList.toggle("on",nAll>0); mf.setAttribute("aria-label",nAll?t("filt_n",nAll):t("filters"));
+  ft.innerHTML=(isPhone()?ico("sliders","ic-s"):"")+esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
+  const mf=document.getElementById("mapfilt"); mf.innerHTML=ico("sliders","ic-s")+esc(t("filters"))+badge(nAll); mf.classList.toggle("on",nAll>0); mf.setAttribute("aria-label",nAll?t("filt_n",nAll):t("filters"));
   const an=document.getElementById("area-n"); an.hidden=!nArea; an.textContent=nArea; document.getElementById("area-sum").classList.toggle("on",nArea>0); if(nArea) document.getElementById("area-d").open=true;
   document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,P.length); document.getElementById("reset2").hidden=!(nAll||st.q);
   document.getElementById("fdone").textContent=t("showres_n",LIST.length); }
@@ -753,7 +802,7 @@ function renderHead(){
   const ae=document.activeElement; const keep=ae&&ae.closest&&ae.closest("#thead")?ae.dataset.s:null;
   thead.innerHTML=COLS.map(c=>{ const s=c.sort; const on=s&&s===st.sort;
     if(!s) return `<th class="nosort ${c.cls}" scope="col">${esc(t(c.t))}</th>`;
-    return `<th class="${c.cls}" scope="col"${on?` aria-sort="${st.dir>0?"ascending":"descending"}"`:""}><button type="button" data-s="${s}">${esc(t(c.t))}</button></th>`; }).join("");
+    return `<th class="${c.cls}" scope="col"${on?` aria-sort="${st.dir>0?"ascending":"descending"}"`:""}><button type="button" data-s="${s}">${esc(t(c.t))}${on?ico(st.dir>0?"cu":"cd","ic-s"):""}</button></th>`; }).join("");
   if(keep){ const b=thead.querySelector(`button[data-s="${keep}"]`); if(b) b.focus(); }
 }
 thead.addEventListener("click",e=>{const b=e.target.closest("button[data-s]"); if(!b) return; const k=b.dataset.s; setSort(k, st.sort===k?-st.dir:DEFDIR[k]);});
@@ -791,11 +840,23 @@ P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=KINDS[kg(p)][1];
   const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}">${pinIco(kg(p))}</div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name,keyboard:false});
-  m.bindPopup(()=>popup(p),{maxWidth:320,minWidth:280,autoPanPaddingTopLeft:[20,20],autoPanPaddingBottomRight:[20,72]});
+  m.on("click",()=>openPin(p._i));
   markers[p._i]=m;
 });
-map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
-  const sl=el.querySelector(".pp-sl"); if(sl){ L.DomEvent.disableClickPropagation(sl.parentElement); L.DomEvent.disableScrollPropagation(sl.parentElement);
+// a pin opens the place preview: a Leaflet popup on desktop, a bottom sheet over the map on phones (map stays interactive, a tap on it closes the sheet)
+const PV={maxWidth:320,minWidth:280,autoPanPaddingTopLeft:[20,20],autoPanPaddingBottomRight:[20,72],closeButton:false};
+function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; if(isPhone()){ openPreview(i); return; } closePreview();
+  L.popup(Object.assign({offset:[0,off==null?-24:off]},PV)).setLatLng(m.getLatLng()).setContent(previewHTML(p)).openOn(map); }
+const ps=document.getElementById("ps");
+function setSel(i){ document.querySelectorAll(".mk.sel").forEach(e=>e.classList.remove("sel")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("sel"); } }
+function openPreview(i){ const p=P[i]; ps.innerHTML=`<div class="ps-grab" aria-hidden="true"></div>`+previewHTML(p); ps.setAttribute("aria-label",pname(p)); ps.hidden=false; ps.scrollTop=0; document.documentElement.classList.add("psopen"); wirePreview(ps); setSel(i);
+  const m=markers[i]; if(m) requestAnimationFrame(()=>{ try{ map.panInside(m.getLatLng(),{paddingTopLeft:[24,24],paddingBottomRight:[24,ps.offsetHeight+48]}); }catch(_){} }); }
+function closePreview(){ if(ps.hidden) return; ps.hidden=true; ps.innerHTML=""; document.documentElement.classList.remove("psopen"); setSel(null); }
+map.on("click",()=>closePreview());
+(function(){ let y0=null,x0=null; ps.addEventListener("touchstart",e=>{ y0=e.touches[0].clientY; x0=e.touches[0].clientX; },{passive:true});
+  ps.addEventListener("touchend",e=>{ if(y0==null) return; const dy=e.changedTouches[0].clientY-y0, dx=Math.abs(e.changedTouches[0].clientX-x0); y0=null; if(dy>60&&dx<40&&ps.scrollTop<=0&&!e.target.closest(".pp-sl")) closePreview(); },{passive:true}); })();
+function wirePreview(el){
+  const sl=el.querySelector(".pp-sl"); if(sl){ if(el!==ps){ L.DomEvent.disableClickPropagation(sl.parentElement); L.DomEvent.disableScrollPropagation(sl.parentElement); }
     ["touchstart","pointerdown","mousedown"].forEach(t=>sl.addEventListener(t,ev=>ev.stopPropagation()));
     // a swipe inside the photo strip must not drag the map underneath
     sl.addEventListener("touchstart",()=>{ if(map.dragging) map.dragging.disable(); },{passive:true});
@@ -805,12 +866,12 @@ map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
     const go=d=>sl.scrollTo({left:((cur()+d+n)%n)*sl.clientWidth,behavior:"smooth"});
     const l=el.querySelector(".pp-nav.l"), r=el.querySelector(".pp-nav.r"); if(l) l.onclick=ev=>{ev.stopPropagation();go(-1);}; if(r) r.onclick=ev=>{ev.stopPropagation();go(1);}; }
   el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
-  const mb=el.querySelector(".pp-more"); if(mb) mb.onclick=()=>openRow(+mb.dataset.i,true);
-});
+  const mb=el.querySelector("[data-more]"); if(mb) mb.onclick=()=>{ const i=+mb.dataset.more; closePreview(); openRow(i,true); };
+  const xb=el.querySelector("[data-pvx]"); if(xb) xb.onclick=ev=>{ ev.stopPropagation(); if(el===ps) closePreview(); else map.closePopup(); };
+}
+map.on("popupopen",e=>{ const el=e.popup.getElement(); if(el) wirePreview(el); });
 
 function dayTxt(p){const a=p.access||{};
-  if(p.status==="soon") return t("soon");
-  if(p.status==="closed") return t("closed");
   if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?" "+t("for_min",a.session_minutes):""}`;
   if(p._grp&&!p._day) return t("acc_rent");
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return t("guests");
@@ -821,21 +882,25 @@ function dayTxt(p){const a=p.access||{};
   return "";
 }
 function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return t("per_month",eur(a.membership_month_eur)); if(p._mem) return t("mem_req"); if(a.membership===false) return t("no"); return null;}
-function popup(p){const a=p.access||{}; const k=KINDS[kg(p)]; const r=p.ratings||{};
+// one meta line: "● Type 4★ · Town [· km]" (stars pulled out of the subtitle), shared by rows and previews
+function metaLine(p){ const k=KINDS[kg(p)]; const stars=starsOf(p); const town=muniName(p.muni)||areaName(p.area)||"";
+  return `<div class="sub meta"><span class="m-in mk-k">${kico(k[2])}${esc(k[0])}${stars?" "+stars:""} ·</span><span class="mk-t">${esc(town)}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</span></div>`; }
+// one price line for previews: "от €37 · 90 мин", "€31,12 · в пакете", or the plain access text
+function priceLine(p){ const h=p.hl||{}; const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
+  if(h.visit_from_eur!=null) return [(vis.length>1?t("from")+" ":"")+eur(h.visit_from_eur), fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ");
+  if(h.pack_session_from_eur!=null) return `${eur(h.pack_session_from_eur)} · ${t("in_pack")}`;
+  if(h.treatment_from_eur!=null) return `${eur(h.treatment_from_eur)} · ${t("w_trt")}`;
+  if(h.group_from_eur!=null) return `${eur(h.group_from_eur)} · ${t("w_group")}`;
+  return dayTxt(p); }
+// place preview (desktop popup and phone sheet): photos, name + share, meta, rating, price, hours, amenities, Details / Directions. No labels: the values read on their own.
+function previewHTML(p){
   const ph=p._ph.slice(0,8).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("openphoto"))}"><img src="${esc(midSrc(x))}" data-full="${esc(x.u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("");
-  const rows=[];
-  const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
-  const am=amen(p); if(am.length) rows.push(`<span>${esc(t("p_has"))}</span><span>${esc(am.join(", "))}</span>`);
-  if(p.hl&&(p.hl.visit_from_eur!=null||p.hl.month_from_eur!=null||p.hl.treatment_from_eur!=null||p.hl.group_from_eur!=null||p.hl.pack_session_from_eur!=null)){ rows.push(...popPrices(p)); } else { const dt=dayTxt(p); if(dt) add(t("p_day"), esc(dt) + (p.confidence==="low"?` <span class="warn-i" title="${esc(t("unconf"))}">?</span>`:""));
-  add(t("p_mem"), esc(memTxt(p)||"")); }
-  add(t("p_hours"), hoursCell(p));
-  add(t("p_rate"), rb(r,true));
-  const s=starsOf(p);
-  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">‹</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">›</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}</div>`:""}<div class="pp-b"><b class="t">${esc(pname(p))} <button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></b>${p._weak?`<div class="wnote">${esc(t("wt_"+p._weak+"_h"))}</div>`:""}<div class="sub">${kico(kg(p))}${esc(k[0])}${s?" "+s:""} · ${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button type="button" class="pp-more" data-i="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("route"))}</a>`:""}</div></div>`;
+  const x=`<button type="button" class="pv-x" data-pvx aria-label="${esc(t("close"))}">${ico("x")}</button>`;
+  const am=amen(p), pl=priceLine(p), rbm=rb(p.ratings), hc=hoursCell(p);
+  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">${ico("cl")}</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">${ico("cr")}</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}${x}</div>`:x}<div class="pp-b${ph?"":" nop"}"><div class="pv-h"><b class="t">${esc(pname(p))}</b><button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("share"))}" aria-label="${esc(t("share"))}">${ico("share")}</button></div>${p._weak?`<div class="wnote">${esc(p._weak==="status"?cap(t(p.status)):t("wt_"+p._weak+"_h"))}</div>`:""}${metaLine(p)}${rbm?`<div class="pv-l rbm">${rbm}</div>`:""}${pl?`<div class="pv-l num${/^(€|\D+ €)/.test(pl)?" pv-p":""}">${esc(pl)}${warn(p)}</div>`:""}${memLine(p)}${hc?`<div class="pv-l">${hc}</div>`:""}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}<div class="acts pv-acts"><button type="button" class="act prim" data-more="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}${esc(t("route"))}</button>`:""}</div></div>`;
 }
 
 // cells
-const NA = ``;
 const TZ="Europe/Lisbon"; const DN=()=>I18N[LANG]._dn; const DL=()=>I18N[LANG]._dl;
 function nowL(tz){ const parts=new Intl.DateTimeFormat("en-GB",{timeZone:tz||TZ,weekday:"short",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).formatToParts(new Date()); const g=t=>parts.find(x=>x.type===t).value; return {d:["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].indexOf(g("weekday")), m:(+g("hour"))*60+(+g("minute"))}; }
 let NOWC={}; const nowFor=tz=>NOWC[tz]||(NOWC[tz]=nowL(tz)); let NOW=nowFor(TZ);
@@ -852,29 +917,28 @@ function todayBar(wk){ const x=wk[NOW.d]; const pct=v=>Math.max(0,Math.min(100,v
   return `<span class="tb" aria-hidden="true">${seg}<i class="tb-now" style="left:${pct(NOW.m)}%"></i></span>`; }
 const live=p=>!(p.status==="soon"||p.status==="closed");
 function statusLine(p){ if(!live(p)) return ""; useNow(p); const s=openState(p.wk); if(!s) return ""; return `<div class="hs ${s.st}"><i class="hdot"></i><b>${esc(s.lab)}</b>${s.tm?` <span>${esc(s.tm)}</span>`:""}</div>`; }
-function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ const sm=p.sch['summary_'+LANG]||p.sch.summary_en||''; return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))} ▾</span></div></button>`; }
-  if(p.wk){ const x=p.wk[NOW.d]; const today=Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:(x==="x"?t("dayoff"):""); return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${live(p)?statusLine(p)+todayBar(p.wk):""}${today?`<div class="tdy">${esc(today)} · <span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`:`<div class="tdy"><span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`}</button>`; } const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
+function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ const sm=p.sch['summary_'+LANG]||p.sch.summary_en||''; return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))}${ico("cd","ic-s")}</span></div></button>`; }
+  if(p.wk){ const x=p.wk[NOW.d]; const today=Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:(x==="x"?t("dayoff"):""); const wkm=`<span class="wkmore">${esc(t("weekshort"))}${ico("cd","ic-s")}</span>`; return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${live(p)?statusLine(p)+todayBar(p.wk):""}${today?`<div class="tdy">${esc(today)} · ${wkm}</div>`:`<div class="tdy">${wkm}</div>`}</button>`; } const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
 function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b); const g=[];
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
   const rng={ru:" по ",en:" to ",pt:" a "}[LANG];
   if(g.length===1&&Array.isArray(g[0].x)) return `<div>${esc({ru:"Ежедневно",en:"Daily",pt:"Todos os dias"}[LANG])} ${fmtT(g[0].x[0])} ${t("to")} ${fmtT(g[0].x[1])}</div>`;
   return `<table class="wkt">${g.map(r=>{ const lab=r.a===r.b?DN()[r.a]:DN()[r.a]+rng+DN()[r.b]; const td=NOW.d>=r.a&&NOW.d<=r.b; return `<tr class="${td?"td":""}"><td>${lab}</td><td>${Array.isArray(r.x)?`${fmtT(r.x[0])} ${t("to")} ${fmtT(r.x[1])}`:r.x==="x"?t("dayoff"):""}</td></tr>`; }).join("")}</table>`; }
-function weekTableOld(wk){ return `<table class="wkt">${wk.map((x,i)=>`<tr class="${i===NOW.d?"td":""}"><td>${DN()[i]}</td><td>${Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:x==="x"?t("dayoff"):""}</td></tr>`).join("")}</table>`; }
 const n1=v=>Number(v).toFixed(1).replace(".",LANG==="en"?".":",");
 const nfmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,LANG==="en"?",":" ");
-function rb(r,compact,nocap){ if(!r) return ""; const o=[];
+// rating: "★ 4,9  1 877 · Google" (Booking is on a 10-point scale and gets no star); fewer than 50 ratings is flagged in the caption
+// rating badges (Booking style): green "4,9" + star + count + "Google", blue "9,5" + count + "Booking"; grey + "мало оценок" under 50 ratings.
+// compact (phone row with both platforms): badge + count only, so both sit on one line; the colour names the platform (explained in the footer)
+function rb(r,compact){ if(!r) return ""; const o=[];
   if(r.google){ const n=r.google_reviews; const few=n!=null&&n<50; const c=few||n==null?"g3":r.google>=4.6?"g1":r.google>=4.2?"g2":"g3";
-    o.push(`<span class="rbw"><span class="rb ${c}"><b>${n1(r.google)}</b><span class="st">★</span>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${nocap?(few?`<span class="rcap">${esc(t("few"))}</span>`:""):`<span class="rcap">Google${few?" · "+t("few"):""}</span>`}</span>`); }
-  if(r.booking){ const n=r.booking_reviews; o.push(`<span class="rbw"><span class="rb bk"><b>${n1(r.booking)}</b>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${nocap?"":`<span class="rcap">Booking</span>`}</span>`); }
+    o.push(`<span class="rbw"><span class="rb ${c}"><b>${n1(r.google)}</b>${ico("star","st")}${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${compact?"":`<span class="rcap">Google${few?" · "+esc(t("few")):""}</span>`}</span>`); }
+  if(r.booking){ const n=r.booking_reviews; o.push(`<span class="rbw"><span class="rb bk"><b>${n1(r.booking)}</b>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${compact?"":`<span class="rcap">Booking</span>`}</span>`); }
   return o.join(""); }
 const bookUrl=p=>{ const u=(p.access||{}).booking_url||p.booking_url; return safeUrl(u); };
-const bookBtn=(p,cls)=>{ const u=bookUrl(p); return u?`<a class="${cls||"bookb"}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""; };
 const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
 function photoCell(p){ if(!p._ph.length) return "";
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCellOld(p){const a=p.access||{}; const w=warn(p);
-  if(p.status==="soon") return `<span class="dim">${esc(t("soon"))}</span>`;
-  if(p.status==="closed") return `<span class="dim">${esc(t("closed"))}</span>`;
   if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${t("min",a.session_minutes)}</div>`:""}`;
   if(p._grp&&!p._day) return `<span class="dim">${esc(t("acc_rent"))}</span>${w}`;
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="dim">${esc(t("guests"))}</span>`;
@@ -883,9 +947,6 @@ function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(p._mem&&a.day_pass!==true) return `<span class="dim">${esc(t("only_mem"))}</span>${w}`;
   return "";
 }
-const sessCell = a => a.session_minutes?`<span class="num">${t("min",a.session_minutes)}</span>`:NA;
-function memCellOld(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim">${t("per_mo")}</span>`; if(p._mem) return `<span class="dim">${esc(t("onreq"))}</span>`; if(a.membership===false) return `<span class="dim">${esc(t("no"))}</span>`; return NA;}
-const bookCell = (a,p) => {const b=BOOK[a.booking]; return (b?`<span class="pill ${b[1]}">${b[0]}</span>`:"")+(p?bookBtn(p):"");};
 function rateCell(r){ const h=rb(r); return h?`<div class="rbs">${h}</div>`:""; }
 const kindCell = p => {const k=KINDS[kg(p)]; const s=starsOf(p); return `<span class="kind">${kico(k[2])}${esc(k[0])}${s?" "+s:""}</span>${p.beach?`<div class="sub">${esc(t("beach"))}</div>`:""}`;};
 
@@ -900,15 +961,12 @@ const offLabel=o=>o["label_"+LANG]||o.label_en||o.label_ru||"";
 const pr=o=>o.price_eur==null?"":(o.price_max_eur?`${eur(o.price_eur)} ${t("rng")} ${eur(o.price_max_eur).replace("€","")}`:eur(o.price_eur));
 function offGroup(o){ if(o.for==="guests") return "guest"; if(o.kind==="membership") return "mem"; if(o.kind==="pack"||o.kind==="pass") return "pack"; if(o.kind==="treatment") return "trt"; if(o.kind==="private"&&o.per==="group") return "group"; if(o.kind==="trial") return "trial"; return "visit"; }
 function priceCell(p){ const h=p.hl||{}; const w=warn(p); const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
-  if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
-  if(p.status==="closed") return `<span class="pill p-no">${esc(t("closed"))}</span>`;
   if(h.visit_from_eur!=null){ const sub=[fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ");
     return `<span class="price num">${vis.length>1?esc(t("from"))+" ":""}${eur(h.visit_from_eur)}</span>${w}${sub?`<div class="sub num">${esc(sub)}</div>`:""}`; }
   if(h.pack_session_from_eur!=null) return `<span class="price num">${eur(h.pack_session_from_eur)}</span>${w}<div class="sub">${esc(t("in_pack"))}</div>`;
   if(h.treatment_from_eur!=null) return `<span class="price num dim">${eur(h.treatment_from_eur)}</span>${w}<div class="sub">${esc(t("w_trt"))}</div>`;
   if(h.group_from_eur!=null) return `<span class="price num">${eur(h.group_from_eur)}</span>${w}<div class="sub">${esc(t("w_group"))}</div>`;
   return dayCellOld(p); }
-function memCellNew(p){ const h=p.hl||{}; if(h.month_from_eur!=null) return `<span class="num">${eur(h.month_from_eur)}</span><span class="dim">${perSfx(h.month_per||"month")}</span>${h.joining_fee_eur?`<div class="sub num">${esc(t("join",eur(h.joining_fee_eur)))}</div>`:""}`; if((p.of||[]).some(o=>o.kind==="membership")) return `<span class="dim">${esc(t("w_mem"))}</span>`; return memCellOld(p); }
 function offLine(o){ const g=offGroup(o); let price=pr(o), extra="";
   if(g==="pack"&&o.price_eur!=null&&o.sessions){ price=eur(o.price_eur); extra=t("per_session",eur(o.per_session_eur||o.price_eur/o.sessions)); }
   if(g==="group"&&o.price_eur!=null){ extra=o.capacity?t("grp_cap",o.capacity,eur(o.per_person_from_eur||Math.round(o.price_eur/o.capacity))):t("w_group"); }
@@ -923,13 +981,6 @@ function pricesBlock(p){ const of=p.of||[]; if(!of.length) return ""; const G={v
   let h=""; ["visit","pack","mem","trt","group","guest"].forEach(k=>{ if(G[k].length) h+=`<div class="ofg"><div class="ofgt">${esc(t(T[k]))}</div>${G[k].map(offLine).join("")}</div>`; });
   if(G.trial.length) h+=G.trial.map(offLine).join("");
   return `<div class="prices">${h}</div>`; }
-function popPrices(p){ const h=p.hl||{}; const rows=[]; const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
-  if(h.visit_from_eur!=null) add(t("p_day"), esc([eur(h.visit_from_eur), fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ")));
-  else if(h.treatment_from_eur!=null) add(t("p_day"), `${eur(h.treatment_from_eur)} · ${esc(t("w_trt"))}`);
-  else if(h.group_from_eur!=null) add(t("p_day"), `${eur(h.group_from_eur)} · ${esc(t("w_group"))}`);
-  if(h.pack_session_from_eur!=null) add(t("p_pack"), t("per_session",eur(h.pack_session_from_eur)));
-  if(h.month_from_eur!=null) add(t("p_mem"), `${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}${h.joining_fee_eur?" · "+t("join",eur(h.joining_fee_eur)):""}`);
-  return rows; }
 function detail(p){const a=p.access||{};
   const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
   const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
@@ -938,18 +989,20 @@ function detail(p){const a=p.access||{};
   const seaT=p.sea_distance_m!=null?`${t("d_sea").toLowerCase()} ≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" "+t("km"):p.sea_distance_m+" "+t("m")}`:"";
   const whereT=[seaT, p.reg?regName(p.reg):"", ME&&p._d<900?`${t("d_fromme").toLowerCase()} ≈ ${kmTxt(p._d)} ${t("km")}`:""].filter(Boolean).join(" · ");
   add(t("d_addr"), `${esc(p.address||"")} ${link(maps,t("d_gmaps"))}${whereT?`<div class="sub">${esc(whereT)}</div>`:""}`);
-  if(!p.of){ if(tr(p,"day_note")) add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
-  if(tr(p,"mem_note")||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". "))); }
+  // the status pill by the name already says "not open yet" / "temporarily closed": a note that starts with that sentence loses it here
+  const dn=noStatus(p,tr(p,"day_note")), mn=noStatus(p,tr(p,"mem_note")), notes=noStatus(p,tr(p,"notes"));
+  if(!p.of){ if(dn) add(t("d_day"), esc([cap(dayTxt(p)), cap(dn)].filter(Boolean).join(". ")));
+  if(mn||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(mn)].filter(Boolean).join(". "))); }
   add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):""].filter(Boolean).join(", "));
   add(t("d_hours"), p.wk?(statusLine(p)+weekTable(p.wk)):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
   const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
   const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
   add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
-  if(p.ratings&&p.ratings.booking&&p.ratings.google) add(t("d_rate"), `${rb({booking:p.ratings.booking,booking_reviews:p.ratings.booking_reviews},true,true)}<div class="sub">Booking${p.ratings.booking_reviews?`, ${nfmt(p.ratings.booking_reviews)} ${t("d_ratings")}`:""}</div>`);
+  if(p.ratings&&p.ratings.booking&&p.ratings.google) add(t("d_rate"), rb({booking:p.ratings.booking,booking_reviews:p.ratings.booking_reviews}));
   if(LANG==="ru") add(t("d_lists"), esc((p.lists||[]).join(", ")));
   add(t("d_rules"), esc([p.min_age?t("from_age",p.min_age):"", cap(tr(p,"rules")||"")].filter(Boolean).join(". ")));
   const fb=p.fb||{}; const vis=[]; if(fb.ok>0) vis.push(t("v_ok",fb.ok)); if(fb.n>=3&&fb.rating!=null) vis.push(t("v_rate",n1(fb.rating),fb.n));
-  if(vis.length) add(t("d_visitors"), `<span class="dim">${esc(vis.join(" · "))}</span>`);
+  if(vis.length) add(t("d_visitors"), `<span class="dim">${ico("check","ic-s")}${esc(vis.join(" · "))}</span>`);
   const host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return u; } };
   // sources: one chip per unique domain
   const seen=new Set(); const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).filter(u=>{ const h=host(u); if(seen.has(h)) return false; seen.add(h); return true; }).slice(0,4).map(u=>`<a class="sd" href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`).join(" ");
@@ -958,11 +1011,15 @@ function detail(p){const a=p.access||{};
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
   // every action in one place: Book, directions, call, website (domain), share, show on map (phone only)
   const bu=bookUrl(p); const tel=p.phone?String(p.phone).replace(/[^\d+]/g,""):""; const site=safeUrl(p.website)||(/^http:\/\//i.test(p.website||"")?p.website:null);
-  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${dest?`<details class="rt"><summary class="act">${esc(t("route"))}&nbsp;▾</summary><div class="rtm"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Google Maps</a><a target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a></div></details>`:""}${tel?`<a class="act" href="tel:${esc(tel)}">${esc(t("call"))}</a>`:""}${site?`<a class="act" href="${esc(site)}" target="_blank" rel="noopener">${esc(host(site))}</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("share"))}</button>${p.lat!=null?`<button type="button" class="act m-only" data-showmap="${p._i}">${esc(t("showmap"))}</button>`:""}</div>`;
+  // phone: icon tiles in one row (the website tile says "Website", the domain shows on desktop)
+  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${dest?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}<span class="al">${esc(t("route"))}</span></button>`:""}${tel?`<a class="act" href="tel:${esc(tel)}">${ico("phone")}<span class="al">${esc(t("call"))}</span></a>`:""}${site?`<a class="act" href="${esc(site)}" target="_blank" rel="noopener">${ico("globe")}<span class="al hide-m">${esc(host(site))}</span><span class="al m-only">${esc(t("site"))}</span></a>`:""}<button type="button" class="act" data-share="${p._i}">${ico("share")}<span class="al">${esc(t("share"))}</span></button>${p.lat!=null?`<button type="button" class="act m-only" data-showmap="${p._i}">${ico("map")}<span class="al">${esc(t("showmap"))}</span></button>`:""}</div>`;
   const ov=p.owner&&p.owner.verified_on;
   const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:`${esc(t("checked",fmtDate(p.verified_on)))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${esc(t("sources"))}: ${src}`:""}`;
-  return `${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">✓ ${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
+  return `${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
 }
+// leading "Ещё не открыто." / "Not open yet." / "Temporarily closed." (any of the three languages) is dropped from a text when the status pill is shown
+const STATUS_RX=new RegExp("^\\s*(?:"+["ru","en","pt"].flatMap(L=>[I18N[L].soon,I18N[L].closed]).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\s*[.;:,]?\\s*","i");
+function noStatus(p,s){ s=s||""; return p._weak==="status"?s.replace(STATUS_RX,""):s; }
 
 function filtered(){
   const coll=st.sort==="name"?new Intl.Collator(LANG,{ignorePunctuation:true,sensitivity:"base"}):null;
@@ -1011,23 +1068,19 @@ function filtered(){
 const tbody=document.getElementById("tbody");
 const KNOWN_HRS=P.filter(p=>p.wk||p.sch).length;
 const PAGE=40; let LIST=[], shown=0, lastAreaKey="", lastMk="";
-const CPL_SVG=`<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg>`;
-const seaTxt=m=>m>=1000?dec(Math.round(m/100)/10)+" "+t("km"):m+" "+t("m");
-function sortVal(p){ if(st.sort==="session"&&p._ses) return `<div class="sub sv">${esc(t("sv_session",fmtMinU(p._ses)))}</div>`;
-  if(st.sort==="sea"&&p.sea_distance_m!=null) return `<div class="sub sv">${esc(t("sv_sea",seaTxt(p.sea_distance_m)))}</div>`; return ""; }
 function memLine(p){ const h=p.hl||{}, a=p.access||{}; let v=null;
   if(h.month_from_eur!=null) v=`${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}`; else if(!p.hl&&a.membership_month_eur!=null) v=`${eur(a.membership_month_eur)}${t("per_mo")}`;
   return v?`<div class="sub mline">${esc(t("mx_mem"))} <span class="num">${esc(v)}</span></div>`:""; }
-function rowHTML(p){ const a=p.access||{}; const am=amen(p); const k=KINDS[kg(p)]; const open=st.open===p._i; const ph=p._ph.length>0;
-  const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(t("wt_"+p._weak))}</span>`:"";
-  const rbm=rb(p.ratings);
-  // one meta line: "● Type 4★ · Town" (stars pulled out of the subtitle; a subtitle that only repeats the town is dropped)
-  const sub0=tr(p,"subtitle")||""; const stars=starsOf(p); const town=muniName(p.muni)||areaName(p.area)||"";
+function rowHTML(p){ const am=amen(p); const open=st.open===p._i; const ph=p._ph.length>0;
+  // status (not open yet / temporarily closed) is shown once, as the pill by the name
+  const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(p._weak==="status"?t(p.status):t("wt_"+p._weak))}</span>`:"";
+  const rbm=rb(p.ratings,!!(p.ratings&&p.ratings.google&&p.ratings.booking));
+  // a subtitle that only repeats the town (or just the hotel stars, which the meta line shows) is dropped
+  const sub0=tr(p,"subtitle")||""; const town=muniName(p.muni)||areaName(p.area)||"";
   let rest=sub0.replace(/\d★\s*(·\s*)?/,"").replace(/\s*·\s*$/,"").trim(); if(rest&&(rest===town||rest===p.muni)) rest="";
-  const meta=`<div class="sub meta"><span class="m-in mk-k">${kico(k[2])}${esc(k[0])}${stars?" "+stars:""} ·</span><span class="mk-t">${esc(town)}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</span></div>`;
   // phone-only line (desktop has rating and hours columns): rating with platform caption + open/closed status; no buttons in the collapsed row
   const rline=(rbm||statusLine(p))?`<div class="rbm">${rbm}${statusLine(p)}</div>`:"";
-  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}">${ph?`<td>${photoCell(p)}</td>`:""}<td class="nm"${ph?"":` colspan="2"`}><div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${meta}${sortVal(p)}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}${rline}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${priceCell(p)}${memLine(p)}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
+  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}">${ph?`<td>${photoCell(p)}</td>`:""}<td class="nm"${ph?"":` colspan="2"`}><div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${metaLine(p)}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}${rline}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${priceCell(p)}${memLine(p)}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
 const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
@@ -1065,22 +1118,22 @@ function openRow(i,fromMap,noMap){
   const r=rowEl(i);
   if(next!=null && r && !document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
   if(next==null && r){ r.classList.remove("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); const d=document.getElementById("det-"+i); if(d) d.remove(); }
-  if(fromMap){ map.closePopup(); if(isFull()){ pendingScroll=i; closeFull(); } scrollToRow(i); }
+  if(fromMap){ map.closePopup(); closePreview(); if(isFull()){ pendingScroll=i; closeFull(); } scrollToRow(i); }
   else if(r&&y0!=null){ const dy=r.getBoundingClientRect().top-y0; if(Math.abs(dy)>1) window.scrollBy(0,dy); }
   setActiveMk(st.open);
   try{ history.replaceState(history.state,"",st.open==null?location.pathname+location.search:"#p-"+P[i].id); }catch(e){}
   if(st.open==null||fromMap||noMap||isPhone()||!markers[i]) return;
   const m=markers[i]; const vis=cluster.getVisibleParent(m);
   // keep the zoom: pan if needed and open the popup in place (also when the pin sits inside a cluster)
-  if(vis===m){ map.panInside(m.getLatLng(),{padding:[80,80]}); m.openPopup(); }
-  else { map.panInside(m.getLatLng(),{padding:[120,120]}); L.popup({maxWidth:320,minWidth:280,autoPanPadding:[20,20],offset:[0,-2]}).setLatLng(m.getLatLng()).setContent(popup(P[i])).openOn(map); }
+  if(vis===m){ map.panInside(m.getLatLng(),{padding:[80,80]}); openPin(i); }
+  else { map.panInside(m.getLatLng(),{padding:[120,120]}); openPin(i,-2); }
 }
-function showOnMap(i){ if(isPhone()) openFull(true); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); },80); }
+function showOnMap(i){ if(isPhone()) openFull(true); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>openPin(i)); },80); }
 function openFull(noFit){ if(isFull()) return; document.documentElement.classList.add("mapfull"); try{history.pushState({mapfull:1},"");}catch(e){} syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); },60); }
-function closeFull(fromPop){ if(!isFull()) return; document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
+function closeFull(fromPop){ if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
 document.getElementById("mapbtn").onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
 window.addEventListener("popstate",()=>{ closeFull(true); if(pendingScroll!=null){ const i=pendingScroll; pendingScroll=null; scrollToRow(i); } });
-const onMQ=()=>{ if(!isPhone()) closeSheet(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
+const onMQ=()=>{ if(!isPhone()) closeSheet(); closePreview(); map.closePopup(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
 try{ matchMedia("(max-width:900px)").addEventListener("change",onMQ); matchMedia("(max-width:600px)").addEventListener("change",()=>render(true)); }catch(e){}
 // hover a row: highlight its pin (desktop)
 tbody.addEventListener("mouseover",e=>{ const r=e.target.closest("tr.row"); const i=r?r.dataset.i:null; if(i===tbody.dataset.hov) return; tbody.dataset.hov=i||"";
@@ -1093,7 +1146,7 @@ function setMe(ll){ ME=ll; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lo
 document.getElementById("near").onclick=()=>{ const b=document.getElementById("near");
   if(!navigator.geolocation){ b.textContent=t("geo_na"); document.getElementById("nearc").hidden=false; return; }
   b.textContent=t("geo_wait");
-  navigator.geolocation.getCurrentPosition(pos=>{ b.textContent=t("geo_ok"); document.getElementById("nearc").hidden=true; setMe([pos.coords.latitude,pos.coords.longitude]); },
+  navigator.geolocation.getCurrentPosition(pos=>{ b.innerHTML=esc(t("geo_ok"))+ico("check","ic-s"); document.getElementById("nearc").hidden=true; setMe([pos.coords.latitude,pos.coords.longitude]); },
     ()=>{ b.textContent=t("geo_no"); document.getElementById("nearc").hidden=false; }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
 document.getElementById("nearc").onclick=()=>{ document.getElementById("nearc").hidden=true; setMe(CASCAIS.slice()); };
 tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
@@ -1108,11 +1161,11 @@ function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].i
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,()=>prompt("Link",u)); else prompt("Link",u); }
 // share: native sheet on phones, copy link elsewhere (one implementation, one toast)
 function shareLink(i,btn){ const p=P[i]; const u=location.origin+location.pathname+"#p-"+p.id; if(navigator.share&&isPhone()){ navigator.share({title:pname(p),url:u}).catch(()=>{}); return; } copyLink(i,btn); }
-document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cpl"); if(b){ e.stopPropagation(); e.preventDefault(); copyLink(+b.dataset.cp,b); } },true);
-// route menu: keep inside the list, close on outside click
-document.addEventListener("toggle",e=>{ const d=e.target; if(!d.classList||!d.classList.contains("rt")||!d.open) return; const m=d.querySelector(".rtm"); m.style.left="0"; m.style.right="auto";
-  const r=m.getBoundingClientRect(), W=document.querySelector(".tablewrap").getBoundingClientRect(); if(r.right>W.right-4){ m.style.left="auto"; m.style.right="0"; } },true);
-document.addEventListener("click",e=>{ document.querySelectorAll("details.rt[open]").forEach(d=>{ if(!d.contains(e.target)) d.open=false; }); });
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cpl"); if(b){ e.stopPropagation(); e.preventDefault(); shareLink(+b.dataset.cp,b); } },true);
+// route menu (Google Maps / Apple Maps / Waze): anchored popover on desktop, bottom sheet on phones
+function showRoute(btn){ const p=P[+btn.dataset.route]; if(!p||p.lat==null) return; const dest=`${p.lat},${p.lon}`;
+  const mi=(h,l)=>`<a class="mi" target="_blank" rel="noopener" href="${h}">${l}${ico("ext","ic-s mi-c")}</a>`;
+  popShow(btn,`<div class="hpt">${esc(t("route"))} · ${esc(pname(p))}</div><div class="menu">${mi(`https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}`,"Google Maps")}${mi(`https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}`,esc(t("r_apple")))}${mi(`https://waze.com/ul?ll=${dest}&navigate=yes`,"Waze")}</div>`,{label:t("route")+" · "+pname(p)}); }
 // filters over full-screen map
 // bottom sheet: filters apply live; closes via "Show", the backdrop, the ✕, a swipe down on the handle or Esc
 const isSheet=()=>document.documentElement.classList.contains("fpanel");
@@ -1129,19 +1182,23 @@ document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&isSheet()&&lb.hidd
 const hpop=document.getElementById("hpop"); let popOpener=null;
 function placePop(btn){ hpop.hidden=false; if(isPhone()){ hpop.style.left=""; hpop.style.top=""; return; } const r=btn.getBoundingClientRect(); const w=hpop.offsetWidth, h=hpop.offsetHeight; let x=Math.min(r.left, innerWidth-w-10); let y=r.bottom+6; if(y+h>innerHeight-10) y=Math.max(10,r.top-h-6); hpop.style.left=Math.max(10,x)+"px"; hpop.style.top=y+"px"; }
 function popShow(btn,html,o){ o=o||{}; popOpener=btn; hpop.classList.toggle("wide",!!o.wide); hpop.dataset.keep=o.keep?"1":"";
-  hpop.innerHTML=`<button type="button" class="hpop-x" aria-label="${esc(t("close"))}">×</button>`+html; hpop.setAttribute("aria-label",o.label||""); placePop(btn); }
-function closePop(refocus){ if(hpop.hidden) return; hpop.hidden=true; hpop.dataset.for=""; if(refocus&&popOpener&&popOpener.focus) popOpener.focus(); }
-hpop.addEventListener("click",e=>{ if(e.target.closest(".hpop-x")) closePop(true); });
+  hpop.innerHTML=`<button type="button" class="hpop-x" aria-label="${esc(t("close"))}">${ico("x")}</button>`+html; hpop.setAttribute("aria-label",o.label||""); placePop(btn); if(btn&&btn.id==="langsw") btn.setAttribute("aria-expanded","true"); }
+function closePop(refocus){ if(hpop.hidden) return; hpop.hidden=true; hpop.dataset.for=""; document.getElementById("langsw").setAttribute("aria-expanded","false"); if(refocus&&popOpener&&popOpener.focus) popOpener.focus(); }
+hpop.addEventListener("click",e=>{ if(e.target.closest(".hpop-x")) return closePop(true); const l=e.target.closest("[data-l]"); if(l){ closePop(); setLang(l.dataset.l); return; } if(e.target.closest("a.mi")) closePop(); });
 function showSched(btn){ const p=P[+btn.dataset.sch]; const c=p&&p.sch; if(!c) return; const dk=["mon","tue","wed","thu","fri","sat","sun"];
   const wk=c.week||c.windows; let grid="";
   if(wk){ grid=`<div class="sgrid">${dk.map((k,i)=>wk[k]&&wk[k].length?`<span>${DN()[i]}</span><span class="tm">${wk[k].map(x=>`<i>${esc(String(x).replace("-"," "+t("to")+" "))}</i>`).join("")}</span>`:"").join("")}</div>`; if(c.windows&&!c.week) grid=`<div class="sup">${esc(t("sch_win"))}</div>`+grid; }
   const fm=(c.formats||[]).map(f=>`<div><span>${esc(f["name_"+LANG]||f.name_en||f.name_ru||"")}${f.minutes?" · "+fmtMinU(f.minutes):""}</span><b class="num">${f.price_eur!=null?eur(f.price_eur):""}</b></div>`).join("");
   const up=(c.upcoming||[]).slice(0,5).map(u=>{ const d=new Date(u.date+"T12:00:00"); const ds=d.toLocaleDateString(LANG==="pt"?"pt-PT":LANG==="en"?"en-GB":"ru-RU",{day:"numeric",month:"short",weekday:"short"}); return `<div><b>${esc(ds)}${u.time?" "+esc(u.time):""}</b> ${esc(u.title||"")}</div>`; }).join("");
-  const bu=safeUrl(c.booking_url)||bookUrl(p);
-  popShow(btn,`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div style="font-size:12.5px">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}${bu?`<a class="bookb" href="${esc(bu)}" target="_blank" rel="noopener" style="margin-top:8px">${esc(t("book"))}</a>`:""}`,{wide:true,label:t("sch_t")+" · "+p.name}); }
+  popShow(btn,`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div class="sub">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}`,{wide:true,label:t("sch_t")+" · "+p.name}); }
 function showHours(btn){ const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); popShow(btn,`<div class="hpt">${esc(t("weekhrs"))}</div>${statusLine(p)}${weekTable(p.wk)}`,{label:t("weekhrs")+" · "+p.name}); }
-document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".hbtn"); if(b){ e.stopPropagation(); e.preventDefault(); const key=b.dataset.hrs||('s'+b.dataset.sch); if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; } if(b.dataset.sch!=null) showSched(b); else showHours(b); hpop.dataset.for=key; return; } if(!e.target.closest||(!e.target.closest("#hpop")&&!e.target.closest("[data-fb]"))) closePop(); },true);
-document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!hpop.hidden) closePop(true); });
+// popover openers (hours, schedule, route, language) toggle; any other click outside the popover closes it
+document.addEventListener("click",e=>{ if(!e.target.closest) return; const b=e.target.closest(".hbtn,[data-route],#langsw");
+  if(b){ e.stopPropagation(); e.preventDefault(); const key=b.dataset.hrs!=null?"h"+b.dataset.hrs:b.dataset.sch!=null?"s"+b.dataset.sch:b.dataset.route!=null?"r"+b.dataset.route:"lang";
+    if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; }
+    if(b.dataset.sch!=null) showSched(b); else if(b.dataset.hrs!=null) showHours(b); else if(b.dataset.route!=null) showRoute(b); else showLang(b); hpop.dataset.for=key; return; }
+  if(!e.target.closest("#hpop")&&!e.target.closest("[data-fb]")) closePop(); },true);
+document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; if(!hpop.hidden) closePop(true); else if(!ps.hidden&&lb.hidden) closePreview(); });
 window.addEventListener("scroll",()=>{ if(hpop.dataset.keep!=="1") closePop(); },{passive:true});
 map.on("movestart",()=>{ if(hpop.dataset.keep!=="1") closePop(); });
 // owner / visitor feedback (shown only when FB is configured)
@@ -1153,23 +1210,24 @@ function fbSend(p,data){ if(!FB.B) return Promise.resolve(false); const v=fbVals
 function fbFail(p,k){ document.querySelectorAll(`.fbb[data-fb="${k}"][data-i="${p._i}"]`).forEach(b=>{ const o=b.textContent; b.textContent=t("fb_err"); setTimeout(()=>{ b.textContent=o; },2500); }); }
 function fbFormUrl(p,data){ return ""; }
 function ownerUrl(p){ const q=new URLSearchParams({id:p.id,name:p.name,lang:LANG}); return "owner.html?"+q.toString(); }
-const fbThx=k=>t(k==="problem"?"fb_thanks":"fb_thx");
-function fbBtn(p,k,lab){ return fbDone(p,k)?`<button type="button" class="fbb" aria-disabled="true" disabled>${esc(fbThx(k))}</button>`:`<button type="button" class="fbb" data-fb="${k}" data-i="${p._i}"${k==="ok"?"":` aria-haspopup="dialog"`}>${esc(lab)}</button>`; }
+const fbThx=k=>ico("check")+esc(t(k==="problem"?"fb_thanks":"fb_thx"));
+const FBI={ok:"thumb",problem:"flag",rating:"star"};
+function fbBtn(p,k,lab){ return fbDone(p,k)?`<button type="button" class="fbb" aria-disabled="true" disabled>${fbThx(k)}</button>`:`<button type="button" class="fbb" data-fb="${k}" data-i="${p._i}"${k==="ok"?"":` aria-haspopup="dialog"`}>${ico(FBI[k])}${esc(lab)}</button>`; }
 function fbLine(p){ if(!FB.B&&!FB.A) return ""; const o=[];
   if(FB.B) o.push(`<span>${esc(t("fb_q"))}</span>`, fbBtn(p,"ok",t("fb_ok")), fbBtn(p,"problem",t("fb_flag")), fbBtn(p,"rating",t("fb_rate")));
-  if(FB.A) o.push(`${FB.B?`<span class="sep" aria-hidden="true">·</span>`:""}<a class="fbo" href="${esc(ownerUrl(p))}" target="_blank" rel="noopener" title="${esc(t("fb_own_h"))}">${esc(t("fb_own"))} →</a>`);
+  if(FB.A) o.push(`${FB.B?`<span class="sep" aria-hidden="true">·</span>`:""}<a class="fbo" href="${esc(ownerUrl(p))}" target="_blank" rel="noopener" title="${esc(t("fb_own_h"))}">${esc(t("fb_own"))}${ico("cr","ic-s")}</a>`);
   return `<div class="fbl">${o.join("")}</div>`; }
-function fbMark(p,k){ document.querySelectorAll(`.fbb[data-fb="${k}"][data-i="${p._i}"]`).forEach(b=>{ b.removeAttribute("data-fb"); b.disabled=true; b.setAttribute("aria-disabled","true"); b.textContent=fbThx(k); }); }
+function fbMark(p,k){ document.querySelectorAll(`.fbb[data-fb="${k}"][data-i="${p._i}"]`).forEach(b=>{ b.removeAttribute("data-fb"); b.disabled=true; b.setAttribute("aria-disabled","true"); b.innerHTML=fbThx(k); }); }
 function fbClick(btn){ const p=P[+btn.dataset.i]; const k=btn.dataset.fb; if(!p||fbDone(p,k)) return;
   if(k==="ok"){ fbSend(p,{kind:"ok"}); return; }
   const key="fb"+k+p._i; if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; }
   if(k==="problem"){
-    popShow(btn,`<div class="hpt">${esc(t("fb_flag").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><form class="fbf" data-i="${p._i}">${["closed","hours","price","nosauna","other"].map(c=>`<label><input type="radio" name="fbp" value="${c}"> ${esc(t("fb_p_"+c))}</label>`).join("")}<textarea name="c" maxlength="300" rows="2" placeholder="${esc(t("fb_comment"))}" aria-label="${esc(t("fb_comment"))}"></textarea><button type="submit" class="fbsend" disabled>${esc(t("fb_send"))}</button></form>`,{keep:true,label:t("fb_flag")+" · "+pname(p)});
+    popShow(btn,`<div class="hpt">${esc(t("fb_flag"))} · ${esc(pname(p))}</div><form class="fbf" data-i="${p._i}">${["closed","hours","price","nosauna","other"].map(c=>`<label><input type="radio" name="fbp" value="${c}"> ${esc(t("fb_p_"+c))}</label>`).join("")}<textarea name="c" maxlength="300" rows="2" placeholder="${esc(t("fb_comment"))}" aria-label="${esc(t("fb_comment"))}"></textarea><button type="submit" class="fbsend" disabled>${esc(t("fb_send"))}</button></form>`,{keep:true,label:t("fb_flag")+" · "+pname(p)});
     const f=hpop.querySelector("form"); f.addEventListener("change",()=>{ f.querySelector(".fbsend").disabled=!f.querySelector("input[name=fbp]:checked"); });
     f.addEventListener("submit",ev=>{ ev.preventDefault(); const c=f.querySelector("input[name=fbp]:checked"); if(!c) return; fbSend(p,{kind:"problem",problem:c.value,comment:f.querySelector("textarea").value}); closePop(true); });
     const r0=f.querySelector("input"); if(r0) r0.focus({preventScroll:true});
   } else {
-    popShow(btn,`<div class="hpt">${esc(t("fb_rate").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><div class="fbstars" role="group" aria-label="${esc(t("fb_rate"))}">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${esc(t("fb_star_n",n))}">★</button>`).join("")}</div>`,{keep:true,label:t("fb_rate")+" · "+pname(p)});
+    popShow(btn,`<div class="hpt">${esc(t("fb_rate"))} · ${esc(pname(p))}</div><div class="fbstars" role="group" aria-label="${esc(t("fb_rate"))}">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${esc(t("fb_star_n",n))}">${ico("star")}</button>`).join("")}</div>`,{keep:true,label:t("fb_rate")+" · "+pname(p)});
     const g=hpop.querySelector(".fbstars"); g.addEventListener("mouseover",e=>{ const b=e.target.closest("[data-star]"); const n=b?+b.dataset.star:0; g.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.star<=n)); });
     g.addEventListener("click",e=>{ const b=e.target.closest("[data-star]"); if(!b) return; fbSend(p,{kind:"rating",rating:+b.dataset.star}); closePop(true); });
     const s0=g.querySelector("button"); if(s0) s0.focus({preventScroll:true});
