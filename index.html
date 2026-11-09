@@ -29,7 +29,7 @@
   --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf;
   --ok:#276b43; --ok-soft:#e3f2e8; --warn:#7a5400; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
   --on-sea:#fff; --heat-text:#9a5410;
-  --chip:#eef2f0; --scrim:rgba(8,14,12,.92); --tilefilter:none;
+  --chip:#eef2f0; --scrim:rgba(8,14,12,.985); --tilefilter:none;
   --f-display:"Unbounded","Onest",system-ui,sans-serif;
   --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   color-scheme:light;
@@ -38,7 +38,7 @@
   --bg:#0f1513; --panel:#161e1b; --ink:#e6ece9; --muted:#97a6a0; --line:#26322e;
   --sea:#5cc0c6; --sea-soft:#15302f; --heat:#f0a24a; --heat-soft:#3a2810;
   --ok:#6fcf93; --ok-soft:#173326; --warn:#e5bf55; --warn-soft:#3a3010; --no:#ef8a8a; --no-soft:#3d1c1c;
-  --chip:#1d2723; --scrim:rgba(0,0,0,.94);
+  --chip:#1d2723; --scrim:rgba(0,0,0,.99);
   --on-sea:#0f1513; --heat-text:#f0a24a;
   --tilefilter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6);
   color-scheme:dark;
@@ -63,16 +63,46 @@ button,input,select{font:inherit;color:inherit}
 .stats b{color:var(--ink);font-variant-numeric:tabular-nums}
 .legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0 0}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
-.filters{display:grid;gap:10px;margin:16px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.fwrap{display:grid;gap:10px;margin:16px 0;padding:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.filters{display:grid;gap:10px}
+.mapbtn{display:none}
 .frow{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
 .flabel{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:84px}
 .chip{border:1px solid var(--line);background:var(--chip);border-radius:999px;padding:5px 11px;font-size:13px;cursor:pointer;white-space:nowrap;line-height:1.2}
-.chip[aria-pressed="true"],.chip[aria-expanded="true"]{background:var(--sea);border-color:var(--sea);color:var(--panel)}
+.chip[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
+.chip[aria-expanded="true"]{background:var(--sea-soft);border-color:var(--sea);color:var(--sea)}
 .chip:hover{border-color:var(--sea)}
+/* filter toggles with active filters: filled accent + count badge */
+.chip.on,.chip.on[aria-expanded="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
+.fcnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;margin-left:6px;border-radius:999px;background:var(--on-sea);color:var(--sea);font-size:11px;font-weight:700;line-height:1;vertical-align:-4px;font-variant-numeric:tabular-nums}
+.fhead{display:none;justify-content:space-between;align-items:center;gap:12px;font-size:12.5px;color:var(--muted)}
+.fhead b{color:var(--ink);font-variant-numeric:tabular-nums}
+.fhead .reset{margin-left:auto;padding:6px 8px;text-decoration:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font-size:12.5px}
+.fhead .reset:hover{border-color:var(--sea);color:var(--sea)}
+.fhead .reset[hidden]{display:none}
+/* region filter: collapsed <details> at the bottom */
+.fd{display:block}
+.fd > summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;width:auto}
+.fd > summary::-webkit-details-marker{display:none}
+.fd > summary .car{font-size:11px;line-height:1;transition:transform .15s}
+/* bottom sheet chrome (full-screen map): backdrop, grab handle, close */
+.fscrim,.fgrab,.fx{display:none}
+html.fpanel .fscrim{display:block;position:fixed;inset:0;z-index:1650;background:rgba(0,0,0,.28)}
+html.fpanel .fgrab{display:block;width:40px;height:4px;border-radius:2px;background:var(--line);margin:-2px auto 0;position:relative}
+html.fpanel .fgrab::before{content:"";position:absolute;inset:-12px -40px}
+html.fpanel .fx{all:unset;display:grid;place-items:center;cursor:pointer;width:32px;height:32px;border-radius:50%;font-size:22px;line-height:1;color:var(--muted);margin-left:4px}
+html.fpanel .fx:hover{background:var(--chip);color:var(--ink)}
+/* type icons: white glyph on the pin, coloured glyph next to the type tag */
+.ki{width:13px;height:13px;flex:0 0 auto;vertical-align:-2px;margin-right:4px}
+.chip .ki{margin-right:5px;vertical-align:-2px}
+.legend .ki{margin-right:3px}
+.empty{display:grid;gap:10px;justify-items:center}
+.empty p{margin:0}
+.fd[open] > summary .car{transform:rotate(180deg)}
+.fd > summary .fcnt{margin-left:0}
+.fd > .frow{margin-top:8px}
 .search{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:7px 11px}
 .range{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
-.range input{width:130px;accent-color:var(--sea)}
-.range output{color:var(--ink);font-variant-numeric:tabular-nums;min-width:48px}
 select{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 8px;font-size:13px}
 .reset{background:none;border:none;color:var(--sea);cursor:pointer;font-size:13px;padding:4px 2px;text-decoration:underline}
 .maptoggle{display:none}
@@ -100,9 +130,9 @@ tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .mk.weak{opacity:.6;filter:grayscale(.4)}
 @media (min-width:901px) and (max-width:2099px){.hide-l{display:none!important} .m-in{display:inline!important}}
 @media (min-width:901px) and (max-width:1399px){#tbody td.nm{min-width:140px!important}}
-@media (min-width:901px){#tbody td.nm{min-width:165px} table{font-size:13.5px} td{padding:8px 7px} th button,th.nosort{padding:9px 7px} .filters:not(.open) > .more{display:none}}
+@media (min-width:901px){#tbody td.nm{min-width:165px} table{font-size:13.5px} td{padding:8px 7px} th button,th.nosort{padding:9px 7px} .filters:not(.open) > .more{display:none} .m-only{display:none!important}}
 .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
-.am{font-size:12.5px;color:var(--heat-text);margin-top:4px;line-height:1.35}
+.am{font-size:12.5px;color:var(--muted);margin-top:4px;line-height:1.35}
 .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
 .tag{font-size:11.5px;padding:1px 7px;border-radius:6px;background:var(--chip);color:var(--muted);white-space:nowrap}
 .tag.heat{background:var(--heat-soft);color:var(--heat-text)}
@@ -116,9 +146,9 @@ tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:7px;overflow:hidden;background:var(--chip);width:58px;height:44px}
 .thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
-tr.detail td{background:var(--bg);padding:10px 12px 12px;max-width:0}
-.gallery{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;max-width:var(--detw,100%);width:100%}
-.gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip)}
+tr.detail > td{background:var(--bg);padding:10px 12px 12px;max-width:0}
+.gallery{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;max-width:var(--detw,100%);width:100%;scroll-snap-type:x proximity;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
+.gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip);scroll-snap-align:start}
 .gallery img{width:100%;height:100%;object-fit:cover;display:block}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px 18px;font-size:13px;line-height:1.4;margin:0}
 .dgrid dt{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
@@ -132,14 +162,35 @@ tr.detail td{background:var(--bg);padding:10px 12px 12px;max-width:0}
 .cpl{all:unset;cursor:pointer;display:inline-grid;place-items:center;width:22px;height:22px;margin-left:4px;border-radius:6px;color:var(--muted);vertical-align:-5px}
 .cpl:hover,.cpl:focus-visible{background:var(--chip);color:var(--sea)}
 .cpl.ok{color:var(--ok)}
-.cptoast{position:fixed;left:50%;bottom:calc(70px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px;z-index:3000}
-.mapfilt{display:none}
-html.mapfull .mapfilt{all:unset;display:block;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));cursor:pointer;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:7px 12px;border-radius:999px;font-weight:600;font-size:13px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
-html.mapfull.fpanel .filters{position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:70vh;overflow:auto;margin:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
-html.mapfull.fpanel .filters > .frow:not([hidden]){display:flex!important}
-html.mapfull.fpanel .main{display:block}
+/* row title: name wraps inside its box, link icon stays on the first line (buttons are atomic inlines, so a plain inline flow would push the icon to its own line) */
+.name{display:flex;align-items:flex-start;gap:2px;flex-wrap:wrap}
+.name .nmb{flex:0 1 auto;min-width:0}
+.name .cpl{flex:0 0 auto;width:20px;height:20px;margin:0 0 0 2px}
+.name .wtag{flex:0 0 auto;margin-left:2px}
+.meta{display:flex;align-items:center;gap:0 4px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meta > span{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.meta .dot{flex:0 0 auto;margin-right:1px}
+.meta .mk-k{flex:0 0 auto}
+.meta .mk-t{flex:0 1 auto}
+.cptoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:999px;font-size:13px;z-index:3000}
+/* full-screen map: one bottom bar "List · Filters" (never over the popup close button) */
+.mapbar,.mapfilt,.mapfull-x{display:none}
+html.mapfull .mapbar{display:flex;gap:6px;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+html.mapfull .mapfull-x{all:unset;display:block;cursor:pointer;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.3);white-space:nowrap}
+html.mapfull .mapfilt{all:unset;display:block;cursor:pointer;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:8px 14px;border-radius:999px;font-weight:600;font-size:13px;box-shadow:0 4px 16px rgba(0,0,0,.25);white-space:nowrap}
+html.mapfull .mapfilt.on{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
+/* one filter sheet for list and map modes (phone): fixed bottom sheet, live filtering, sticky "Show N" footer, reset + close in the header */
+html.fpanel .filters{display:grid;gap:7px;position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:76vh;max-height:76svh;overflow:auto;overscroll-behavior:contain;margin:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding:8px 12px 0;background:var(--panel)}
+html.fpanel .filters > .frow:not([hidden]):not(.fdrow){display:flex!important}
+html.fpanel .filters > .fd{display:block!important}
+html.fpanel .filters > .fhead{display:flex!important}
+html.fpanel .filters > .fgrab{order:-3}
+html.fpanel .filters > .fhead{order:-2}
+html.fpanel .filters > .sortrow{order:-1}
+.fdrow{display:none}
+html.fpanel .fdrow{display:flex!important;justify-content:center;position:sticky;bottom:0;z-index:2;margin:4px -12px 0;padding:8px 12px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line)}
 .fdone{display:none}
-html.mapfull.fpanel .fdone{all:unset;display:block;cursor:pointer;margin:6px auto 0;background:var(--sea);color:var(--on-sea);padding:9px 18px;border-radius:999px;font-weight:600;text-align:center}
+html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);color:var(--on-sea);padding:8px 22px;border-radius:999px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums}
 .price + .sub, td .sub.num{white-space:normal}
 .bk2{margin-top:4px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .bk2:empty{display:none}
@@ -186,7 +237,7 @@ html.mapfull.fpanel .fdone{all:unset;display:block;cursor:pointer;margin:6px aut
 .wk{display:inline-flex;gap:2px;margin-top:4px}
 .wk i{font-style:normal;font-size:11px;width:15px;height:17px;display:grid;place-items:center;border-radius:4px;background:var(--chip);color:var(--muted);font-weight:600}
 .wk i.on{background:var(--ok-soft);color:var(--ok)} .wk i.off{background:transparent;color:var(--line)} .wk i.td{outline:1.5px solid var(--ink);outline-offset:-1.5px}
-.wkt{border-collapse:collapse;font-size:13px;width:auto;margin-top:2px} tr.detail .wkt td,.wkt td{padding:1px 14px 1px 0;border:0;background:none!important;line-height:1.45} .wkt tr.td td{font-weight:700}
+.wkt{border-collapse:collapse;font-size:13px;width:auto;table-layout:auto;margin-top:2px} tr.detail .wkt td,.wkt td{padding:1px 14px 1px 0;border:0;background:none!important;line-height:1.45;max-width:none;overflow-wrap:normal;white-space:nowrap} .wkt tr.td td{font-weight:700}
 .rbs{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .rb{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
 .rb b{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 5px;border-radius:6px 6px 6px 0;color:#fff;font-size:12.5px;font-variant-numeric:tabular-nums}
@@ -201,11 +252,8 @@ html.mapfull.fpanel .fdone{all:unset;display:block;cursor:pointer;margin:6px aut
 .leaflet-container a.bookb,.leaflet-container a.bookb:visited{color:var(--on-sea)}
 .leaflet-popup-content .bookb{margin-top:0}
 a.act.prim,a.act.prim:visited{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
-.fab{display:none}
-.mapfull-x{display:none}
 html.mapfull{overflow:hidden}
 html.mapfull .mapwrap{position:fixed!important;inset:0;height:100%!important;z-index:1500;border:none}
-html.mapfull .mapfull-x{all:unset;display:block;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(18px + env(safe-area-inset-bottom,0px));cursor:pointer;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;box-shadow:0 4px 16px rgba(0,0,0,.3)}
 .acts{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
 .act{all:unset;box-sizing:border-box;cursor:pointer;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:4px 11px;font-size:12.5px;color:var(--ink);text-decoration:none}
 a.act{color:var(--ink)}
@@ -215,7 +263,7 @@ a.act{color:var(--ink)}
 /* map */
 .leaflet-container{font:inherit}
 .mk{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center}
-.mk span{transform:rotate(45deg);font-size:11px;font-weight:700;color:#fff}
+.mk svg{transform:rotate(45deg);width:14px;height:14px;display:block}
 .mk.active{outline:3px solid var(--heat)}
 .mk.hover{transform:rotate(-45deg) scale(1.3);box-shadow:0 0 0 3px var(--heat),0 2px 8px rgba(0,0,0,.35)}
 .leaflet-marker-icon:has(.mk.hover){z-index:100000!important}
@@ -241,10 +289,16 @@ a.act{color:var(--ink)}
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:2000;background:var(--scrim);display:grid;grid-template-rows:auto 1fr auto;color:#fff;touch-action:pan-y}
 .lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(10px + env(safe-area-inset-top,0px)) max(14px,env(safe-area-inset-right,0px)) 10px max(14px,env(safe-area-inset-left,0px));font-size:14px}
-.lb-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.lb-top .lbc{color:rgba(255,255,255,.7);flex:0 0 auto;font-variant-numeric:tabular-nums}
+.lb-top .lbl{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto}
 .lb-x{all:unset;cursor:pointer;font-size:28px;line-height:1;padding:4px 8px}
-.lb-stage{position:relative;min-height:0;display:grid;place-items:center;overflow:hidden}
-.lb-stage img{max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
+.lb-stage{position:relative;min-height:0;display:grid;overflow:hidden}
+/* native swipe: one slide per viewport, photo follows the finger and snaps */
+.lb-track{display:flex;width:100%;height:100%;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x;-webkit-overflow-scrolling:touch}
+.lb-track::-webkit-scrollbar{display:none}
+.lb-slide{flex:0 0 100%;width:100%;height:100%;scroll-snap-align:center;scroll-snap-stop:always;display:grid;place-items:center}
+.lb-slide img{max-width:100%;max-height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none}
 .lb-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:22px}
 .lb-nav:hover{background:rgba(255,255,255,.26)}
 .lb-prev{left:max(10px,env(safe-area-inset-left,0px))}.lb-next{right:max(10px,env(safe-area-inset-right,0px))}
@@ -289,41 +343,42 @@ tr.row{scroll-margin-top:44px}
 .fbstars button{all:unset;cursor:pointer;font-size:26px;line-height:1;padding:4px 3px;color:var(--line)}
 .fbstars button:hover,.fbstars button:focus-visible,.fbstars button.on{color:#e7a300}
 .fbaf{display:block;margin-top:8px;font-size:11.5px;color:var(--muted)}
-.lb-tap{position:absolute;top:0;bottom:0;width:33%;z-index:1;cursor:pointer}
-.lb-tap.l{left:0}.lb-tap.r{right:0}
 .lb-nav{z-index:2}
 #more-sentinel{height:1px}
 @media (max-width:900px){
   .app{display:block}
-  .hd{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-block:10px 8px}
-  .hd h1{font-size:19px;margin:0}
+  .hd{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-block:8px 6px}
+  .hd h1{font-size:18px;margin:0}
   .toprow{align-items:center}
   .langsw{margin-top:0}
   .hd p,.hd .legend{display:none}
   .fintro{display:block}
   .flegend{display:flex;margin-top:10px}
-  .stats{margin:4px 0 0;font-size:12px;gap:2px 12px}
+  .stats{margin:3px 0 0;font-size:12px;gap:2px 12px}
   .stats .s-m{display:none}
-  .mapwrap{position:relative;height:26vh;height:26svh;min-height:170px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
+  .mapwrap{position:relative;height:36vh;height:36svh;min-height:210px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
   html:not(.mapfull) #map{touch-action:pan-y;cursor:pointer}
   html.mapfull #map{touch-action:none}
   html:not(.mapfull) .leaflet-control-zoom{display:none}
   html:not(.mapfull) .mapcue{display:block;position:absolute;z-index:1000;top:8px;right:max(8px,env(safe-area-inset-right,0px));pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:5px 11px;border-radius:999px;font-weight:600;font-size:12.5px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
   .mapwrap.collapsed{height:0;border:none}
-  .main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:8px;padding-bottom:96px}
+  .main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:0;padding-bottom:40px}
   .ftoggle,.maptoggle{display:inline-block}
+  .mapbtn{display:inline-flex}
   input,select,textarea{font-size:16px!important}
-  .fab{all:unset;display:block;position:fixed;z-index:1400;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));cursor:pointer;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
-  html.mapfull .fab{display:none}
-  .filters{padding:10px;gap:8px;margin:0 0 8px}
-  .filters > .r-search{order:-2}
-  .filters:not(.open) > .frow:not(.r-search):not(.sortrow){display:none}
-  .filters:not(.open) > .sortrow{order:-1}
-  .filters:not(.open) .reset{display:none}
-  .search{padding:9px 11px}
+  /* phone: sticky search bar (search · Filters · Map); the filter rows live only in the bottom sheet */
+  .fwrap{position:sticky;top:0;z-index:5;display:block;margin:0 -12px 6px;padding:6px 12px;background:var(--bg);border:0;border-radius:0}
+  html.fpanel .fwrap{z-index:1700}
+  html:not(.fpanel) .filters{display:none}
+  .stats{display:none}
+  /* header row stays in the layout (it defines the fixed column widths) but is invisible and zero-height */
+  thead{visibility:hidden} thead th{height:0;padding:0;border:0;line-height:0;font-size:0;overflow:hidden} thead th button,thead th.nosort{padding:0;height:0;line-height:0;overflow:hidden}
+  tr.row{scroll-margin-top:58px}
+  .sortrow .reset{display:none}
+  .search{padding:6px 10px}
   .flabel{min-width:100%;font-size:11px;margin-bottom:-3px}
-  .chip{padding:9px 13px;font-size:14px;min-height:40px}
-  .frow{gap:8px}
+  .chip{padding:5px 10px;font-size:13px;min-height:32px;display:inline-flex;align-items:center}
+  .frow{gap:6px}
   .hide-m{display:none}
   .show-m{display:block}
   .m-in{display:inline}
@@ -331,21 +386,24 @@ tr.row{scroll-margin-top:44px}
   table{table-layout:fixed;font-size:13.5px}
   thead th.c-photo{width:62px}
   thead th.c-day{width:126px}
-  td{overflow-wrap:anywhere;padding:8px 6px}
+  td{overflow-wrap:anywhere;padding:7px 5px}
   th{top:env(safe-area-inset-top,0px)}
-  th button,th.nosort{padding:9px 6px}
+  th button,th.nosort{padding:8px 5px}
   .pill{white-space:normal;font-size:11.5px;padding:2px 7px;hyphens:auto}
   .bk2 .bookb{font-size:11.5px;padding:4px 10px;white-space:nowrap;max-width:100%;position:relative}
   .bk2 .bookb::after{content:"";position:absolute;inset:-8px -4px}
   .thumbs button{width:52px;height:52px}
-  .range input{width:110px;height:28px}
   .cpl{position:relative}
   .cpl::before{content:"";position:absolute;inset:-9px}
-  .act{padding:9px 14px;min-height:40px;display:inline-flex;align-items:center}
-  .near,.reset{padding:11px 4px;display:inline-block;min-height:40px;box-sizing:border-box}
-  select{min-height:40px}
-  .langsw button{padding:11px 10px;min-height:40px;box-sizing:border-box}
-  .sortrow .range > span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .am{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-top:3px;color:var(--muted)}
+  tr.row.active .am{-webkit-line-clamp:unset}
+  .sub{margin-top:1px}
+  .rbm{margin-top:4px;align-items:center}
+  .rbm .hs{font-size:12px;flex-wrap:nowrap;white-space:nowrap}
+  .act{padding:5px 11px;min-height:32px;display:inline-flex;align-items:center}
+  .near,.reset{padding:6px 4px;display:inline-block;min-height:32px;box-sizing:border-box}
+  select{min-height:34px;padding:4px 6px}
+  .langsw button{padding:4px 7px;min-height:28px;font-size:11px;box-sizing:border-box}
   #sort{max-width:56vw}
   .main > .hint{display:none}
   .fhint{display:block;margin-top:12px}
@@ -366,9 +424,10 @@ tr.row{scroll-margin-top:44px}
 }
 @media (max-width:600px){
   .hide-s{display:none}
-  .rbm{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:5px}
-  .rbm .rcap{display:none}
-  .rbm .rbw{margin-right:0}
+  .rbm{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px}
+  .rbm .rbw{margin-right:0;flex-direction:row;align-items:center;gap:5px;flex-wrap:nowrap}
+  .rbm .rcap{font-size:11.5px;white-space:nowrap}
+  .rbm .rb b{height:20px;min-width:28px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
@@ -382,34 +441,35 @@ tr.row{scroll-margin-top:44px}
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><button type="button" class="mapfull-x" id="mapfull-x" data-t="list">Список</button><button type="button" class="mapfilt" id="mapfilt" data-t="filters">Фильтры</button><span class="mapcue" aria-hidden="true" data-t="openmap">Открыть карту</span></div>
-  <button type="button" class="fab" id="fab" data-t="fullmap">Карта на весь экран</button>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="mapfull-x" id="mapfull-x" data-t="list">Список</button><button type="button" class="mapfilt" id="mapfilt" data-t="filters">Фильтры</button></div><span class="mapcue" aria-hidden="true" data-t="openmap">Открыть карту</span></div>
   <main class="main">
-    <section class="filters" data-ta="filters">
-      <div class="frow r-search">
-        <input id="q" class="search" type="search" data-tp="search" autocomplete="off">
-        <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" aria-controls="f-more" data-t="filters">Фильтры</button>
-      </div>
-      <div class="frow" role="group" aria-labelledby="lab-area"><span class="flabel" id="lab-area" data-t="area">Район</span><div class="frow" id="f-area"></div></div>
-      <div class="frow" id="muni-row" role="group" aria-labelledby="lab-muni" hidden><span class="flabel" id="lab-muni" data-t="muni">Город</span><div class="frow" id="f-muni"></div></div>
-      <div class="frow" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Тип</span><div class="frow" id="f-kind"></div></div>
+    <section class="fwrap" data-ta="filters">
+    <div class="fscrim" id="fscrim" aria-hidden="true"></div>
+    <div class="frow r-search" id="searchbar">
+      <input id="q" class="search" type="search" data-tp="search" autocomplete="off">
+      <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" aria-controls="f-more" data-t="filters">Фильтры</button>
+      <button class="chip mapbtn" id="mapbtn" type="button" data-t="map">Карта</button>
+    </div>
+    <div class="filters" id="filters">
+      <div class="fgrab" id="fgrab" aria-hidden="true"></div>
+      <div class="fhead" id="fhead"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset">Сбросить всё</button><button class="fx" id="fclose" type="button" data-ta="close">×</button></div>
+      <div class="frow" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
+      <div class="frow" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Вход</span><div class="frow" id="f-access"></div></div>
+      <div class="frow" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
+      <div class="frow" role="group" aria-labelledby="lab-has"><span class="flabel" id="lab-has" data-t="has">Ещё есть</span><div class="frow" id="f-ext"></div></div>
       <div class="frow" role="group" aria-labelledby="lab-rate"><span class="flabel" id="lab-rate" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"></div></div>
-      <div class="frow more" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Доступ</span><div class="frow" id="f-access"></div></div>
-      <div class="frow more" role="group" aria-labelledby="lab-has"><span class="flabel" id="lab-has" data-t="has">Есть</span><div class="frow" id="f-ext"></div></div>
+      <div class="frow more" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
       <div class="frow more" role="group" aria-labelledby="lab-hours"><span class="flabel" id="lab-hours" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
-      <div class="frow more" role="group" aria-labelledby="lab-price">
-        <span class="flabel" id="lab-price" data-t="price">Цена</span>
-        <label class="range" for="price"><span data-t="daymax">разовый вход до</span> <input id="price" type="range" min="0" max="100" step="5" value="100"><output id="priceout" data-t="anyf">любая</output></label>
-        <label class="range" for="mprice"><span data-t="memmax">абонемент до</span> <input id="mprice" type="range" min="0" max="300" step="10" value="300"><output id="mpriceout" data-t="anym">любой</output></label>
-      </div>
+      <details class="fd" id="area-d">
+        <summary class="chip" id="area-sum"><span data-t="area">Район</span><b class="fcnt" id="area-n" hidden></b><span class="car" aria-hidden="true">▾</span></summary>
+        <div class="frow" id="f-area" role="group" data-ta="area"></div>
+        <div class="frow" id="muni-row" role="group" aria-labelledby="lab-muni" hidden><span class="flabel" id="lab-muni" data-t="muni">Город</span><div class="frow" id="f-muni"></div></div>
+      </details>
       <div class="frow sortrow">
         <label class="range" for="sort"><span data-t="sort">Сортировка</span>
           <select id="sort">
             <option value="score" data-t="s_score"></option>
             <option value="price" data-t="s_price"></option>
-            <option value="mprice" data-t="s_mprice"></option>
-            <option value="session" data-t="s_session"></option>
-            <option value="sea" data-t="s_sea"></option>
             <option value="name" data-t="s_name"></option>
             <option value="dist" data-t="s_dist" hidden id="opt-dist"></option>
           </select>
@@ -419,7 +479,8 @@ tr.row{scroll-margin-top:44px}
         <span class="frow" id="f-rad" role="group" data-ta="radius" hidden></span>
         <button class="reset" id="reset" type="button" data-t="reset">Сбросить всё</button>
       </div>
-      <div class="frow"><button type="button" class="fdone" id="fdone" data-t="showres">Показать</button></div>
+      <div class="frow fdrow"><button type="button" class="fdone" id="fdone" data-t="showres">Показать</button></div>
+    </div>
     </section>
 
     <p class="hint" data-th="hint"></p>
@@ -429,7 +490,7 @@ tr.row{scroll-margin-top:44px}
         <tbody id="tbody"></tbody>
       </table>
       <div id="more-sentinel"></div>
-      <div class="empty" id="empty" role="status" hidden data-t="empty"></div>
+      <div class="empty" id="empty" role="status" hidden><p data-t="empty"></p><button type="button" class="act" id="reset3" data-t="reset">Сбросить всё</button></div>
     </div>
     <p class="foot fintro" data-t="intro"></p>
     <p class="hint fhint" data-th="hint"></p>
@@ -439,14 +500,13 @@ tr.row{scroll-margin-top:44px}
 </div>
 <div class="hpop" id="hpop" hidden role="dialog" tabindex="-1"></div>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" data-ta="photos">
-  <div class="lb-top"><b id="lb-title"></b><button class="lb-x" id="lb-x" type="button" data-ta="close">×</button></div>
+  <div class="lb-top"><span class="lbl"><b id="lb-title"></b><span class="lbc" id="lb-count"></span></span><button class="lb-x" id="lb-x" type="button" data-ta="close">×</button></div>
   <div class="lb-stage" id="lb-stage">
-    <div id="lb-imgslot" style="display:contents"></div>
-    <div class="lb-tap l" id="lb-tl" aria-hidden="true"></div><div class="lb-tap r" id="lb-tr" aria-hidden="true"></div>
+    <div class="lb-track" id="lb-track"></div>
     <button class="lb-nav lb-prev" id="lb-prev" type="button" data-ta="prev">‹</button>
     <button class="lb-nav lb-next" id="lb-next" type="button" data-ta="next">›</button>
   </div>
-  <div class="lb-bot"><span id="lb-count"></span><a id="lb-src" target="_blank" rel="noopener" data-t="photosrc">источник фото</a></div>
+  <div class="lb-bot"><span></span><a id="lb-src" target="_blank" rel="noopener" data-t="photosrc">источник фото</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -504,25 +564,50 @@ Object.assign(I18N.pt,{tolist:"Ir para a lista",openmap:"Abrir mapa",fromcascais
 I18N.ru._am.ice_fountain="ледяной фонтан";I18N.ru._am.ice_room="ледяная комната";I18N.en._am.ice_fountain="ice fountain";I18N.en._am.ice_room="ice room";I18N.pt._am.ice_fountain="fonte de gelo";I18N.pt._am.ice_room="sala de gelo";I18N.ru.inc.ice_fountain="ледяной фонтан";I18N.ru.inc.ice_room="ледяная комната";I18N.en.inc.ice_fountain="ice fountain";I18N.en.inc.ice_room="ice room";I18N.pt.inc.ice_fountain="fonte de gelo";I18N.pt.inc.ice_room="sala de gelo";
 const TFX={"en": {"has": "Features", "p_has": "On site", "x_hammam": "Hammam or steam room", "acc_walkin": "Walk-in", "b_recommended": "Recommended", "guests": "hotel guests only", "only_trt": "only with a treatment", "p_day": "Single visit", "s_price": "Single-visit price", "empty": "Nothing matches these filters. Loosen them or tap “Reset all”.", "d_social": "Social media", "d_via": "via {0}", "join": "+ {0} joining fee", "grp_cap": "per group up to {0} · from {1} per person", "sch_calendar": "Sessions on set dates", "sch_win": "Available slots this week", "rg_centro": "Central Portugal", "_area.Centro": "Central Portugal", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "_am.rooms": "{0} saunas", "inc.infrared": "infrared sauna", "cond.booking_required": "booking required", "cond.booking_recommended": "booking recommended", "cond.min_term_months": "{0}-month minimum term", "cond.sauna_after_class_only": "sauna after class only", "cond.trial_once": "one time only", "cond.cancel_24h": "cancel up to 24 h ahead"}, "pt": {"has": "Características", "p_has": "No local", "b_walk_in": "Sem reserva", "guests": "só para hóspedes", "x_cold": "Imersão em água fria", "_am.cold_plunge": "imersão em água fria", "inc.cold_plunge": "imersão em água fria", "_am.hot_tub": "hot tub", "inc.hot_tub": "hot tub", "_am.infrared": "sauna de infravermelhos", "inc.infrared": "sauna de infravermelhos", "empty": "Nada corresponde a estes filtros. Alargue-os ou toque em “Limpar tudo”.", "d_via": "via {0}", "d_fromme": "Distância", "reliab": "fiabilidade dos dados: {0}", "grp_cap": "por grupo até {0} · desde {1} por pessoa", "sch_calendar": "Sessões em datas marcadas", "sch_win": "Horários disponíveis esta semana", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "cond.booking_required": "reserva obrigatória", "cond.booking_recommended": "reserva recomendada", "cond.min_term_months": "fidelização de {0} meses", "cond.cancel_24h": "cancelamento até 24 h antes", "cond.sauna_after_class_only": "sauna só após a aula", "cond.trial_once": "só uma vez"}};
 for(const L in TFX){ for(const k in TFX[L]){ const parts=k.split("."); let o=I18N[L]; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]=o[parts[i]]||{}; } o[parts[parts.length-1]]=TFX[L][k]; } }
+// 09.11.2026 filter redesign: sauna-first groups ("where the sauna is"), entry / extras / rating / price / hours, hammam = steam room (one facility)
+Object.assign(I18N.ru,{type:"Где сауна",kf_sauna:"Отдельная сауна",kf_spa:"В спа-центре",kf_hotel:"В отеле",kf_fit:"В фитнес-клубе",k_sauna:"Сауна",k_spa:"Спа-центр",k_hotel:"Отель",k_fit:"Фитнес/бассейн",access:"Вход",acc_day:"Разовый вход",acc_treatment:"С процедурой",acc_membership:"Абонемент",acc_private:"Аренда для компании",has:"Ещё есть",x_cold:"Холодная купель",x_pool:"Бассейн",x_hammam:"Хаммам",x_sea:"Море рядом",x_banya:"Русская баня",x_ir:"Инфракрасная",hours:"Часы",h_now:"Открыто сейчас",h_eve:"После 21:00",rating:"Рейтинг",r_45:"От 4,5",r_ok:"Только проверенные",price:"Цена входа",upto:"до €{0}",s_price:"Цена входа",showres_n:"Показать · {0}",fh_n:"{0} из {1} мест",filt_n:"Фильтры · {0}"});
+I18N.ru._am.steam="хаммам"; I18N.ru._am.rooms="{0} саун"; I18N.ru._am.cap="сауна до {0} чел."; I18N.ru.inc.steam="хаммам";
+Object.assign(I18N.en,{type:"Sauna at",kf_sauna:"Standalone",kf_spa:"Day spa",kf_hotel:"Hotel",kf_fit:"Gym or pool",k_sauna:"Sauna",k_spa:"Day spa",k_hotel:"Hotel",k_fit:"Gym/pool",access:"Entry",acc_day:"Single visit",acc_treatment:"With a treatment",acc_membership:"Membership",acc_private:"Private hire",has:"Also has",x_cold:"Cold plunge",x_pool:"Pool",x_hammam:"Hammam",x_sea:"Near the sea",x_banya:"Russian banya",x_ir:"Infrared",hours:"Hours",h_now:"Open now",h_eve:"After 9 pm",rating:"Rating",r_45:"4.5+",r_ok:"Verified only",price:"Visit price",upto:"up to €{0}",s_price:"Visit price",showres_n:"Show · {0}",fh_n:"{0} of {1} places",filt_n:"Filters · {0}"});
+I18N.en._am.steam="hammam"; I18N.en._am.rooms="{0} saunas"; I18N.en.inc.steam="hammam";
+Object.assign(I18N.pt,{type:"Sauna em",kf_sauna:"Independente",kf_spa:"Spa",kf_hotel:"Hotel",kf_fit:"Ginásio ou piscina",k_sauna:"Sauna",k_spa:"Spa",k_hotel:"Hotel",k_fit:"Ginásio/piscina",access:"Acesso",acc_day:"Entrada avulsa",acc_treatment:"Com tratamento",acc_membership:"Mensalidade",acc_private:"Aluguer privado",has:"Tem também",x_cold:"Imersão em água fria",x_pool:"Piscina",x_hammam:"Banho turco",x_sea:"Perto do mar",x_banya:"Banya russa",x_ir:"Infravermelhos",hours:"Horário",h_now:"Aberto agora",h_eve:"Depois das 21h",rating:"Avaliação",r_45:"4,5+",r_ok:"Só verificados",price:"Preço da entrada",upto:"até €{0}",s_price:"Preço da entrada",showres_n:"Ver · {0}",fh_n:"{0} de {1} locais",filt_n:"Filtros · {0}"});
+I18N.pt._am.steam="banho turco"; I18N.pt._am.hammam="banho turco"; I18N.pt._am.rooms="{0} saunas"; I18N.pt.inc.steam="banho turco"; I18N.pt.inc.hammam="banho turco";
+I18N.ru._am.sauna="сауна"; I18N.en._am.sauna="sauna"; I18N.pt._am.sauna="sauna";
+Object.assign(I18N.ru,{heat:"Жар",x_sauna:"Сауна",map:"Карта",acc_rent:"аренда бани",share:"Поделиться",call:"Позвонить",site:"Сайт",empty:"Под эти фильтры ничего не нашлось. Ослабь фильтры или сбрось их.",sort_in:"Сортировка"});
+Object.assign(I18N.en,{heat:"Heat",x_sauna:"Sauna",map:"Map",acc_rent:"private rental",share:"Share",call:"Call",site:"Website",empty:"Nothing matches these filters. Loosen or reset them.",sort_in:"Sort"});
+Object.assign(I18N.pt,{heat:"Calor",x_sauna:"Sauna",map:"Mapa",acc_rent:"aluguer privado",share:"Partilhar",call:"Ligar",site:"Site",empty:"Nada corresponde a estes filtros. Alargue-os ou limpe-os.",sort_in:"Ordenar"});
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
 const tr=(p,f)=>{ const x=p.tr&&p.tr[LANG]&&p.tr[LANG][f]; if(x!=null) return x; if(LANG==="ru") return p[f]; if(f==="subtitle"&&p.subtitle&&!/[А-Яа-яЁё]/.test(p.subtitle)) return p.subtitle; return (p.tr&&p.tr.en&&p.tr.en[f])||""; };
-const KCOL={hotel:"#0f6b72",spa:"#7a55b0",gym:"#2f6fb2",sauna:"#c26a12",public:"#4f7d2f"};
-const KINDS = new Proxy({}, {get:(o,k)=>KCOL[k]?[t("k_"+k),KCOL[k]]:undefined, ownKeys:()=>Object.keys(KCOL), getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
+// display groups ("where the sauna is"): data kinds gym + public are one group (gyms, municipal pools, sports complexes); sauna first
+const KCOL={sauna:"#c26a12",spa:"#7a55b0",hotel:"#0f6b72",fit:"#2f6fb2"};
+const KG={sauna:"sauna",spa:"spa",hotel:"hotel",gym:"fit",public:"fit"};
+const kg=p=>KG[p.kind]||"sauna";
+const KINDS = new Proxy({}, {get:(o,k)=>KCOL[k]?[t("k_"+k),KCOL[k],k]:undefined, ownKeys:()=>Object.keys(KCOL), getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
+const KFILT=()=>{ const m={}; Object.keys(KCOL).forEach(k=>{ if(P.some(p=>kg(p)===k)) m[k]=[t("kf_"+k),KCOL[k],k]; }); return m; };
+const starsOf=p=>{ const m=/(\d)★/.exec(tr(p,"subtitle")||""); return m?m[1]+"★":""; };
+// type glyphs (24-grid, 2px round strokes): heat waves = standalone sauna, droplet = day spa, bed = hotel, dumbbell = gym or pool
+const KICO={sauna:"M8 18c-3-3.5 3-6.5 0-10M12 18c-3-3.5 3-6.5 0-10M16 18c-3-3.5 3-6.5 0-10",spa:"M12 3.5C12 3.5 6 10 6 14.2a6 6 0 0 0 12 0C18 10 12 3.5 12 3.5Z",hotel:"M3 19V9M3 15h18M21 19v-6a2 2 0 0 0-2-2h-9v4M7 11h.01",fit:"M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12"};
+const kico=(k,cls)=>`<svg class="ki ${cls||""}" viewBox="0 0 24 24" aria-hidden="true" style="color:${KCOL[k]}"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
+const pinIco=k=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
 const SAUNA_RU = {finnish:"финская",steam:"парная",hammam:"хаммам",bio:"био",infrared:"инфракрасная",banya:"баня"};
 const EXT_RU = {indoor_pool:"крытый бассейн",outdoor_pool:"открытый бассейн",heated_pool:"тёплый бассейн",jacuzzi:"джакузи",cold_plunge:"холодная купель",ice_bath:"ледяная ванна",sea_view:"вид на море",beach_access:"выход к пляжу",gym:"зал",massage:"массаж",relax_room:"зона отдыха"};
 function amen(p,LG){ const A=I18N[LG||LANG]._am; const ex=new Set(p.extras||[]); const o=[];
-  ["finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if((p.sauna_types||[]).includes(s)) o.push(A[s]); });
+  const sts=new Set(p.sauna_types||[]); if(sts.has("hammam")) sts.delete("steam"); // steam room and hammam are the same facility, show it once
+  ["sauna","finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if(sts.has(s)) o.push(A[s]||I18N.ru._am[s]); });
   if(p.steam_rooms>1) o.push(A.rooms.replace("{0}",p.steam_rooms));
   if(p.capacity) o.push(A.cap.replace("{0}",p.capacity));
   if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?A.heated_pool:A.pool);
   ["jacuzzi","hot_tub","cold_plunge","ice_bath","ice_fountain","ice_room","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) o.push(A[k]||(I18N.ru._am[k])); });
   return o; }
-const ACCESS = ()=>({day:t("acc_day"),membership:t("acc_membership"),treatment:t("acc_treatment"),private:t("acc_private"),walkin:t("acc_walkin")});
-const EXTF = ()=>({pool:t("x_pool"),cold:t("x_cold"),hammam:t("x_hammam"),sea:t("x_sea"),photo:t("x_photo")});
-const HRS = ()=>({now:t("h_now"),eve:t("h_eve"),wknd:t("h_wknd"),early:t("h_early")});
-const RATE = ()=>({"0":t("r_0"),"4":t("r_4"),"4.5":t("r_45"),"ok":t("r_ok")});
+const ACCESS = ()=>({day:t("acc_day"),treatment:t("acc_treatment"),membership:t("acc_membership"),private:t("acc_private")});
+const HEATF = ()=>({sauna:t("x_sauna"),hammam:t("x_hammam"),banya:t("x_banya"),ir:t("x_ir")});
+const EXTF = ()=>({cold:t("x_cold"),pool:t("x_pool"),sea:t("x_sea")});
+const HRS = ()=>({now:t("h_now"),eve:t("h_eve")});
+const RATE = ()=>({"4.5":t("r_45"),"ok":t("r_ok")});
+const PRICES=[20,30,50]; // caps from the visit-price distribution: 33 / 66 / 89 of 102 priced places
+const PRICEF=()=>{ const m={}; PRICES.forEach(v=>m[String(v)]=t("upto",v)); return m; };
+const SORTS=new Set(["score","price","name","dist"]);
 const BCL={required:"p-warn",recommended:"p-warn",walk_in:"p-ok"};
 const BOOK = new Proxy({}, {get:(o,k)=>BCL[k]?[t("b_"+k),BCL[k]]:undefined});
 const COLS = [
@@ -535,8 +620,8 @@ const COLS = [
 ];
 const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:"0",price:null,mprice:null,sort:"score",dir:-1,open:null};
-try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
+const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:new Set(),price:null,sort:"score",dir:-1,open:null};
+try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&SORTS.has(s.sort)&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 try{ history.scrollRestoration="manual"; }catch(e){}
 
 let ME=null, meMarker=null;
@@ -556,10 +641,10 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._day=a.day_pass===true||a.day_pass_price_eur!=null; p._mem=a.membership===true||a.membership_month_eur!=null; p._trt=a.treatment_access===true;
   const ex=new Set(p.extras||[]), sa=new Set(p.sauna_types||[]);
   p._pool=ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool");
-  p._cold=ex.has("cold_plunge")||ex.has("ice_bath"); p._ham=sa.has("hammam")||sa.has("steam");
+  p._cold=ex.has("cold_plunge")||ex.has("ice_bath"); p._ham=sa.has("hammam")||sa.has("steam"); p._banya=sa.has("banya"); p._ir=sa.has("infrared"); p._sauna=["sauna","finnish","bio","banya","infrared"].some(s=>sa.has(s));
   p._sea=ex.has("sea_view")||ex.has("beach_access")||p.beach||(p.sea_distance_m!=null&&p.sea_distance_m<=600);
   p._ph=(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u||""));
-  const hl=p.hl||{}; p._vp=hl.visit_from_eur!=null?hl.visit_from_eur:(p.of?null:a.day_pass_price_eur); p._mp=hl.month_from_eur!=null?hl.month_from_eur:(p.of?null:a.membership_month_eur); p._sp=hl.sort_eur!=null?hl.sort_eur:p._vp;
+  const hl=p.hl||{}; p._vp=hl.visit_from_eur!=null?hl.visit_from_eur:(p.of?null:a.day_pass_price_eur); if(typeof p._vp!=="number"||!isFinite(p._vp)) p._vp=null; p._mp=hl.month_from_eur!=null?hl.month_from_eur:(p.of?null:a.membership_month_eur); p._sp=hl.sort_eur!=null?hl.sort_eur:p._vp;
   if(p.of){ if(p.of.some(o=>o.kind==='membership')) p._mem=true; if(p.of.some(o=>o.kind==='treatment')) p._trt=true; if(hl.visit_from_eur!=null) p._day=true; p._grp=p.of.some(o=>o.kind==='private'&&o.per==='group'); }
   p._book={walk_in:0,recommended:1,required:2}[a.booking]; if(p._book==null) p._book=3;
   const sparse=!r.google&&!r.booking&&a.day_pass_price_eur==null&&a.membership_month_eur==null&&!p.wk;
@@ -570,7 +655,7 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
 const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ё/g,"е");
 function hay(p){ if(p._hay) return p._hay;
   const parts=[p.name,p.nm_lat,p.subtitle,p.address,p.muni,MUNI_RU[p.muni],p.area,AREA_RU[p.area],p.hours_short];
-  ["ru","en","pt"].forEach(L=>{ const D=I18N[L]; parts.push((D._area||{})[p.area], D["rg_"+p.reg], D["k_"+p.kind], p.tr&&p.tr[L]&&p.tr[L].subtitle, ...amen(p,L)); });
+  ["ru","en","pt"].forEach(L=>{ const D=I18N[L]; parts.push((D._area||{})[p.area], D["rg_"+p.reg], D["k_"+kg(p)], D["kf_"+kg(p)], p.tr&&p.tr[L]&&p.tr[L].subtitle, ...amen(p,L)); });
   parts.push(...(p.alias_names||[])); return p._hay=norm(parts.filter(Boolean).join(" ")); }
 const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
@@ -588,7 +673,7 @@ function chips(el,map,get,set){
   el.innerHTML="";
   Object.entries(map).forEach(([k,label])=>{
     const b=document.createElement("button"); b.type="button"; b.className="chip"; b.dataset.k=k;
-    b.innerHTML=Array.isArray(label)?`<span class="dot" style="background:${label[1]}"></span>${esc(label[0])}`:esc(label);
+    b.innerHTML=Array.isArray(label)?`${label[2]?kico(label[2]):`<span class="dot" style="background:${label[1]}"></span>`}${esc(label[0])}`:esc(label);
     b.setAttribute("aria-pressed",String(get(k)));
     b.onclick=()=>{set(k); el.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(get(c.dataset.k)))); render();};
     el.appendChild(b);
@@ -604,16 +689,17 @@ function areaMap(){const m={}; REGS.forEach(r=>{ if(P.some(p=>p.reg===r)) m[r]=r
 function muniMap(){ const c={}; P.forEach(p=>{ if(st.area.has(p.reg)&&p.muni) c[p.muni]=(c[p.muni]||0)+1; }); const m={}; Object.keys(c).sort((a,b)=>c[b]-c[a]).forEach(k=>m[k]=muniName(k)); return m; }
 function drawMuni(){ const row=document.getElementById("muni-row"); const mm=muniMap(); [...st.muni].forEach(k=>{ if(!mm[k]) st.muni.delete(k); }); row.hidden=Object.keys(mm).length<2; chips(document.getElementById("f-muni"),mm,k=>st.muni.has(k),toggle(st.muni)); }
 function drawAreas(){ chips(document.getElementById("f-area"),areaMap(),k=>st.area.has(k),k=>{ toggle(st.area)(k); drawMuni(); }); drawMuni(); }
-const kindMap=()=>{ const m={}; Object.keys(KCOL).forEach(k=>{ if(P.some(p=>p.kind===k)) m[k]=KINDS[k]; }); return m; };
-const extMap=()=>{ const m=EXTF(); if(!P.some(p=>p._ph.length)) delete m.photo; return m; };
+const kindMap=()=>{ const m={}; Object.keys(KCOL).forEach(k=>{ if(P.some(p=>kg(p)===k)) m[k]=KINDS[k]; }); return m; };
 function drawChips(){
   drawAreas();
-  chips(document.getElementById("f-kind"),kindMap(),k=>st.kind.has(k),toggle(st.kind));
+  chips(document.getElementById("f-kind"),KFILT(),k=>st.kind.has(k),toggle(st.kind));
   chips(document.getElementById("f-access"),ACCESS(),k=>st.access.has(k),toggle(st.access));
-  chips(document.getElementById("f-ext"),extMap(),k=>st.ext.has(k),toggle(st.ext));
+  chips(document.getElementById("f-heat"),HEATF(),k=>st.ext.has(k),toggle(st.ext));
+  chips(document.getElementById("f-ext"),EXTF(),k=>st.ext.has(k),toggle(st.ext));
+  chips(document.getElementById("f-rate"),RATE(),k=>st.rate.has(k),toggle(st.rate));
+  chips(document.getElementById("f-price"),PRICEF(),k=>String(st.price)===k,k=>{ st.price=String(st.price)===k?null:+k; });
   chips(document.getElementById("f-hours"),HRS(),k=>st.hrs.has(k),toggle(st.hrs));
-  chips(document.getElementById("f-rate"),RATE(),k=>st.rate===k,k=>{st.rate=k;});
-  const lg=Object.values(kindMap()).map(v=>`<span><i class="dot" style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("")+`<span>${esc(t("legend_eur"))}</span>`;
+  const lg=Object.values(kindMap()).map(v=>`<span>${kico(v[2])}${esc(v[0])}</span>`).join("");
   document.getElementById("legend").innerHTML=lg; document.getElementById("legend2").innerHTML=lg;
   drawRad();
 }
@@ -629,21 +715,8 @@ function applyStatic(){ document.documentElement.lang=LANG; document.title=t("ti
 applyStatic(); drawChips();
 document.getElementById("langsw").addEventListener("click",e=>{ const b=e.target.closest("button[data-l]"); if(!b||b.dataset.l===LANG) return; LANG=b.dataset.l; lsSet("sauna-lang",LANG);
   try{ const u=new URL(location.href); u.searchParams.set("lang",LANG); history.replaceState(history.state,"",u); }catch(_){}
-  applyStatic(); drawChips(); map.closePopup(); hpop.hidden=true; syncSliders(); drawFoot(); renderHead(); render(true); });
+  applyStatic(); drawChips(); map.closePopup(); hpop.hidden=true; drawFoot(); renderHead(); render(true); });
 
-let rafR=0; const scheduleRender=()=>{ if(rafR) return; rafR=requestAnimationFrame(()=>{ rafR=0; render(); }); };
-const SL=[];
-function slider(id,outId,vals,anyTxt,key){
-  const el=document.getElementById(id), out=document.getElementById(outId);
-  const mx=Math.max(50,...vals); el.max=Math.ceil(mx/10)*10; el.value=el.max;
-  const sync=()=>{ const txt=st[key]==null?anyTxt():"€"+st[key]; out.textContent=txt; el.setAttribute("aria-valuetext",txt); };
-  el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; sync(); scheduleRender();};
-  SL.push(sync); sync();
-  return ()=>{el.value=el.max; st[key]=null; sync();};
-}
-const syncSliders=()=>SL.forEach(f=>f());
-const resetPrice=slider("price","priceout",P.map(p=>p._vp||0),()=>t("anyf"),"price");
-const resetM=slider("mprice","mpriceout",P.map(p=>p._mp||0),()=>t("anym"),"mprice");
 const qEl=document.getElementById("q"); let qTimer=0;
 const applyQ=()=>{ clearTimeout(qTimer); st.q=norm(qEl.value.trim()); st.qt=st.q.split(/\s+/).filter(Boolean); render(); };
 qEl.addEventListener("input",()=>{ clearTimeout(qTimer); qTimer=setTimeout(applyQ,150); });
@@ -652,17 +725,26 @@ const sortEl=document.getElementById("sort");
 function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; lsSet("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir})); renderHead(); render(); }
 sortEl.onchange=()=>setSort(sortEl.value);
 sortEl.value=st.sort;
-function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear()); st.rate="0"; st.rad=null;
-  document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed",String(b.dataset.k==="0"&&b.parentElement.id==="f-rate")); });
-  resetPrice(); resetM(); drawAreas(); drawRad(); lastAreaKey="*";
+function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs,st.rate].forEach(s=>s.clear()); st.price=null; st.rad=null;
+  document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed","false"); });
+  drawAreas(); drawRad(); lastAreaKey="*";
   st.sort=ME?"dist":"score"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
   renderHead(); if(!noRender) render(); }
 document.getElementById("reset").onclick=()=>resetAll();
+document.getElementById("reset2").onclick=()=>resetAll();
+document.getElementById("reset3").onclick=()=>resetAll();
 const ft=document.getElementById("ftoggle"), fbox=document.querySelector(".filters");
-ft.onclick=()=>{const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",String(o));};
-function updateFtoggle(){ const nAll=st.area.size+st.muni.size+st.kind.size+st.access.size+st.ext.size+st.hrs.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0)+(st.rad?1:0);
-  const nMore=st.access.size+st.ext.size+st.hrs.size+(st.price!=null?1:0)+(st.mprice!=null?1:0);
-  ft.textContent=isPhone()?(nAll?t("filt_n",nAll):t("filters")):(nMore?t("morefilt_n",nMore):t("morefilt")); }
+ft.onclick=()=>{ if(isPhone()){ openSheet(); return; } const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",String(o)); };
+// active-filter state: filled toggle + count badge (list toggle, full-screen map button, region summary), live counts in the sheet header and "Show" button
+function updateFtoggle(){ const nArea=st.area.size+st.muni.size; const nMore=st.hrs.size+(st.price!=null?1:0);
+  const nAll=nArea+st.kind.size+st.access.size+st.ext.size+st.rate.size+nMore+(st.rad?1:0);
+  const badge=n=>n?`<b class="fcnt">${n}</b>`:"";
+  const n=isPhone()?nAll:nMore; const lab=isPhone()?t("filters"):t("morefilt");
+  ft.innerHTML=esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
+  const mf=document.getElementById("mapfilt"); mf.innerHTML=esc(t("filters"))+badge(nAll); mf.classList.toggle("on",nAll>0); mf.setAttribute("aria-label",nAll?t("filt_n",nAll):t("filters"));
+  const an=document.getElementById("area-n"); an.hidden=!nArea; an.textContent=nArea; document.getElementById("area-sum").classList.toggle("on",nArea>0); if(nArea) document.getElementById("area-d").open=true;
+  document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,P.length); document.getElementById("reset2").hidden=!(nAll||st.q);
+  document.getElementById("fdone").textContent=t("showres_n",LIST.length); }
 
 
 // header
@@ -685,9 +767,15 @@ map.attributionControl.setPrefix(false);
 (function(){const el=document.getElementById("map");
   el.addEventListener("touchmove",e=>{ if(isPhone()&&!isFull()) return; if(e.target.closest&&e.target.closest(".pp-sl")) return; if(e.cancelable) e.preventDefault(); },{passive:false});
   el.addEventListener("wheel",e=>{ if(isPhone()&&!isFull()) return; e.preventDefault(); },{passive:false});
-  document.getElementById("mapwrap").addEventListener("click",e=>{ if(!isPhone()||isFull()) return; if(e.target.closest(".mapfull-x,.mapfilt")) return; e.stopPropagation(); e.preventDefault(); openFull(); },true);
+  // preview map on phones: a single tap opens the full-screen map (after a short double-tap window), a double tap zooms in like Google Maps
+  let tapT=0, tapTimer=0;
+  document.getElementById("mapwrap").addEventListener("click",e=>{ if(!isPhone()||isFull()) return; if(e.target.closest(".mapbar")) return; e.stopPropagation(); e.preventDefault();
+    const now=Date.now();
+    if(tapT&&now-tapT<320){ clearTimeout(tapTimer); tapT=0; try{ map.setZoomAround(map.mouseEventToLatLng(e),map.getZoom()+1); }catch(_){ map.zoomIn(); } return; }
+    tapT=now; tapTimer=setTimeout(()=>{ tapT=0; openFull(); },320); },true);
 })();
-function syncMapMode(){ const preview=isPhone()&&!isFull(); [map.dragging,map.touchZoom,map.doubleClickZoom,map.scrollWheelZoom,map.boxZoom,map.keyboard].forEach(h=>{ if(h) preview?h.disable():h.enable(); }); }
+// preview keeps one-finger page scroll (no drag) but allows pinch zoom; full-screen map has every gesture
+function syncMapMode(){ const preview=isPhone()&&!isFull(); [map.dragging,map.doubleClickZoom,map.scrollWheelZoom,map.boxZoom,map.keyboard].forEach(h=>{ if(h) preview?h.disable():h.enable(); }); if(map.touchZoom) map.touchZoom.enable(); }
 const MAINLAND=[[36.95,-9.52],[42.16,-6.19]], LISBON=[[38.45,-9.5],[38.95,-8.85]];
 function fitDefault(){ if(isPhone()&&!isFull()) map.fitBounds(LISBON,{padding:[2,2]}); else map.fitBounds(MAINLAND,{padding:[8,8]}); }
 function fitList(list){ let pts=list.filter(p=>p.lat!=null); const isl=st.area.has("madeira")||st.area.has("acores"); const ml=pts.filter(p=>p.lon>-10.5); if(!isl&&ml.length) pts=ml;
@@ -700,15 +788,18 @@ const cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:4
 map.addLayer(cluster);
 const markers={};
 P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
-  const col=(KINDS[p.kind]||KINDS.sauna)[1];
-  const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}"><span>${p._vp!=null?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
+  const col=KINDS[kg(p)][1];
+  const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}">${pinIco(kg(p))}</div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name,keyboard:false});
-  m.bindPopup(()=>popup(p),{maxWidth:320,minWidth:280,autoPanPadding:[20,20]});
+  m.bindPopup(()=>popup(p),{maxWidth:320,minWidth:280,autoPanPaddingTopLeft:[20,20],autoPanPaddingBottomRight:[20,72]});
   markers[p._i]=m;
 });
 map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
   const sl=el.querySelector(".pp-sl"); if(sl){ L.DomEvent.disableClickPropagation(sl.parentElement); L.DomEvent.disableScrollPropagation(sl.parentElement);
     ["touchstart","pointerdown","mousedown"].forEach(t=>sl.addEventListener(t,ev=>ev.stopPropagation()));
+    // a swipe inside the photo strip must not drag the map underneath
+    sl.addEventListener("touchstart",()=>{ if(map.dragging) map.dragging.disable(); },{passive:true});
+    ["touchend","touchcancel"].forEach(t=>sl.addEventListener(t,()=>{ if(map.dragging&&!(isPhone()&&!isFull())) map.dragging.enable(); },{passive:true}));
     const cnt=el.querySelector(".pp-cnt"); const n=sl.children.length; const cur=()=>Math.round(sl.scrollLeft/sl.clientWidth);
     sl.addEventListener("scroll",()=>{ if(cnt) cnt.textContent=t("n_of",cur()+1,n); },{passive:true});
     const go=d=>sl.scrollTo({left:((cur()+d+n)%n)*sl.clientWidth,behavior:"smooth"});
@@ -720,8 +811,9 @@ map.on("popupopen",e=>{ const el=e.popup.getElement(); if(!el) return;
 function dayTxt(p){const a=p.access||{};
   if(p.status==="soon") return t("soon");
   if(p.status==="closed") return t("closed");
-  if(p.stay && a.day_pass===false && !p._trt && !p._day) return t("guests");
   if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?" "+t("for_min",a.session_minutes):""}`;
+  if(p._grp&&!p._day) return t("acc_rent");
+  if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return t("guests");
   if(p._day) return t("yes_noprice");
   if(p._trt) return t("only_trt");
   if(p._mem&&a.day_pass!==true) return t("only_mem");
@@ -729,17 +821,17 @@ function dayTxt(p){const a=p.access||{};
   return "";
 }
 function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return t("per_month",eur(a.membership_month_eur)); if(p._mem) return t("mem_req"); if(a.membership===false) return t("no"); return null;}
-function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; const r=p.ratings||{};
+function popup(p){const a=p.access||{}; const k=KINDS[kg(p)]; const r=p.ratings||{};
   const ph=p._ph.slice(0,8).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("openphoto"))}"><img src="${esc(midSrc(x))}" data-full="${esc(x.u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("");
   const rows=[];
   const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
   const am=amen(p); if(am.length) rows.push(`<span>${esc(t("p_has"))}</span><span>${esc(am.join(", "))}</span>`);
   if(p.hl&&(p.hl.visit_from_eur!=null||p.hl.month_from_eur!=null||p.hl.treatment_from_eur!=null||p.hl.group_from_eur!=null||p.hl.pack_session_from_eur!=null)){ rows.push(...popPrices(p)); } else { const dt=dayTxt(p); if(dt) add(t("p_day"), esc(dt) + (p.confidence==="low"?` <span class="warn-i" title="${esc(t("unconf"))}">?</span>`:""));
   add(t("p_mem"), esc(memTxt(p)||"")); }
-  add(t("p_book"), BOOK[a.booking]?BOOK[a.booking][0].toLowerCase():"");
   add(t("p_hours"), hoursCell(p));
   add(t("p_rate"), rb(r,true));
-  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">‹</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">›</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}</div>`:""}<div class="pp-b"><b class="t">${esc(pname(p))} <button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></b>${p._weak?`<div class="wnote">${esc(t("wt_"+p._weak+"_h"))}</div>`:""}<div class="sub"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])} · ${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">${bookBtn(p)}<button type="button" class="pp-more" data-i="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("route"))}</a>`:""}</div></div>`;
+  const s=starsOf(p);
+  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">‹</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">›</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}</div>`:""}<div class="pp-b"><b class="t">${esc(pname(p))} <button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></b>${p._weak?`<div class="wnote">${esc(t("wt_"+p._weak+"_h"))}</div>`:""}<div class="sub">${kico(kg(p))}${esc(k[0])}${s?" "+s:""} · ${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</div><div class="pp-grid">${rows.join("")}</div><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button type="button" class="pp-more" data-i="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<a class="pp-more" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lon}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("route"))}</a>`:""}</div></div>`;
 }
 
 // cells
@@ -781,21 +873,21 @@ const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unc
 function photoCell(p){ if(!p._ph.length) return "";
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCellOld(p){const a=p.access||{}; const w=warn(p);
-  if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
-  if(p.status==="closed") return `<span class="pill p-no">${esc(t("closed"))}</span>`;
-  if(p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="pill p-na">${esc(t("guests"))}</span>`;
+  if(p.status==="soon") return `<span class="dim">${esc(t("soon"))}</span>`;
+  if(p.status==="closed") return `<span class="dim">${esc(t("closed"))}</span>`;
   if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${t("min",a.session_minutes)}</div>`:""}`;
-  if(p._day) return `<span class="pill p-ok">${esc(t("yes"))}</span>${w}<div class="sub">${esc(t("noprice"))}</div>`;
-  if(p._trt) return `<span class="pill p-warn">${esc(t("w_trt"))}</span>${w}`;
-  if(p._mem&&a.day_pass!==true) return `<span class="pill p-na">${esc(t("w_mem"))}</span>${w}`;
-  if(a.day_pass===false) return `<span class="pill p-no">${esc(t("no"))}</span>`;
+  if(p._grp&&!p._day) return `<span class="dim">${esc(t("acc_rent"))}</span>${w}`;
+  if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="dim">${esc(t("guests"))}</span>`;
+  if(p._day) return `<span class="pill p-ok">${esc(t("yes"))}</span>${w}`;
+  if(p._trt) return `<span class="dim">${esc(t("w_trt"))}</span>${w}`;
+  if(p._mem&&a.day_pass!==true) return `<span class="dim">${esc(t("only_mem"))}</span>${w}`;
   return "";
 }
 const sessCell = a => a.session_minutes?`<span class="num">${t("min",a.session_minutes)}</span>`:NA;
 function memCellOld(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim">${t("per_mo")}</span>`; if(p._mem) return `<span class="dim">${esc(t("onreq"))}</span>`; if(a.membership===false) return `<span class="dim">${esc(t("no"))}</span>`; return NA;}
 const bookCell = (a,p) => {const b=BOOK[a.booking]; return (b?`<span class="pill ${b[1]}">${b[0]}</span>`:"")+(p?bookBtn(p):"");};
 function rateCell(r){ const h=rb(r); return h?`<div class="rbs">${h}</div>`:""; }
-const kindCell = p => {const k=KINDS[p.kind]||KINDS.sauna; return `<span class="kind"><span class="dot" style="background:${k[1]}"></span>${esc(k[0])}</span>${p.beach?`<div class="sub">${esc(t("beach"))}</div>`:""}`;};
+const kindCell = p => {const k=KINDS[kg(p)]; const s=starsOf(p); return `<span class="kind">${kico(k[2])}${esc(k[0])}${s?" "+s:""}</span>${p.beach?`<div class="sub">${esc(t("beach"))}</div>`:""}`;};
 
 
 // ===== prices (offers model) =====
@@ -842,85 +934,74 @@ function detail(p){const a=p.access||{};
   const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
   const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
   const it=[]; const add=(k,v)=>{ if(v) it.push(`<div><dt>${k}</dt><dd>${v}</dd></div>`); };
-  add(t("d_type"), kindCell(p));
-  add(t("d_addr"), `${esc(p.address||"")} ${link(maps,t("d_gmaps"))}`);
-  add(t("d_has"), esc(amen(p).join(", ")));
-  if(!p.of){ add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
-  add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". "))); }
-  add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):"", link(a.booking_url||p.booking_url,t("d_bookpage"))].filter(Boolean).join(", "));
+  // the row above stays visible, so the card adds only what the row does not show: address, prices block or notes, booking terms, week hours, contacts, rules, second rating, sources
+  const seaT=p.sea_distance_m!=null?`${t("d_sea").toLowerCase()} ≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" "+t("km"):p.sea_distance_m+" "+t("m")}`:"";
+  const whereT=[seaT, p.reg?regName(p.reg):"", ME&&p._d<900?`${t("d_fromme").toLowerCase()} ≈ ${kmTxt(p._d)} ${t("km")}`:""].filter(Boolean).join(" · ");
+  add(t("d_addr"), `${esc(p.address||"")} ${link(maps,t("d_gmaps"))}${whereT?`<div class="sub">${esc(whereT)}</div>`:""}`);
+  if(!p.of){ if(tr(p,"day_note")) add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
+  if(tr(p,"mem_note")||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". "))); }
+  add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):""].filter(Boolean).join(", "));
   add(t("d_hours"), p.wk?(statusLine(p)+weekTable(p.wk)):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
-  add(t("d_phone"), p.phone?`<span style="user-select:all">${esc(p.phone)}</span>`:"");
-  add(t("d_site"), link(p.website,t("d_official")));
   const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
   const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
   add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
-  add(t("d_rate"), (p.ratings&&(p.ratings.google||p.ratings.booking))?`${rb(p.ratings,true,true)}<div class="sub">${[p.ratings.google?"Google"+(p.ratings.google_reviews?`, ${nfmt(p.ratings.google_reviews)} ${t("d_ratings")}`:""):"",p.ratings.booking?"Booking"+(p.ratings.booking_reviews?`, ${nfmt(p.ratings.booking_reviews)} ${t("d_ratings")}`:""):""].filter(Boolean).join("; ")}</div>`:"");
+  if(p.ratings&&p.ratings.booking&&p.ratings.google) add(t("d_rate"), `${rb({booking:p.ratings.booking,booking_reviews:p.ratings.booking_reviews},true,true)}<div class="sub">Booking${p.ratings.booking_reviews?`, ${nfmt(p.ratings.booking_reviews)} ${t("d_ratings")}`:""}</div>`);
   if(LANG==="ru") add(t("d_lists"), esc((p.lists||[]).join(", ")));
-  add(t("d_sea"), p.sea_distance_m!=null?`≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" "+t("km"):p.sea_distance_m+" "+t("m")}`:"");
-  add(t("d_region"), esc([muniName(p.muni), p.reg?regName(p.reg):""].filter(Boolean).join(", ")));
-  if(ME) add(t("d_fromme"), p._d<900?`≈ ${kmTxt(p._d)} ${t("km")}, ${t("straight")}`:"");
   add(t("d_rules"), esc([p.min_age?t("from_age",p.min_age):"", cap(tr(p,"rules")||"")].filter(Boolean).join(". ")));
   const fb=p.fb||{}; const vis=[]; if(fb.ok>0) vis.push(t("v_ok",fb.ok)); if(fb.n>=3&&fb.rating!=null) vis.push(t("v_rate",n1(fb.rating),fb.n));
   if(vis.length) add(t("d_visitors"), `<span class="dim">${esc(vis.join(" · "))}</span>`);
   const host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return u; } };
-  const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).slice(0,4).map((u,j,arr)=>{ const h=host(u); const n=arr.slice(0,j).filter(x=>host(x)===h).length; return `<a class="sd" href="${esc(u)}" target="_blank" rel="noopener">${esc(h)}${n?" ("+(n+1)+")":""}</a>`; }).join(" ");
-  const gal=p._ph.length?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(galSrc(x))}" data-full="${esc(x.u)}" width="120" height="84" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
-  const conf=p.confidence?t("conf_"+p.confidence):"";
+  // sources: one chip per unique domain
+  const seen=new Set(); const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).filter(u=>{ const h=host(u); if(seen.has(h)) return false; seen.add(h); return true; }).slice(0,4).map(u=>`<a class="sd" href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`).join(" ");
+  const gal=p._ph.length>1?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(galSrc(x))}" data-full="${esc(x.u)}" width="120" height="84" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
+  const conf=p.confidence==="low"?t("conf_low"):"";
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
-  const bu=bookUrl(p);
-  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${p.lat!=null?`<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>`:""}${dest?`<details class="rt"><summary class="act">${esc(t("route"))}&nbsp;▾</summary><div class="rtm"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Google Maps</a><a target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a></div></details>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
+  // every action in one place: Book, directions, call, website (domain), share, show on map (phone only)
+  const bu=bookUrl(p); const tel=p.phone?String(p.phone).replace(/[^\d+]/g,""):""; const site=safeUrl(p.website)||(/^http:\/\//i.test(p.website||"")?p.website:null);
+  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${dest?`<details class="rt"><summary class="act">${esc(t("route"))}&nbsp;▾</summary><div class="rtm"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Google Maps</a><a target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a></div></details>`:""}${tel?`<a class="act" href="tel:${esc(tel)}">${esc(t("call"))}</a>`:""}${site?`<a class="act" href="${esc(site)}" target="_blank" rel="noopener">${esc(host(site))}</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("share"))}</button>${p.lat!=null?`<button type="button" class="act m-only" data-showmap="${p._i}">${esc(t("showmap"))}</button>`:""}</div>`;
   const ov=p.owner&&p.owner.verified_on;
   const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:`${esc(t("checked",fmtDate(p.verified_on)))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${esc(t("sources"))}: ${src}`:""}`;
   return `${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">✓ ${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
 }
 
 function filtered(){
-  const minR=st.rate==="ok"?0:+st.rate;
   const coll=st.sort==="name"?new Intl.Collator(LANG,{ignorePunctuation:true,sensitivity:"base"}):null;
-  return P.filter(p=>{const a=p.access||{};
+  return P.filter(p=>{
     if(st.qt.length){ const h=hay(p); if(!st.qt.every(w=>h.includes(w))) return false; }
     if(st.hrs.size){ const w=p.wk;
-      if(!w){ const sc=p.sch||{}; const wkd=sc.week||{}; const upW=(sc.upcoming||[]).some(u=>{ const d=new Date(u.date+"T12:00:00").getDay(); return d===0||d===6; });
-        const hasWknd=!!((wkd.sat&&wkd.sat.length)||(wkd.sun&&wkd.sun.length))||upW;
+      if(!w){ const sc=p.sch||{}; const wkd=sc.week||{};
         const lateStart=Object.values(wkd).some(a=>(a||[]).some(x=>parseInt(String(x))>=20));
-        const early=Object.values(wkd).some(a=>(a||[]).some(x=>parseInt(String(x))<8));
         if(st.hrs.has("now")) return false;
-        if(st.hrs.has("wknd")&&!hasWknd) return false;
         if(st.hrs.has("eve")&&!lateStart) return false;
-        if(st.hrs.has("early")&&!early) return false;
       } else { useNow(p); const S=openState(w);
       if(st.hrs.has("now") && (p.status==="soon"||p.status==="closed"||!(S&&(S.st==="open"||S.st==="soon")))) return false;
-      if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false;
-      if(st.hrs.has("wknd") && !(Array.isArray(w[5])||Array.isArray(w[6]))) return false;
-      if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; } }
+      if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false; } }
     if(st.scope==="near" && !p._near) return false;
     if(st.rad && ME && !(p.lat!=null && p._d<=st.rad)) return false;
     if(st.area.size && !st.area.has(p.reg)) return false;
     if(st.muni.size && !st.muni.has(p.muni)) return false;
-    if(st.kind.size && !st.kind.has(p.kind)) return false;
+    if(st.kind.size && !st.kind.has(kg(p))) return false;
     if(st.access.has("day") && !p._day) return false;
     if(st.access.has("membership") && !p._mem) return false;
     if(st.access.has("treatment") && !p._trt) return false;
-    if(st.access.has("walkin") && a.booking!=="walk_in") return false;
-    if(st.ext.has("pool") && !p._pool) return false;
+    if(st.access.has("private") && !p._grp) return false;
+    if(st.ext.has("sauna") && !p._sauna) return false;
     if(st.ext.has("cold") && !p._cold) return false;
+    if(st.ext.has("pool") && !p._pool) return false;
     if(st.ext.has("hammam") && !p._ham) return false;
     if(st.ext.has("sea") && !p._sea) return false;
-    if(st.ext.has("photo") && !p._ph.length) return false;
-    if(st.rate==="ok"){ if(p._weak) return false; } else if(minR && !(p._g>=minR)) return false;
+    if(st.ext.has("banya") && !p._banya) return false;
+    if(st.ext.has("ir") && !p._ir) return false;
+    if(st.rate.has("ok") && p._weak) return false;
+    if(st.rate.has("4.5") && !(p._g>=4.5)) return false;
     if(st.price!=null && (p._vp==null || p._vp>st.price)) return false;
-    if(st.mprice!=null && (p._mp==null || p._mp>st.mprice)) return false;
-    if(st.access.has("private") && !p._grp) return false;
     return true;
   }).sort((x,y)=>{const d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
     switch(st.sort){
       case "price": return nl(x._sp,y._sp)||y._score-x._score;
-      case "mprice": return nl(x._mp,y._mp)||y._score-x._score;
-      case "session": return nl(x._ses,y._ses)||y._score-x._score;
       case "book": return d*(x._book-y._book)||x._d-y._d;
-      case "kind": return d*((KINDS[x.kind]||[""])[0].localeCompare((KINDS[y.kind]||[""])[0]))||x._d-y._d;
+      case "kind": return d*(KINDS[kg(x)][0].localeCompare(KINDS[kg(y)][0]))||x._d-y._d;
       case "dist": return d*(x._d-y._d);
-      case "sea": return nl(x.sea_distance_m,y.sea_distance_m)||y._score-x._score;
       case "name": return d*coll.compare(pname(x),pname(y));
       default: return d*(x._score-y._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
     }
@@ -937,10 +1018,16 @@ function sortVal(p){ if(st.sort==="session"&&p._ses) return `<div class="sub sv"
 function memLine(p){ const h=p.hl||{}, a=p.access||{}; let v=null;
   if(h.month_from_eur!=null) v=`${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}`; else if(!p.hl&&a.membership_month_eur!=null) v=`${eur(a.membership_month_eur)}${t("per_mo")}`;
   return v?`<div class="sub mline">${esc(t("mx_mem"))} <span class="num">${esc(v)}</span></div>`:""; }
-function rowHTML(p){ const a=p.access||{}; const am=amen(p); const k=KINDS[p.kind]||KINDS.sauna; const open=st.open===p._i; const ph=p._ph.length>0;
+function rowHTML(p){ const a=p.access||{}; const am=amen(p); const k=KINDS[kg(p)]; const open=st.open===p._i; const ph=p._ph.length>0;
   const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(t("wt_"+p._weak))}</span>`:"";
   const rbm=rb(p.ratings);
-  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}">${ph?`<td>${photoCell(p)}</td>`:""}<td class="nm"${ph?"":` colspan="2"`}><div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}<button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}">${CPL_SVG}</button></div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${sortVal(p)}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}${rbm?`<div class="rbm">${rbm}</div>`:""}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${priceCell(p)}${memLine(p)}<div class="bk2">${bookCell(a,p)}</div></td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
+  // one meta line: "● Type 4★ · Town" (stars pulled out of the subtitle; a subtitle that only repeats the town is dropped)
+  const sub0=tr(p,"subtitle")||""; const stars=starsOf(p); const town=muniName(p.muni)||areaName(p.area)||"";
+  let rest=sub0.replace(/\d★\s*(·\s*)?/,"").replace(/\s*·\s*$/,"").trim(); if(rest&&(rest===town||rest===p.muni)) rest="";
+  const meta=`<div class="sub meta"><span class="m-in mk-k">${kico(k[2])}${esc(k[0])}${stars?" "+stars:""} ·</span><span class="mk-t">${esc(town)}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</span></div>`;
+  // phone-only line (desktop has rating and hours columns): rating with platform caption + open/closed status; no buttons in the collapsed row
+  const rline=(rbm||statusLine(p))?`<div class="rbm">${rbm}${statusLine(p)}</div>`:"";
+  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}">${ph?`<td>${photoCell(p)}</td>`:""}<td class="nm"${ph?"":` colspan="2"`}><div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${meta}${sortVal(p)}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}${rline}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${priceCell(p)}${memLine(p)}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
 const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
@@ -989,12 +1076,11 @@ function openRow(i,fromMap,noMap){
   else { map.panInside(m.getLatLng(),{padding:[120,120]}); L.popup({maxWidth:320,minWidth:280,autoPanPadding:[20,20],offset:[0,-2]}).setLatLng(m.getLatLng()).setContent(popup(P[i])).openOn(map); }
 }
 function showOnMap(i){ if(isPhone()) openFull(true); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); },80); }
-const fab=document.getElementById("fab");
 function openFull(noFit){ if(isFull()) return; document.documentElement.classList.add("mapfull"); try{history.pushState({mapfull:1},"");}catch(e){} syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); },60); }
-function closeFull(fromPop){ if(!isFull()) return; document.documentElement.classList.remove("mapfull","fpanel"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
-fab.onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
+function closeFull(fromPop){ if(!isFull()) return; document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
+document.getElementById("mapbtn").onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
 window.addEventListener("popstate",()=>{ closeFull(true); if(pendingScroll!=null){ const i=pendingScroll; pendingScroll=null; scrollToRow(i); } });
-const onMQ=()=>{ syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
+const onMQ=()=>{ if(!isPhone()) closeSheet(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
 try{ matchMedia("(max-width:900px)").addEventListener("change",onMQ); matchMedia("(max-width:600px)").addEventListener("change",()=>render(true)); }catch(e){}
 // hover a row: highlight its pin (desktop)
 tbody.addEventListener("mouseover",e=>{ const r=e.target.closest("tr.row"); const i=r?r.dataset.i:null; if(i===tbody.dataset.hov) return; tbody.dataset.hov=i||"";
@@ -1012,7 +1098,7 @@ document.getElementById("near").onclick=()=>{ const b=document.getElementById("n
 document.getElementById("nearc").onclick=()=>{ document.getElementById("nearc").hidden=true; setMe(CASCAIS.slice()); };
 tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
   const sm=e.target.closest("[data-showmap]"); if(sm){ showOnMap(+sm.dataset.showmap); return; }
-  const sh=e.target.closest("[data-share]"); if(sh){ const u=location.origin+location.pathname+"#p-"+P[+sh.dataset.share].id; const done=()=>{sh.textContent=t("copied");}; (navigator.clipboard?navigator.clipboard.writeText(u).then(done,()=>{prompt("Link",u)}):prompt("Link",u)); return; }
+  const sh=e.target.closest("[data-share]"); if(sh){ shareLink(+sh.dataset.share,sh); return; }
   const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
   if(e.target.closest("tr.detail")) return;
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) openRow(+r.dataset.i,false);});
@@ -1020,14 +1106,25 @@ tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(p
 // copy link
 function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].id; const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} const tt=document.createElement("div"); tt.className="cptoast"; tt.setAttribute("role","status"); tt.textContent=t("copied"); document.body.appendChild(tt); setTimeout(()=>tt.remove(),1600); };
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,()=>prompt("Link",u)); else prompt("Link",u); }
+// share: native sheet on phones, copy link elsewhere (one implementation, one toast)
+function shareLink(i,btn){ const p=P[i]; const u=location.origin+location.pathname+"#p-"+p.id; if(navigator.share&&isPhone()){ navigator.share({title:pname(p),url:u}).catch(()=>{}); return; } copyLink(i,btn); }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cpl"); if(b){ e.stopPropagation(); e.preventDefault(); copyLink(+b.dataset.cp,b); } },true);
 // route menu: keep inside the list, close on outside click
 document.addEventListener("toggle",e=>{ const d=e.target; if(!d.classList||!d.classList.contains("rt")||!d.open) return; const m=d.querySelector(".rtm"); m.style.left="0"; m.style.right="auto";
   const r=m.getBoundingClientRect(), W=document.querySelector(".tablewrap").getBoundingClientRect(); if(r.right>W.right-4){ m.style.left="auto"; m.style.right="0"; } },true);
 document.addEventListener("click",e=>{ document.querySelectorAll("details.rt[open]").forEach(d=>{ if(!d.contains(e.target)) d.open=false; }); });
 // filters over full-screen map
-document.getElementById("mapfilt").onclick=()=>{ document.documentElement.classList.add("fpanel"); fbox.classList.add("open"); ft.setAttribute("aria-expanded","true"); };
-document.getElementById("fdone").onclick=()=>{ document.documentElement.classList.remove("fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); };
+// bottom sheet: filters apply live; closes via "Show", the backdrop, the ✕, a swipe down on the handle or Esc
+const isSheet=()=>document.documentElement.classList.contains("fpanel");
+function openSheet(){ document.documentElement.classList.add("fpanel"); fbox.classList.add("open"); ft.setAttribute("aria-expanded","true"); fbox.scrollTop=0; }
+function closeSheet(){ if(!isSheet()) return; document.documentElement.classList.remove("fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); }
+document.getElementById("mapfilt").onclick=openSheet;
+document.getElementById("fdone").onclick=closeSheet;
+document.getElementById("fclose").onclick=closeSheet;
+document.getElementById("fscrim").addEventListener("click",closeSheet);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&isSheet()&&lb.hidden&&hpop.hidden) closeSheet(); });
+(function(){ let y0=null; const start=e=>{ y0=e.touches[0].clientY; }; const end=e=>{ if(y0==null) return; const dy=e.changedTouches[0].clientY-y0; y0=null; if(dy>50&&isSheet()) closeSheet(); };
+  ["fgrab","fhead"].forEach(id=>{ const el=document.getElementById(id); el.addEventListener("touchstart",start,{passive:true}); el.addEventListener("touchend",end,{passive:true}); }); })();
 // popovers (hours, schedule, feedback): anchored on desktop, bottom sheet on phones
 const hpop=document.getElementById("hpop"); let popOpener=null;
 function placePop(btn){ hpop.hidden=false; if(isPhone()){ hpop.style.left=""; hpop.style.top=""; return; } const r=btn.getBoundingClientRect(); const w=hpop.offsetWidth, h=hpop.offsetHeight; let x=Math.min(r.left, innerWidth-w-10); let y=r.bottom+6; if(y+h>innerHeight-10) y=Math.max(10,r.top-h-6); hpop.style.left=Math.max(10,x)+"px"; hpop.style.top=y+"px"; }
@@ -1079,30 +1176,35 @@ function fbClick(btn){ const p=P[+btn.dataset.i]; const k=btn.dataset.fb; if(!p|
   }
   hpop.dataset.for=key; }
 // lightbox
-const lb=document.getElementById("lb"); const lbImg=document.createElement("img"); lbImg.alt=""; document.getElementById("lb-imgslot").appendChild(lbImg);
-let lbP=null, lbJ=0, lastFocus=null;
-function lbShow(){ const x=lbP._ph[lbJ]; lbImg.src=x.u; lbImg.alt=lbP.name;
+// lightbox: a native scroll-snap track (one slide per viewport) so the photo follows the finger and settles on the next one;
+// arrows, keys and the counter drive/follow the same scroll position
+const lb=document.getElementById("lb"); const lbTrack=document.getElementById("lb-track");
+let lbP=null, lbJ=0, lastFocus=null, lbRaf=0;
+function lbBuild(){ lbTrack.innerHTML=lbP._ph.map((x,j)=>`<div class="lb-slide" data-j="${j}"><img alt="" decoding="async" referrerpolicy="no-referrer" loading="${Math.abs(j-lbJ)<=1?"eager":"lazy"}" src="${esc(x.u)}" data-j="${j}"></div>`).join(""); }
+function lbAlign(smooth){ lbTrack.scrollTo({left:lbJ*lbTrack.clientWidth,behavior:smooth?"smooth":"auto"}); }
+function lbShow(){ const x=lbP._ph[lbJ]; if(!x) return;
   document.getElementById("lb-title").textContent=pname(lbP);
   document.getElementById("lb-count").textContent=t("n_of",lbJ+1,lbP._ph.length);
   const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
-  const many=lbP._ph.length>1; ["lb-prev","lb-next","lb-tl","lb-tr"].forEach(id=>document.getElementById(id).hidden=!many);
-  const nx=lbP._ph[(lbJ+1)%lbP._ph.length]; if(nx){ const im=new Image(); im.referrerPolicy="no-referrer"; im.src=nx.u; } }
-function openLB(i,j){ lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbShow(); document.getElementById("lb-x").focus(); }
-function closeLB(){ lb.hidden=true; document.body.style.overflow=""; lbImg.removeAttribute("src"); lastFocus&&lastFocus.focus&&lastFocus.focus(); }
-const step=d=>{ if(!lbP) return; lbJ=(lbJ+d+lbP._ph.length)%lbP._ph.length; lbShow(); };
-lbImg.referrerPolicy="no-referrer";
+  const many=lbP._ph.length>1; ["lb-prev","lb-next"].forEach(id=>document.getElementById(id).hidden=!many);
+  [lbJ,lbJ+1,lbJ-1].forEach(j=>{ const sl=lbTrack.children[(j+lbP._ph.length)%lbP._ph.length]; const im=sl&&sl.firstElementChild; if(im&&im.loading==="lazy") im.loading="eager"; }); }
+function openLB(i,j){ lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbBuild(); lbAlign(false); lbShow(); document.getElementById("lb-x").focus(); }
+function closeLB(){ lb.hidden=true; document.body.style.overflow=""; lbTrack.innerHTML=""; lbP=null; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
+const step=d=>{ if(!lbP) return; lbJ=(lbJ+d+lbP._ph.length)%lbP._ph.length; lbAlign(true); lbShow(); };
+lbTrack.addEventListener("scroll",()=>{ if(lbRaf||!lbP) return; lbRaf=requestAnimationFrame(()=>{ lbRaf=0; if(!lbP||!lbTrack.clientWidth) return; const j=Math.round(lbTrack.scrollLeft/lbTrack.clientWidth); if(j!==lbJ&&j>=0&&j<lbP._ph.length){ lbJ=j; lbShow(); } }); },{passive:true});
+window.addEventListener("resize",()=>{ if(!lb.hidden&&lbP) lbAlign(false); });
 document.getElementById("lb-x").onclick=closeLB;
 document.getElementById("lb-prev").onclick=()=>step(-1);
 document.getElementById("lb-next").onclick=()=>step(1);
-document.getElementById("lb-tl").onclick=()=>step(-1);
-document.getElementById("lb-tr").onclick=()=>step(1);
-document.getElementById("lb-stage").addEventListener("click",e=>{ if(e.target.id==="lb-stage") closeLB(); });
+// tap on the photo: left third = previous, right third = next; tap beside the photo closes
+lbTrack.addEventListener("click",e=>{ if(e.target.tagName==="IMG"){ if(lbP&&lbP._ph.length>1){ const r=lbTrack.getBoundingClientRect(); const f=(e.clientX-r.left)/r.width; if(f<0.33) step(-1); else if(f>0.67) step(1); } return; } closeLB(); });
 document.addEventListener("keydown",e=>{ if(lb.hidden) return; if(e.key==="Escape") closeLB(); if(e.key==="ArrowLeft") step(-1); if(e.key==="ArrowRight") step(1);
   if(e.key==="Tab"){ const f=["lb-x","lb-prev","lb-next","lb-src"].map(id=>document.getElementById(id)).filter(x=>x&&!x.hidden); if(!f.length) return; const k=f.indexOf(document.activeElement); e.preventDefault(); f[(k+(e.shiftKey?-1:1)+f.length)%f.length].focus(); } });
+// horizontal swipes are native scroll; a clear vertical swipe down closes
 let tx=null, ty=null;
 lb.addEventListener("touchstart",e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
-lb.addEventListener("touchend",e=>{ if(tx==null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)) step(dx<0?1:-1); else if(dy>90) closeLB(); tx=null; },{passive:true});
-lbImg.onerror=()=>{ if(lbP && lbP._ph.length>1){ lbP._ph.splice(lbJ,1); if(lbJ>=lbP._ph.length) lbJ=0; lbShow(); } };
+lb.addEventListener("touchend",e=>{ if(tx==null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(dy>90&&Math.abs(dx)<40) closeLB(); tx=null; },{passive:true});
+lbTrack.addEventListener("error",e=>{ const im=e.target; if(!lbP||!im||im.tagName!=="IMG") return; if(lbP._ph.length>1){ const j=+im.dataset.j; lbP._ph.splice(j,1); if(j<lbJ) lbJ--; if(lbJ>=lbP._ph.length) lbJ=0; lbBuild(); lbAlign(false); lbShow(); } },true);
 document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.dataset.full && t.getAttribute("src")!==t.dataset.full){ t.src=t.dataset.full; return; } if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; const nx=b.nextElementSibling; if(nx&&b.parentElement.classList.contains("thumbs")) nx.style.display="block"; } },true);
 
 setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
