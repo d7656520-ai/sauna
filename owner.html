@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Saunas of Portugal · Owner update</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@600&display=swap">
+<style>
+:root{--bg:#f4f6f5;--panel:#fff;--ink:#18201d;--muted:#5d6a65;--line:#dde3e0;--sea:#0f6b72;--on-sea:#fff;--ok:#1f6e44;--no:#a23a3a;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1513;--panel:#161e1b;--ink:#e6ece9;--muted:#9fb0a9;--line:#26322e;--sea:#5cc0c6;--on-sea:#0b1f20;--ok:#7fd8a1;--no:#f19a9a;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Onest",system-ui,sans-serif}
+.wrap{max-width:720px;margin:0 auto;padding-block:20px 60px;padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+h1{font:600 22px/1.2 "Unbounded","Onest",sans-serif;margin:0 0 6px;text-wrap:balance}
+p.lead{color:var(--muted);margin:0 0 18px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+.top a{color:var(--sea);font-size:14px}
+.langsw{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.langsw button{all:unset;cursor:pointer;font-size:13px;font-weight:600;padding:8px 12px;color:var(--muted)}
+.langsw button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+form{display:grid;gap:14px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+label{display:grid;gap:5px;font-size:13px;font-weight:600}
+label small{font-weight:400;color:var(--muted)}
+input[type=text],input[type=email],input[type=tel],input[type=url],select,textarea{font:inherit;font-size:16px;color:inherit;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{min-height:84px;resize:vertical}
+fieldset{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:0}
+legend{font-size:13px;font-weight:600;padding:0 4px}
+.chk{display:flex;flex-wrap:wrap;gap:8px}
+.chk label{display:inline-flex;align-items:center;gap:6px;font-weight:500;border:1px solid var(--line);border-radius:999px;padding:8px 12px;cursor:pointer}
+.chk input{accent-color:var(--sea)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:560px){.row2{grid-template-columns:1fr}}
+.place{font-size:16px;font-weight:600}
+.consent{display:flex;gap:10px;align-items:flex-start;font-weight:500}
+button.send{all:unset;cursor:pointer;text-align:center;background:var(--sea);color:var(--on-sea);font-weight:600;padding:13px 18px;border-radius:999px}
+button.send[disabled]{opacity:.6;cursor:wait}
+.msg{padding:12px 14px;border-radius:10px;font-weight:500}
+.msg.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok)}
+.msg.err{background:color-mix(in srgb,var(--no) 14%,transparent);color:var(--no)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.thumbs{display:flex;flex-wrap:wrap;gap:6px}
+.thumbs img{width:76px;height:58px;object-fit:cover;border-radius:6px}
+:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top"><a href="./" data-t="back">← Saunas of Portugal</a>
+    <div class="langsw" id="langsw"><button type="button" data-l="ru">RU</button><button type="button" data-l="en">EN</button><button type="button" data-l="pt">PT</button></div></div>
+  <h1 data-t="title"></h1>
+  <p class="lead" data-t="lead"></p>
+  <form id="f" novalidate>
+    <div><div class="place" id="place"></div><input type="hidden" name="place_id" id="place_id"><input type="hidden" name="place_name" id="place_name"><input type="hidden" name="lang" id="lang"></div>
+    <div class="row2">
+      <label><span data-t="role"></span><select name="role"><option value="Owner" data-t="r_owner"></option><option value="Manager" data-t="r_manager"></option><option value="Staff" data-t="r_staff"></option></select></label>
+      <label><span data-t="vstatus"></span><select name="venue_status"><option value="" data-t="s_same"></option><option value="Open" data-t="s_open"></option><option value="Opening soon" data-t="s_soon"></option><option value="Temporarily closed" data-t="s_temp"></option><option value="Closed permanently" data-t="s_closed"></option></select></label>
+    </div>
+    <label><span data-t="address"></span><input type="text" name="address" maxlength="300"></label>
+    <label><span data-t="hours"></span><small data-t="hours_h"></small><textarea name="hours" maxlength="600"></textarea></label>
+    <label><span data-t="prices"></span><small data-t="prices_h"></small><textarea name="prices" maxlength="1500"></textarea></label>
+    <div class="row2">
+      <label><span data-t="booking"></span><select name="booking"><option value=""></option><option value="required" data-t="b_req"></option><option value="recommended" data-t="b_rec"></option><option value="walk_in" data-t="b_walk"></option></select></label>
+      <label><span data-t="booking_url"></span><input type="url" name="booking_url" maxlength="300" placeholder="https://"></label>
+    </div>
+    <fieldset><legend data-t="facilities"></legend><div class="chk" id="fac"></div></fieldset>
+    <label><span data-t="rules"></span><textarea name="rules" maxlength="600"></textarea></label>
+    <label><span data-t="desc"></span><small data-t="desc_h"></small><textarea name="description" maxlength="500"></textarea></label>
+    <div class="row2">
+      <label><span data-t="phone"></span><input type="tel" name="phone" maxlength="60"></label>
+      <label><span data-t="website"></span><input type="url" name="website" maxlength="300" placeholder="https://"></label>
+      <label>Instagram<input type="text" name="instagram" maxlength="100" placeholder="@"></label>
+      <label>Telegram / WhatsApp<input type="text" name="telegram" maxlength="100"></label>
+    </div>
+    <label><span data-t="photos"></span><small data-t="photos_h"></small><input type="file" name="photos" id="photos" accept="image/jpeg,image/png,image/webp,image/heic" multiple><div class="thumbs" id="thumbs"></div></label>
+    <fieldset><legend data-t="contact"></legend><small data-t="contact_h" style="display:block;color:var(--muted);margin-bottom:8px"></small>
+      <div class="row2"><label><span data-t="cname"></span><input type="text" name="contact_name" maxlength="120"></label>
+      <label><span data-t="cemail"></span><input type="email" name="contact_email" maxlength="200"></label>
+      <label><span data-t="cphone"></span><input type="tel" name="contact_phone" maxlength="60"></label></div></fieldset>
+    <div class="hp" aria-hidden="true"><label>Leave empty<input type="text" name="hp" tabindex="-1" autocomplete="off"></label></div>
+    <label class="consent"><input type="checkbox" name="consent" value="yes" id="consent"><span data-t="consent"></span></label>
+    <div id="msg" role="status" aria-live="polite"></div>
+    <button type="submit" class="send" id="send" data-t="send"></button>
+  </form>
+</div>
+<script>
+const API="https://sheldon-dev.tail289d1a.ts.net";
+const T={
+ ru:{back:"← Сауны Португалии",title:"Обновить данные места",lead:"Владелец или менеджер может прислать актуальные цены, часы, описание и фото. Мы проверим заявку в течение 3 дней и опубликуем с отметкой «Подтверждено владельцем».",role:"Ваша роль",r_owner:"Владелец",r_manager:"Менеджер",r_staff:"Сотрудник",vstatus:"Статус места",s_same:"Без изменений",s_open:"Работает",s_soon:"Скоро откроется",s_temp:"Временно закрыто",s_closed:"Закрыто навсегда",address:"Адрес",hours:"Часы работы",hours_h:"Например: пн по пт 10:00 до 22:00; сб 10:00 до 20:00; вс выходной. Или «по расписанию сессий».",prices:"Цены",prices_h:"Разовый вход (€ и минуты), пакеты, абонемент €/месяц, аренда, «только с процедурой».",booking:"Бронь",b_req:"Обязательна",b_rec:"Желательна",b_walk:"Не нужна",booking_url:"Ссылка на бронь",facilities:"Что есть на месте",rules:"Правила, возраст",desc:"Короткое описание",desc_h:"До 500 символов.",phone:"Телефон для публикации",website:"Сайт",photos:"Фото",photos_h:"До 10 фото: парная, хаммам, бассейн, интерьер, фасад. До 10 МБ каждое.",contact:"Контакт для связи",contact_h:"Не публикуется, нужен только для проверки заявки. Укажите почту или телефон.",cname:"Имя",cemail:"Почта",cphone:"Телефон",consent:"Я представляю это заведение и разрешаю публиковать указанные данные и фото на сайте.",send:"Отправить на проверку",sending:"Отправляем…",ok:"Спасибо! Заявка получена, номер {0}. Мы проверим её в течение 3 дней.",err:"Не удалось отправить. Проверьте подключение и попробуйте ещё раз.",need:"Нужны согласие и почта или телефон для связи.",tooMany:"Не больше 10 фото, до 10 МБ каждое.",noplace:"Откройте эту форму из карточки места на сайте."},
+ en:{back:"← Saunas of Portugal",title:"Update this listing",lead:"The owner or manager can send current prices, hours, description and photos. We review submissions within 3 days and publish them marked \"Verified by owner\".",role:"Your role",r_owner:"Owner",r_manager:"Manager",r_staff:"Staff",vstatus:"Status",s_same:"No change",s_open:"Open",s_soon:"Opening soon",s_temp:"Temporarily closed",s_closed:"Closed permanently",address:"Address",hours:"Opening hours",hours_h:"e.g. Mon to Fri 10:00 to 22:00; Sat 10:00 to 20:00; Sun closed. Or \"by session schedule\".",prices:"Prices",prices_h:"Single visit (€ and minutes), packs, membership €/month, private hire, \"with treatment only\".",booking:"Booking",b_req:"Required",b_rec:"Recommended",b_walk:"Walk-in",booking_url:"Booking link",facilities:"Facilities",rules:"Rules, age limit",desc:"Short description",desc_h:"Up to 500 characters.",phone:"Phone to publish",website:"Website",photos:"Photos",photos_h:"Up to 10 photos: sauna, steam room, pool, interior, exterior. Up to 10 MB each.",contact:"Contact for verification",contact_h:"Not published; used only to verify the submission. Give an email or phone.",cname:"Name",cemail:"Email",cphone:"Phone",consent:"I represent this business and allow publishing the information and photos above on the site.",send:"Send for review",sending:"Sending…",ok:"Thank you! Submission received, number {0}. We will review it within 3 days.",err:"Could not send. Check your connection and try again.",need:"Consent and an email or phone for contact are required.",tooMany:"Up to 10 photos, 10 MB each.",noplace:"Open this form from a listing on the site."},
+ pt:{back:"← Saunas de Portugal",title:"Atualizar esta ficha",lead:"O proprietário ou gerente pode enviar preços, horário, descrição e fotos atualizados. Revemos em 3 dias e publicamos com a marca \"Confirmado pelo proprietário\".",role:"A sua função",r_owner:"Proprietário",r_manager:"Gerente",r_staff:"Colaborador",vstatus:"Estado",s_same:"Sem alteração",s_open:"Aberto",s_soon:"Abre em breve",s_temp:"Temporariamente fechado",s_closed:"Encerrado definitivamente",address:"Morada",hours:"Horário",hours_h:"Ex.: seg a sex 10:00 às 22:00; sáb 10:00 às 20:00; dom fechado. Ou \"por sessões marcadas\".",prices:"Preços",prices_h:"Entrada avulsa (€ e minutos), packs, mensalidade €/mês, aluguer privado, \"só com tratamento\".",booking:"Reserva",b_req:"Obrigatória",b_rec:"Recomendada",b_walk:"Sem reserva",booking_url:"Link de reserva",facilities:"Instalações",rules:"Regras, idade mínima",desc:"Descrição curta",desc_h:"Até 500 caracteres.",phone:"Telefone a publicar",website:"Site",photos:"Fotos",photos_h:"Até 10 fotos: sauna, banho turco, piscina, interior, exterior. Até 10 MB cada.",contact:"Contacto para verificação",contact_h:"Não é publicado; serve só para verificar o pedido. Indique email ou telefone.",cname:"Nome",cemail:"Email",cphone:"Telefone",consent:"Represento este negócio e autorizo a publicação das informações e fotos acima no site.",send:"Enviar para revisão",sending:"A enviar…",ok:"Obrigado! Pedido recebido, número {0}. Vamos revê-lo em 3 dias.",err:"Não foi possível enviar. Verifique a ligação e tente novamente.",need:"São necessários o consentimento e um email ou telefone de contacto.",tooMany:"Até 10 fotos, 10 MB cada.",noplace:"Abra este formulário a partir de uma ficha do site."}};
+const FAC=[["Finnish sauna",{ru:"Финская сауна",en:"Finnish sauna",pt:"Sauna finlandesa"}],["Infrared sauna",{ru:"Инфракрасная сауна",en:"Infrared sauna",pt:"Sauna de infravermelhos"}],["Steam room / hammam",{ru:"Парная / хаммам",en:"Steam room / hammam",pt:"Banho turco / hammam"}],["Russian banya",{ru:"Русская баня",en:"Russian banya",pt:"Banya russa"}],["Pool",{ru:"Бассейн",en:"Pool",pt:"Piscina"}],["Heated pool",{ru:"Тёплый бассейн",en:"Heated pool",pt:"Piscina aquecida"}],["Cold plunge",{ru:"Купель",en:"Cold plunge",pt:"Imersão em água fria"}],["Ice bath",{ru:"Ледяная ванна",en:"Ice bath",pt:"Banho de gelo"}],["Jacuzzi",{ru:"Джакузи",en:"Jacuzzi",pt:"Jacuzzi"}],["Hot tub",{ru:"Чан",en:"Hot tub",pt:"Hot tub"}],["Massage",{ru:"Массаж",en:"Massage",pt:"Massagem"}],["Gym",{ru:"Зал",en:"Gym",pt:"Ginásio"}],["Relax room",{ru:"Зона отдыха",en:"Relax room",pt:"Zona de relaxamento"}],["Sea view",{ru:"Вид на море",en:"Sea view",pt:"Vista mar"}]];
+const q=new URLSearchParams(location.search);
+let L=(q.get("lang")&&T[q.get("lang")])?q.get("lang"):((navigator.language||"en").slice(0,2) in T?(navigator.language||"en").slice(0,2):"en");
+const pid=(q.get("id")||"").replace(/[^a-z0-9-]/g,"").slice(0,60), pname=(q.get("name")||"").slice(0,200);
+const t=(k,...a)=>(T[L][k]||T.en[k]||k).replace(/\{(\d)\}/g,(m,i)=>a[+i]);
+function apply(){ document.documentElement.lang=L; document.title=t("title")+" · Saunas of Portugal";
+  document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
+  document.querySelectorAll("#langsw button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===L)));
+  document.getElementById("fac").innerHTML=FAC.map(([v,n])=>`<label><input type="checkbox" name="facilities" value="${v}"> ${n[L]}</label>`).join("");
+  document.getElementById("place").textContent=pname||t("noplace"); document.getElementById("lang").value=L; }
+document.getElementById("place_id").value=pid; document.getElementById("place_name").value=pname;
+document.getElementById("langsw").onclick=e=>{ const b=e.target.closest("button[data-l]"); if(!b) return; const keep=[...document.querySelectorAll('#fac input:checked')].map(i=>i.value); L=b.dataset.l; apply(); document.querySelectorAll('#fac input').forEach(i=>{ if(keep.includes(i.value)) i.checked=true; }); };
+apply();
+const ph=document.getElementById("photos"), th=document.getElementById("thumbs");
+ph.onchange=()=>{ th.innerHTML=""; [...ph.files].slice(0,10).forEach(f=>{ const im=document.createElement("img"); im.alt=""; im.src=URL.createObjectURL(f); th.appendChild(im); }); };
+const msg=(c,txt)=>{ const m=document.getElementById("msg"); m.className="msg "+c; m.textContent=txt; };
+document.getElementById("f").addEventListener("submit",async e=>{ e.preventDefault(); const f=e.target;
+  if(!pid){ msg("err",t("noplace")); return; }
+  if(!document.getElementById("consent").checked||!(f.contact_email.value.trim()||f.contact_phone.value.trim())){ msg("err",t("need")); return; }
+  const files=[...ph.files]; if(files.length>10||files.some(x=>x.size>10*1024*1024)){ msg("err",t("tooMany")); return; }
+  const fd=new FormData(f); fd.delete("photos"); files.forEach(x=>fd.append("photos",x,x.name));
+  const b=document.getElementById("send"); b.disabled=true; b.textContent=t("sending");
+  try{ const r=await fetch(API+"/api/owner",{method:"POST",body:fd}); const j=await r.json().catch(()=>({})); if(r.ok&&j.ok){ msg("ok",t("ok",j.id||"")); f.reset(); th.innerHTML=""; b.hidden=true; } else { msg("err",t("err")); } }
+  catch(_){ msg("err",t("err")); }
+  finally{ b.disabled=false; b.textContent=t("send"); } });
+</script>
+</body>
+</html>

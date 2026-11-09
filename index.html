@@ -457,7 +457,7 @@ tr.row{scroll-margin-top:44px}
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
 // A: owner form viewform URL, A_id/A_name: "entry.NNN" of its Place ID / Place name fields.
 // B: feedback form ".../formResponse" URL, f: "entry.NNN" per field.
-const FB={A:"", A_id:"", A_name:"", B:"", f:{place_id:"",kind:"",problem:"",rating:"",comment:"",cid:"",lang:""}};
+const FB_API="https://sheldon-dev.tail289d1a.ts.net"; const FB={A:"", B:"", API:FB_API};
 const D = window.SAUNA_DATA || {places:[],meta:{}};
 const P = D.places;
 const CASCAIS = [38.6968, -9.4215];
@@ -469,6 +469,7 @@ const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сау�
 Object.assign(I18N.ru,{sch_weekly:"По расписанию",sch_calendar:"По датам",sch_on_request:"По записи",sch_open:"расписание",sch_t:"Расписание",sch_up:"Ближайшие",sch_win:"Свободные окна на этой неделе"});Object.assign(I18N.en,{sch_weekly:"Scheduled sessions",sch_calendar:"Dated sessions",sch_on_request:"By appointment",sch_open:"schedule",sch_t:"Schedule",sch_up:"Upcoming",sch_win:"Free slots this week"});Object.assign(I18N.pt,{sch_weekly:"Sessões com horário",sch_calendar:"Sessões por data",sch_on_request:"Por marcação",sch_open:"horário",sch_t:"Horário",sch_up:"Próximas",sch_win:"Horários livres esta semana"});
 Object.assign(I18N.ru,{showres:"Показать"});Object.assign(I18N.en,{showres:"Show results"});Object.assign(I18N.pt,{showres:"Ver resultados"});
 Object.assign(I18N.ru,{rng:"до"});Object.assign(I18N.en,{rng:"to"});Object.assign(I18N.pt,{rng:"a"});
+Object.assign(I18N.ru,{fb_err:"Не отправилось, попробуйте ещё раз"});Object.assign(I18N.en,{fb_err:"Not sent, please try again"});Object.assign(I18N.pt,{fb_err:"Não enviado, tente novamente"});
 Object.assign(I18N.ru,{per_yr:" /год",per_wk:" /нед."});Object.assign(I18N.en,{per_yr:" /yr",per_wk:" /wk"});Object.assign(I18N.pt,{per_yr:" /ano",per_wk:" /sem."});
 Object.assign(I18N.ru,{few:"мало оценок"});Object.assign(I18N.en,{few:"few ratings"});Object.assign(I18N.pt,{few:"poucas avaliações"});
 Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"неделя"});Object.assign(I18N.en,{weekhrs:"Opening hours by day",weekshort:"week"});Object.assign(I18N.pt,{weekhrs:"Horário por dia",weekshort:"semana"});
@@ -557,7 +558,7 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._pool=ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool");
   p._cold=ex.has("cold_plunge")||ex.has("ice_bath"); p._ham=sa.has("hammam")||sa.has("steam");
   p._sea=ex.has("sea_view")||ex.has("beach_access")||p.beach||(p.sea_distance_m!=null&&p.sea_distance_m<=600);
-  p._ph=(p.photos||[]).filter(x=>safeUrl(x.u));
+  p._ph=(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u||""));
   const hl=p.hl||{}; p._vp=hl.visit_from_eur!=null?hl.visit_from_eur:(p.of?null:a.day_pass_price_eur); p._mp=hl.month_from_eur!=null?hl.month_from_eur:(p.of?null:a.membership_month_eur); p._sp=hl.sort_eur!=null?hl.sort_eur:p._vp;
   if(p.of){ if(p.of.some(o=>o.kind==='membership')) p._mem=true; if(p.of.some(o=>o.kind==='treatment')) p._trt=true; if(hl.visit_from_eur!=null) p._day=true; p._grp=p.of.some(o=>o.kind==='private'&&o.per==='group'); }
   p._book={walk_in:0,recommended:1,required:2}[a.booking]; if(p._book==null) p._book=3;
@@ -570,7 +571,7 @@ const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u03
 function hay(p){ if(p._hay) return p._hay;
   const parts=[p.name,p.nm_lat,p.subtitle,p.address,p.muni,MUNI_RU[p.muni],p.area,AREA_RU[p.area],p.hours_short];
   ["ru","en","pt"].forEach(L=>{ const D=I18N[L]; parts.push((D._area||{})[p.area], D["rg_"+p.reg], D["k_"+p.kind], p.tr&&p.tr[L]&&p.tr[L].subtitle, ...amen(p,L)); });
-  return p._hay=norm(parts.filter(Boolean).join(" ")); }
+  parts.push(...(p.alias_names||[])); return p._hay=norm(parts.filter(Boolean).join(" ")); }
 const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
 const fmtDate=s=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||""); return m?`${m[3]}.${m[2]}.${m[1]}`:(s||""); };
@@ -1050,11 +1051,11 @@ map.on("movestart",()=>{ if(hpop.dataset.keep!=="1") closePop(); });
 const fbDone=(p,k)=>!!lsGet(`fb:${p.id}:${k}`);
 function fbCid(){ let c=lsGet("sauna-cid"); if(!c){ c=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36); lsSet("sauna-cid",c); } return c; }
 function fbVals(p,data){ return {place_id:p.id,kind:data.kind,problem:data.problem||"",rating:data.rating!=null?String(data.rating):"",comment:String(data.comment||"").slice(0,300),cid:fbCid(),lang:LANG}; }
-function fbSend(p,data){ if(!FB.B) return; const v=fbVals(p,data); const fd=new FormData(); Object.keys(v).forEach(k=>{ if(FB.f[k]) fd.append(FB.f[k],v[k]); });
-  try{ fetch(FB.B,{method:"POST",mode:"no-cors",body:fd}).catch(()=>{}); }catch(e){}
-  lsSet(`fb:${p.id}:${data.kind}`,String(Date.now())); fbMark(p,data.kind); }
-function fbFormUrl(p,data){ const q=new URLSearchParams({usp:"pp_url"}); const v=fbVals(p,data); Object.keys(v).forEach(k=>{ if(FB.f[k]&&v[k]) q.set(FB.f[k],v[k]); }); return FB.B.replace(/formResponse.*$/,"viewform")+"?"+q.toString(); }
-function ownerUrl(p){ const q=new URLSearchParams({usp:"pp_url"}); if(FB.A_id) q.set(FB.A_id,p.id); if(FB.A_name) q.set(FB.A_name,p.name); return FB.A+(FB.A.includes("?")?"&":"?")+q.toString(); }
+function fbSend(p,data){ if(!FB.B) return Promise.resolve(false); const v=fbVals(p,data);
+  return fetch(FB.API+"/api/feedback",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(v)}).then(r=>r.ok?r.json():Promise.reject(r.status)).then(j=>{ if(!j.ok) throw 0; lsSet(`fb:${p.id}:${data.kind}`,String(Date.now())); fbMark(p,data.kind); return true; }).catch(()=>{ fbFail(p,data.kind); return false; }); }
+function fbFail(p,k){ document.querySelectorAll(`.fbb[data-fb="${k}"][data-i="${p._i}"]`).forEach(b=>{ const o=b.textContent; b.textContent=t("fb_err"); setTimeout(()=>{ b.textContent=o; },2500); }); }
+function fbFormUrl(p,data){ return ""; }
+function ownerUrl(p){ const q=new URLSearchParams({id:p.id,name:p.name,lang:LANG}); return "owner.html?"+q.toString(); }
 const fbThx=k=>t(k==="problem"?"fb_thanks":"fb_thx");
 function fbBtn(p,k,lab){ return fbDone(p,k)?`<button type="button" class="fbb" aria-disabled="true" disabled>${esc(fbThx(k))}</button>`:`<button type="button" class="fbb" data-fb="${k}" data-i="${p._i}"${k==="ok"?"":` aria-haspopup="dialog"`}>${esc(lab)}</button>`; }
 function fbLine(p){ if(!FB.B&&!FB.A) return ""; const o=[];
@@ -1066,12 +1067,12 @@ function fbClick(btn){ const p=P[+btn.dataset.i]; const k=btn.dataset.fb; if(!p|
   if(k==="ok"){ fbSend(p,{kind:"ok"}); return; }
   const key="fb"+k+p._i; if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; }
   if(k==="problem"){
-    popShow(btn,`<div class="hpt">${esc(t("fb_flag").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><form class="fbf" data-i="${p._i}">${["closed","hours","price","nosauna","other"].map(c=>`<label><input type="radio" name="fbp" value="${c}"> ${esc(t("fb_p_"+c))}</label>`).join("")}<textarea name="c" maxlength="300" rows="2" placeholder="${esc(t("fb_comment"))}" aria-label="${esc(t("fb_comment"))}"></textarea><button type="submit" class="fbsend" disabled>${esc(t("fb_send"))}</button></form><a class="fbaf" href="${esc(fbFormUrl(p,{kind:"problem"}))}" target="_blank" rel="noopener">${esc(t("fb_asform"))}</a>`,{keep:true,label:t("fb_flag")+" · "+pname(p)});
+    popShow(btn,`<div class="hpt">${esc(t("fb_flag").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><form class="fbf" data-i="${p._i}">${["closed","hours","price","nosauna","other"].map(c=>`<label><input type="radio" name="fbp" value="${c}"> ${esc(t("fb_p_"+c))}</label>`).join("")}<textarea name="c" maxlength="300" rows="2" placeholder="${esc(t("fb_comment"))}" aria-label="${esc(t("fb_comment"))}"></textarea><button type="submit" class="fbsend" disabled>${esc(t("fb_send"))}</button></form>`,{keep:true,label:t("fb_flag")+" · "+pname(p)});
     const f=hpop.querySelector("form"); f.addEventListener("change",()=>{ f.querySelector(".fbsend").disabled=!f.querySelector("input[name=fbp]:checked"); });
     f.addEventListener("submit",ev=>{ ev.preventDefault(); const c=f.querySelector("input[name=fbp]:checked"); if(!c) return; fbSend(p,{kind:"problem",problem:c.value,comment:f.querySelector("textarea").value}); closePop(true); });
     const r0=f.querySelector("input"); if(r0) r0.focus({preventScroll:true});
   } else {
-    popShow(btn,`<div class="hpt">${esc(t("fb_rate").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><div class="fbstars" role="group" aria-label="${esc(t("fb_rate"))}">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${esc(t("fb_star_n",n))}">★</button>`).join("")}</div><a class="fbaf" href="${esc(fbFormUrl(p,{kind:"rating"}))}" target="_blank" rel="noopener">${esc(t("fb_asform"))}</a>`,{keep:true,label:t("fb_rate")+" · "+pname(p)});
+    popShow(btn,`<div class="hpt">${esc(t("fb_rate").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><div class="fbstars" role="group" aria-label="${esc(t("fb_rate"))}">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${esc(t("fb_star_n",n))}">★</button>`).join("")}</div>`,{keep:true,label:t("fb_rate")+" · "+pname(p)});
     const g=hpop.querySelector(".fbstars"); g.addEventListener("mouseover",e=>{ const b=e.target.closest("[data-star]"); const n=b?+b.dataset.star:0; g.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.star<=n)); });
     g.addEventListener("click",e=>{ const b=e.target.closest("[data-star]"); if(!b) return; fbSend(p,{kind:"rating",rating:+b.dataset.star}); closePop(true); });
     const s0=g.querySelector("button"); if(s0) s0.focus({preventScroll:true});
@@ -1105,8 +1106,12 @@ lbImg.onerror=()=>{ if(lbP && lbP._ph.length>1){ lbP._ph.splice(lbJ,1); if(lbJ>=
 document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.dataset.full && t.getAttribute("src")!==t.dataset.full){ t.src=t.dataset.full; return; } if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; const nx=b.nextElementSibling; if(nx&&b.parentElement.classList.contains("thumbs")) nx.style.display="block"; } },true);
 
 setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
+// own API: enable owner/feedback UI only when the service answers
+(function(){ const ctl=new AbortController(); setTimeout(()=>ctl.abort(),6000);
+  fetch(FB_API+"/api/health",{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(j=>{ if(!j||!j.ok) return; FB.B="api"; FB.A="owner.html";
+    return fetch(FB_API+"/api/stats").then(r=>r.ok?r.json():{}).then(sx=>{ P.forEach(p=>{ if(sx[p.id]) p.fb=sx[p.id]; }); }).catch(()=>{}).then(()=>{ if(hpop.hidden&&lb.hidden) render(true); }); }).catch(()=>{}); })();
 renderHead(); render();
-function openFromHash(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]); if(!p) return;
+function openFromHash(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]||(x.alias_ids||[]).includes(mm[1])); if(!p) return;
   if(st.open!==p._i) openRow(p._i,false,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
 openFromHash();
 window.addEventListener("hashchange",openFromHash);
