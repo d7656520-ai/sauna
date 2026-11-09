@@ -10,6 +10,13 @@
 <meta property="og:description" content="Сауны, бани и спа вокруг Лиссабона и по Португалии: карта, цены разового входа и абонементов, бронь, фото.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://d7656520-ai.github.io/sauna/">
+<meta property="og:image" content="https://images.ctfassets.net/h00dcmbjgibb/XO6ZBHwtvHI3lVKtnc79D/9cbc931012cce558338a0815e334b4ed/Thalassotherapy_Cascais.jpg?w=1200&amp;h=630&amp;fit=fill&amp;fm=jpg&amp;q=80">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1513" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f6b72'/%3E%3Cpath d='M22 44c-4-6 4-10 0-17M32 44c-4-6 4-10 0-17M42 44c-4-6 4-10 0-17' fill='none' stroke='%23fff' stroke-width='4.5' stroke-linecap='round'/%3E%3Crect x='14' y='47' width='36' height='5' rx='2.5' fill='%23f0a24a'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&family=Unbounded:wght@500;700&display=swap">
@@ -20,7 +27,8 @@
 :root{
   --bg:#f4f6f5; --panel:#ffffff; --ink:#18201d; --muted:#5d6a65; --line:#dde3e0;
   --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf;
-  --ok:#2f7d4f; --ok-soft:#e3f2e8; --warn:#9a6a00; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
+  --ok:#276b43; --ok-soft:#e3f2e8; --warn:#7a5400; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
+  --on-sea:#fff; --heat-text:#9a5410;
   --chip:#eef2f0; --scrim:rgba(8,14,12,.92); --tilefilter:none;
   --f-display:"Unbounded","Onest",system-ui,sans-serif;
   --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
@@ -31,6 +39,7 @@
   --sea:#5cc0c6; --sea-soft:#15302f; --heat:#f0a24a; --heat-soft:#3a2810;
   --ok:#6fcf93; --ok-soft:#173326; --warn:#e5bf55; --warn-soft:#3a3010; --no:#ef8a8a; --no-soft:#3d1c1c;
   --chip:#1d2723; --scrim:rgba(0,0,0,.94);
+  --on-sea:#0f1513; --heat-text:#f0a24a;
   --tilefilter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6);
   color-scheme:dark;
 }}
@@ -66,10 +75,10 @@ button,input,select{font:inherit;color:inherit}
 .range output{color:var(--ink);font-variant-numeric:tabular-nums;min-width:48px}
 select{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:6px 8px;font-size:13px}
 .reset{background:none;border:none;color:var(--sea);cursor:pointer;font-size:13px;padding:4px 2px;text-decoration:underline}
-.ftoggle,.maptoggle{display:none}
+.maptoggle{display:none}
 .hint{font-size:12.5px;color:var(--muted);margin:0 0 8px}
 .warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:700;vertical-align:1px;margin-left:4px}
-.tablewrap{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.tablewrap{overflow:visible;overflow:clip;background:var(--panel);border:1px solid var(--line);border-radius:14px}
 table{width:100%;border-collapse:collapse;font-size:14px}
 th{position:sticky;top:0;z-index:1;background:var(--panel);text-align:left;font-weight:600;font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
 th button{all:unset;cursor:pointer;display:block;padding:10px 9px}
@@ -86,17 +95,17 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .name{font-weight:600}
 .wtag{display:inline-block;margin-left:6px;font-size:11px;font-weight:500;padding:0 6px;border:1px dashed var(--warn);color:var(--warn);border-radius:6px;vertical-align:1px;white-space:nowrap}
 .wtag.sparse{border-color:var(--muted);color:var(--muted)}
-tr.row.weak td:not(:first-child){opacity:.78}
-tr.row.weak td:first-child img{filter:grayscale(.5);opacity:.8}
+tr.row.w-status td:not(:first-child){opacity:.78}
+tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .mk.weak{opacity:.6;filter:grayscale(.4)}
 @media (min-width:901px) and (max-width:2099px){.hide-l{display:none!important} .m-in{display:inline!important}}
-@media (min-width:901px) and (max-width:1399px){#tbody > tr > td:nth-child(2){min-width:140px!important}}
-@media (min-width:901px){#tbody > tr > td:nth-child(2){min-width:165px} table{font-size:13.5px} td{padding:8px 7px} th button,th.nosort{padding:9px 7px}}
+@media (min-width:901px) and (max-width:1399px){#tbody td.nm{min-width:140px!important}}
+@media (min-width:901px){#tbody td.nm{min-width:165px} table{font-size:13.5px} td{padding:8px 7px} th button,th.nosort{padding:9px 7px} .filters:not(.open) > .more{display:none}}
 .sub{color:var(--muted);font-size:12.5px;margin-top:2px}
-.am{font-size:12.5px;color:var(--heat);margin-top:4px;line-height:1.35}
+.am{font-size:12.5px;color:var(--heat-text);margin-top:4px;line-height:1.35}
 .tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
 .tag{font-size:11.5px;padding:1px 7px;border-radius:6px;background:var(--chip);color:var(--muted);white-space:nowrap}
-.tag.heat{background:var(--heat-soft);color:var(--heat)}
+.tag.heat{background:var(--heat-soft);color:var(--heat-text)}
 .pill{display:inline-block;font-size:12px;padding:2px 8px;border-radius:999px;white-space:nowrap;font-weight:500}
 .p-ok{background:var(--ok-soft);color:var(--ok)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-no{background:var(--no-soft);color:var(--no)}.p-na{background:var(--chip);color:var(--muted)}
 .kind{display:inline-flex;align-items:center;font-size:12.5px;white-space:nowrap}
@@ -107,7 +116,6 @@ tr.row.weak td:first-child img{filter:grayscale(.5);opacity:.8}
 .thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:7px;overflow:hidden;background:var(--chip);width:58px;height:44px}
 .thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
-.nophoto{width:58px;height:44px;border-radius:7px;background:var(--chip);display:grid;place-items:center;color:var(--muted);font-size:11px;text-align:center;line-height:1.1}
 tr.detail td{background:var(--bg);padding:10px 12px 12px;max-width:0}
 .gallery{display:flex;gap:5px;overflow-x:auto;margin-bottom:10px;padding-bottom:2px;max-width:var(--detw,100%);width:100%}
 .gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip)}
@@ -128,10 +136,10 @@ tr.detail td{background:var(--bg);padding:10px 12px 12px;max-width:0}
 .mapfilt{display:none}
 html.mapfull .mapfilt{all:unset;display:block;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));right:max(10px,env(safe-area-inset-right,0px));cursor:pointer;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:7px 12px;border-radius:999px;font-weight:600;font-size:13px;box-shadow:0 2px 10px rgba(0,0,0,.2)}
 html.mapfull.fpanel .filters{position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:70vh;overflow:auto;margin:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
-html.mapfull.fpanel .filters > .frow{display:flex!important}
+html.mapfull.fpanel .filters > .frow:not([hidden]){display:flex!important}
 html.mapfull.fpanel .main{display:block}
 .fdone{display:none}
-html.mapfull.fpanel .fdone{all:unset;display:block;cursor:pointer;margin:6px auto 0;background:var(--sea);color:#fff;padding:9px 18px;border-radius:999px;font-weight:600;text-align:center}
+html.mapfull.fpanel .fdone{all:unset;display:block;cursor:pointer;margin:6px auto 0;background:var(--sea);color:var(--on-sea);padding:9px 18px;border-radius:999px;font-weight:600;text-align:center}
 .price + .sub, td .sub.num{white-space:normal}
 .bk2{margin-top:4px;display:flex;flex-direction:column;align-items:flex-start;gap:4px}
 .bk2:empty{display:none}
@@ -182,17 +190,17 @@ html.mapfull.fpanel .fdone{all:unset;display:block;cursor:pointer;margin:6px aut
 .rbs{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
 .rb{display:inline-flex;align-items:center;gap:4px;font-size:12px;white-space:nowrap}
 .rb b{display:inline-grid;place-items:center;min-width:30px;height:22px;padding:0 5px;border-radius:6px 6px 6px 0;color:#fff;font-size:12.5px;font-variant-numeric:tabular-nums}
-.rb.g1 b{background:#1e7d4a}.rb.g2 b{background:#4b8f63}.rb.g3 b{background:#7d8a84}
+.rb.g1 b{background:#1e7d4a}.rb.g2 b{background:#3d7a53}.rb.g3 b{background:#5f6d67}
 .rb.bk b{background:#003580}
 .rb .st{color:#e7a300;font-size:13px;margin-left:-2px}
 .rb .rc{color:var(--muted);font-variant-numeric:tabular-nums}
 .rbw{display:inline-flex;flex-direction:column;gap:1px;margin-right:8px;vertical-align:top}
 .rcap{font-size:11px;color:var(--muted);letter-spacing:.02em}
-.bookb,.bookb:visited{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;color:#fff!important;background:var(--sea);border-radius:999px;padding:3px 10px;text-decoration:none;white-space:nowrap}
+.bookb,.bookb:visited{display:inline-block;margin-top:6px;font-size:12px;font-weight:600;color:var(--on-sea)!important;background:var(--sea);border-radius:999px;padding:3px 10px;text-decoration:none;white-space:nowrap}
 .bookb:hover{filter:brightness(1.08)}
-.leaflet-container a.bookb,.leaflet-container a.bookb:visited{color:#fff}
+.leaflet-container a.bookb,.leaflet-container a.bookb:visited{color:var(--on-sea)}
 .leaflet-popup-content .bookb{margin-top:0}
-a.act.prim,a.act.prim:visited{background:var(--sea);border-color:var(--sea);color:#fff;font-weight:600}
+a.act.prim,a.act.prim:visited{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
 .fab{display:none}
 .mapfull-x{display:none}
 html.mapfull{overflow:hidden}
@@ -209,7 +217,9 @@ a.act{color:var(--ink)}
 .mk{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center}
 .mk span{transform:rotate(45deg);font-size:11px;font-weight:700;color:#fff}
 .mk.active{outline:3px solid var(--heat)}
-.mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:#fff;font-weight:700;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.mk.hover{transform:rotate(-45deg) scale(1.3);box-shadow:0 0 0 3px var(--heat),0 2px 8px rgba(0,0,0,.35)}
+.leaflet-marker-icon:has(.mk.hover){z-index:100000!important}
+.mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:var(--on-sea);font-weight:700;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .leaflet-popup-content-wrapper{border-radius:12px;background:var(--panel);color:var(--ink)}
 .leaflet-popup-tip{background:var(--panel)}
 .leaflet-popup-content{margin:0;width:312px!important;max-width:calc(100vw - 40px);font-size:13.5px;line-height:1.38}
@@ -240,75 +250,162 @@ a.act{color:var(--ink)}
 .lb-prev{left:max(10px,env(safe-area-inset-left,0px))}.lb-next{right:max(10px,env(safe-area-inset-right,0px))}
 .lb-bot{display:flex;justify-content:space-between;gap:12px;padding:10px max(14px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(14px,env(safe-area-inset-left,0px));font-size:13px;color:rgba(255,255,255,.75)}
 .lb-bot a{color:rgba(255,255,255,.85)}
+/* skip link, a11y helpers */
+.skip{position:absolute;left:8px;top:-60px;z-index:4000;background:var(--ink);color:var(--bg);padding:10px 14px;border-radius:10px;text-decoration:none;font-weight:600}
+.skip:focus{top:8px}
+.nmb{all:unset;cursor:pointer;font-weight:600;overflow-wrap:anywhere}
+.nmb:focus-visible{outline:2px solid var(--sea);outline-offset:2px;border-radius:4px}
+.sv{color:var(--ink);font-weight:500}
+.rbm{display:none}
+.mline{white-space:normal}
+.mapcue{display:none}
+.fintro,.flegend,.fhint{display:none}
+.rbm:empty{display:none}
+tr.row{scroll-margin-top:44px}
+.hpop-x{display:none}
+.rt{display:inline-block;position:relative}
+.rt > summary{list-style:none}
+.rt > summary::-webkit-details-marker{display:none}
+.rt[open] > summary{border-color:var(--sea)}
+.rtm{position:absolute;z-index:20;top:calc(100% + 4px);left:0;display:flex;flex-direction:column;min-width:170px;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.16);padding:4px}
+.rtm a{display:block;padding:9px 12px;border-radius:8px;color:var(--ink);text-decoration:none;font-size:13px}
+.rtm a:hover,.rtm a:focus-visible{background:var(--sea-soft)}
+.src a.sd{display:inline-block;padding:1px 7px;margin:2px 2px 0 0;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--muted)}
+.src a.sd:hover{border-color:var(--sea);color:var(--sea)}
+.ovb{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:2px 9px;margin:0 0 8px}
+.fbl{margin-top:6px;font-size:12px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;line-height:1.4}
+.fbb{all:unset;cursor:pointer;color:var(--muted)}
+.fbb:hover,.fbb:focus-visible{color:var(--ink);text-decoration:underline dotted}
+.fbb:disabled,.fbb[aria-disabled="true"]{cursor:default;color:var(--ok);text-decoration:none}
+.fbl a.fbo{color:var(--muted);text-decoration:none}
+.fbl a.fbo:hover{color:var(--ink);text-decoration:underline dotted}
+.fbl .sep{opacity:.6}
+.fbf{display:grid;gap:6px;font-size:13px;min-width:220px}
+.fbf label{display:flex;align-items:center;gap:8px;cursor:pointer;padding:2px 0}
+.fbf textarea{width:100%;min-height:58px;resize:vertical;border:1px solid var(--line);background:var(--bg);border-radius:8px;padding:6px 8px;font:inherit;color:inherit}
+.fbf .fbsend{all:unset;cursor:pointer;justify-self:start;background:var(--sea);color:var(--on-sea);font-weight:600;padding:7px 16px;border-radius:999px}
+.fbf .fbsend:disabled{opacity:.5;cursor:default}
+.fbstars{display:flex;gap:2px}
+.fbstars button{all:unset;cursor:pointer;font-size:26px;line-height:1;padding:4px 3px;color:var(--line)}
+.fbstars button:hover,.fbstars button:focus-visible,.fbstars button.on{color:#e7a300}
+.fbaf{display:block;margin-top:8px;font-size:11.5px;color:var(--muted)}
+.lb-tap{position:absolute;top:0;bottom:0;width:33%;z-index:1;cursor:pointer}
+.lb-tap.l{left:0}.lb-tap.r{right:0}
+.lb-nav{z-index:2}
+#more-sentinel{height:1px}
 @media (max-width:900px){
   .app{display:block}
-  .hd{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-block:14px 12px}
-  .mapwrap{position:relative;height:38vh;height:38svh;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
-  #map{touch-action:none}
+  .hd{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));padding-block:10px 8px}
+  .hd h1{font-size:19px;margin:0}
+  .toprow{align-items:center}
+  .langsw{margin-top:0}
+  .hd p,.hd .legend{display:none}
+  .fintro{display:block}
+  .flegend{display:flex;margin-top:10px}
+  .stats{margin:4px 0 0;font-size:12px;gap:2px 12px}
+  .stats .s-m{display:none}
+  .mapwrap{position:relative;height:26vh;height:26svh;min-height:170px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
+  html:not(.mapfull) #map{touch-action:pan-y;cursor:pointer}
+  html.mapfull #map{touch-action:none}
+  html:not(.mapfull) .leaflet-control-zoom{display:none}
+  html:not(.mapfull) .mapcue{display:block;position:absolute;z-index:1000;top:8px;right:max(8px,env(safe-area-inset-right,0px));pointer-events:none;background:var(--panel);color:var(--ink);border:1px solid var(--line);padding:5px 11px;border-radius:999px;font-weight:600;font-size:12.5px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
   .mapwrap.collapsed{height:0;border:none}
-  .main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:12px}
+  .main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:8px;padding-bottom:96px}
   .ftoggle,.maptoggle{display:inline-block}
   input,select,textarea{font-size:16px!important}
   .fab{all:unset;display:block;position:fixed;z-index:1400;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));cursor:pointer;background:var(--ink);color:var(--bg);padding:11px 20px;border-radius:999px;font-weight:600;font-size:14px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
   html.mapfull .fab{display:none}
-  .filters{padding:10px;gap:8px}
-  .filters:not(.open) > .frow:not(:first-child){display:none}
+  .filters{padding:10px;gap:8px;margin:0 0 8px}
+  .filters > .r-search{order:-2}
+  .filters:not(.open) > .frow:not(.r-search):not(.sortrow){display:none}
+  .filters:not(.open) > .sortrow{order:-1}
+  .filters:not(.open) .reset{display:none}
+  .search{padding:9px 11px}
   .flabel{min-width:100%;font-size:11px;margin-bottom:-3px}
-  .chip{padding:4px 9px;font-size:12.5px}
+  .chip{padding:9px 13px;font-size:14px;min-height:40px}
+  .frow{gap:8px}
   .hide-m{display:none}
   .show-m{display:block}
   .m-in{display:inline}
-  table{table-layout:fixed}
-  thead th:nth-child(1){width:62px}
-  thead th:nth-child(4){width:108px}
-  thead th:nth-child(2){width:var(--namew,180px)}
-  .pill{white-space:normal;font-size:11.5px;padding:2px 7px}
-  .bk2 .bookb{font-size:11px;padding:3px 8px;white-space:normal;max-width:100%}
-  td{overflow-wrap:anywhere}
-  table{font-size:13.5px}
-  td{padding:8px 6px}
+  .hint{margin:0 0 6px;font-size:12px}
+  table{table-layout:fixed;font-size:13.5px}
+  thead th.c-photo{width:62px}
+  thead th.c-day{width:126px}
+  td{overflow-wrap:anywhere;padding:8px 6px}
+  th{top:env(safe-area-inset-top,0px)}
   th button,th.nosort{padding:9px 6px}
+  .pill{white-space:normal;font-size:11.5px;padding:2px 7px;hyphens:auto}
+  .bk2 .bookb{font-size:11.5px;padding:4px 10px;white-space:nowrap;max-width:100%;position:relative}
+  .bk2 .bookb::after{content:"";position:absolute;inset:-8px -4px}
   .thumbs button{width:52px;height:52px}
-  .thumbs button + button{display:none}
-  .nophoto{width:52px;height:52px}
-  .range input{width:110px}
-  .lb-nav{display:none}
+  .range input{width:110px;height:28px}
+  .cpl{position:relative}
+  .cpl::before{content:"";position:absolute;inset:-9px}
+  .act{padding:9px 14px;min-height:40px;display:inline-flex;align-items:center}
+  .near,.reset{padding:11px 4px;display:inline-block;min-height:40px;box-sizing:border-box}
+  select{min-height:40px}
+  .langsw button{padding:11px 10px;min-height:40px;box-sizing:border-box}
+  .sortrow .range > span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  #sort{max-width:56vw}
+  .main > .hint{display:none}
+  .fhint{display:block;margin-top:12px}
+  .pp-more{display:inline-block;padding:9px 0}
+  .leaflet-container a.leaflet-popup-close-button{width:40px;height:40px;font-size:24px;line-height:40px}
+  .src a.sd{padding:6px 9px}
+  .fbb{padding:9px 0}
+  .fbl a.fbo{padding:9px 0}
+  .lb-nav{width:36px;height:36px;font-size:18px;background:rgba(255,255,255,.1)}
+  .hpop,.hpop.wide{left:0!important;right:0;top:auto!important;bottom:0;max-width:none;min-width:0;max-height:70vh;overflow:auto;border-radius:16px 16px 0 0;padding:14px 16px calc(16px + env(safe-area-inset-bottom,0px));box-shadow:0 -8px 30px rgba(0,0,0,.25);font-size:14px}
+  .hpop-x{all:unset;display:grid;place-items:center;cursor:pointer;float:right;width:40px;height:40px;margin:-8px -8px 0 8px;font-size:24px;line-height:1;color:var(--muted)}
+}
+@media (min-width:601px) and (max-width:900px){
+  thead th.c-day{width:122px}
+  thead th.c-hrs{width:126px}
+  thead th.c-rate{width:96px}
+  .hrs{min-width:0;max-width:none}
+}
+@media (max-width:600px){
+  .hide-s{display:none}
+  .rbm{display:flex;flex-wrap:wrap;gap:4px 8px;margin-top:5px}
+  .rbm .rcap{display:none}
+  .rbm .rbw{margin-right:0}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
 <body>
+<a class="skip" href="#list" data-t="tolist">К списку</a>
 <div class="app">
   <header class="hd">
     <div class="toprow"><h1 data-t="title">Сауны Португалии</h1><div class="langsw" id="langsw" role="group" aria-label="Language"><button type="button" data-l="ru">RU</button><button type="button" data-l="en">EN</button><button type="button" data-l="pt">PT</button></div></div>
     <p data-t="intro"></p>
-    <div class="stats" id="stats"></div>
+    <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><button type="button" class="mapfull-x" id="mapfull-x" data-t="list">Список</button><button type="button" class="mapfilt" id="mapfilt" data-t="filters">Фильтры</button></div>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><button type="button" class="mapfull-x" id="mapfull-x" data-t="list">Список</button><button type="button" class="mapfilt" id="mapfilt" data-t="filters">Фильтры</button><span class="mapcue" aria-hidden="true" data-t="openmap">Открыть карту</span></div>
   <button type="button" class="fab" id="fab" data-t="fullmap">Карта на весь экран</button>
   <main class="main">
     <section class="filters" data-ta="filters">
-      <div class="frow">
-        <input id="q" class="search" type="search" data-tp="search">
-        <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" data-t="filters">Фильтры</button>
+      <div class="frow r-search">
+        <input id="q" class="search" type="search" data-tp="search" autocomplete="off">
+        <button class="chip ftoggle" id="ftoggle" type="button" aria-expanded="false" aria-controls="f-more" data-t="filters">Фильтры</button>
       </div>
-      <div class="frow"><span class="flabel" data-t="area">Район</span><div class="frow" id="f-area"></div></div>
-      <div class="frow" id="muni-row" hidden><span class="flabel" data-t="muni">Город</span><div class="frow" id="f-muni"></div></div>
-      <div class="frow"><span class="flabel" data-t="type">Тип</span><div class="frow" id="f-kind"></div></div>
-      <div class="frow"><span class="flabel" data-t="access">Доступ</span><div class="frow" id="f-access"></div></div>
-      <div class="frow"><span class="flabel" data-t="has">Есть</span><div class="frow" id="f-ext"></div></div>
-      <div class="frow"><span class="flabel" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"></div></div>
-      <div class="frow"><span class="flabel" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
-      <div class="frow">
-        <span class="flabel" data-t="price">Цена</span>
+      <div class="frow" role="group" aria-labelledby="lab-area"><span class="flabel" id="lab-area" data-t="area">Район</span><div class="frow" id="f-area"></div></div>
+      <div class="frow" id="muni-row" role="group" aria-labelledby="lab-muni" hidden><span class="flabel" id="lab-muni" data-t="muni">Город</span><div class="frow" id="f-muni"></div></div>
+      <div class="frow" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Тип</span><div class="frow" id="f-kind"></div></div>
+      <div class="frow" role="group" aria-labelledby="lab-rate"><span class="flabel" id="lab-rate" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"></div></div>
+      <div class="frow more" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Доступ</span><div class="frow" id="f-access"></div></div>
+      <div class="frow more" role="group" aria-labelledby="lab-has"><span class="flabel" id="lab-has" data-t="has">Есть</span><div class="frow" id="f-ext"></div></div>
+      <div class="frow more" role="group" aria-labelledby="lab-hours"><span class="flabel" id="lab-hours" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
+      <div class="frow more" role="group" aria-labelledby="lab-price">
+        <span class="flabel" id="lab-price" data-t="price">Цена</span>
         <label class="range" for="price"><span data-t="daymax">разовый вход до</span> <input id="price" type="range" min="0" max="100" step="5" value="100"><output id="priceout" data-t="anyf">любая</output></label>
         <label class="range" for="mprice"><span data-t="memmax">абонемент до</span> <input id="mprice" type="range" min="0" max="300" step="10" value="300"><output id="mpriceout" data-t="anym">любой</output></label>
       </div>
-      <div class="frow">
+      <div class="frow sortrow">
         <label class="range" for="sort"><span data-t="sort">Сортировка</span>
           <select id="sort">
-                        <option value="score" data-t="s_score"></option>
+            <option value="score" data-t="s_score"></option>
             <option value="price" data-t="s_price"></option>
             <option value="mprice" data-t="s_mprice"></option>
             <option value="session" data-t="s_session"></option>
@@ -318,27 +415,34 @@ a.act{color:var(--ink)}
           </select>
         </label>
         <button class="near" id="near" type="button" data-t="nearme">Рядом со мной</button>
+        <button class="near" id="nearc" type="button" data-t="fromcascais" hidden>От центра Кашкайша</button>
+        <span class="frow" id="f-rad" role="group" data-ta="radius" hidden></span>
         <button class="reset" id="reset" type="button" data-t="reset">Сбросить всё</button>
       </div>
       <div class="frow"><button type="button" class="fdone" id="fdone" data-t="showres">Показать</button></div>
     </section>
 
     <p class="hint" data-th="hint"></p>
-    <div class="tablewrap">
+    <div class="tablewrap" id="list" tabindex="-1">
       <table>
         <thead><tr id="thead"></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
-      <div class="empty" id="empty" hidden data-t="empty"></div>
+      <div id="more-sentinel"></div>
+      <div class="empty" id="empty" role="status" hidden data-t="empty"></div>
     </div>
+    <p class="foot fintro" data-t="intro"></p>
+    <p class="hint fhint" data-th="hint"></p>
+    <div class="legend flegend" id="legend2"></div>
     <p class="foot" id="foot"></p>
   </main>
 </div>
-<div class="hpop" id="hpop" hidden role="dialog"></div>
+<div class="hpop" id="hpop" hidden role="dialog" tabindex="-1"></div>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" data-ta="photos">
   <div class="lb-top"><b id="lb-title"></b><button class="lb-x" id="lb-x" type="button" data-ta="close">×</button></div>
   <div class="lb-stage" id="lb-stage">
     <div id="lb-imgslot" style="display:contents"></div>
+    <div class="lb-tap l" id="lb-tl" aria-hidden="true"></div><div class="lb-tap r" id="lb-tr" aria-hidden="true"></div>
     <button class="lb-nav lb-prev" id="lb-prev" type="button" data-ta="prev">‹</button>
     <button class="lb-nav lb-next" id="lb-next" type="button" data-ta="next">›</button>
   </div>
@@ -350,6 +454,10 @@ a.act{color:var(--ink)}
 <script src="data.js"></script>
 <script>
 (function(){
+// Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
+// A: owner form viewform URL, A_id/A_name: "entry.NNN" of its Place ID / Place name fields.
+// B: feedback form ".../formResponse" URL, f: "entry.NNN" per field.
+const FB={A:"", A_id:"", A_name:"", B:"", f:{place_id:"",kind:"",problem:"",rating:"",comment:"",cid:"",lang:""}};
 const D = window.SAUNA_DATA || {places:[],meta:{}};
 const P = D.places;
 const CASCAIS = [38.6968, -9.4215];
@@ -386,6 +494,12 @@ Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_m
  cond:{booking_required:"reserva",booking_recommended:"reserva aconselhada",age_16_plus:"+16",age_18_plus:"+18",under_18_with_adult:"menores com adulto",under_16_from_12_with_adult:"+12 com adulto",under_16_half_price:"menores de 16 a meio preço",with_treatment_only:"só com tratamento",men_only:"só homens",women_only:"só mulheres",waitlist:"lista de espera",trial_once:"uma vez",prepayment:"pré-pagamento",voucher:"voucher",swimwear_required:"fato de banho",bring_towels:"traga toalhas",cap_swimwear_slippers:"touca, fato de banho, chinelos",private_room:"sala privada",sauna_after_class_only:"sauna após aula",cancel_24h:"cancelar 24 h antes",cancel_8h_50pct:"cancelamento tardio: 50%",sold_out:"esgotado",min_people:"mín. {0} pessoas",joining_fee:"inscrição €{0}",min_term_months:"mín. {0} meses",booking_ahead_h:"reservar {0} h antes",valid_days:"válido {0} dias",time:"{0}"},
  wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
 
+Object.assign(I18N.ru,{tolist:"К списку",openmap:"Открыть карту",fromcascais:"Считать от центра Кашкайша",radius:"Радиус",rad:"до {0} км",hrs_known:"часы известны для {0} мест",sv_session:"сеанс {0}",sv_sea:"до моря ≈ {0}",morefilt:"Ещё фильтры",morefilt_n:"Ещё фильтры · {0}",
+ fb_q:"Всё верно?",fb_ok:"👍 Да",fb_flag:"⚑ Есть ошибка",fb_rate:"★ Оценить",fb_own:"Вы владелец? Обновить данные",fb_own_h:"Владелец или менеджер места может прислать цены, часы, описание и фото; после проверки карточка получает отметку «Подтверждено владельцем»",fb_p_closed:"Закрыто",fb_p_hours:"Другие часы",fb_p_price:"Другая цена",fb_p_nosauna:"Сауны нет",fb_p_other:"Другое",fb_comment:"Что не так? (необязательно)",fb_send:"Отправить",fb_thanks:"✓ Спасибо, проверим",fb_thx:"✓ Спасибо",fb_asform:"Открыть как форму",fb_star_n:"Оценка {0} из 5",ov_badge:"Подтверждено владельцем",ov_line:"Подтверждено владельцем {0}",d_visitors:"Посетители",v_ok:"✓ {0} подтвердили, что всё верно",v_rate:"★ {0} по {1} оценкам посетителей"});
+Object.assign(I18N.en,{tolist:"Skip to list",openmap:"Open map",fromcascais:"Measure from central Cascais",radius:"Radius",rad:"within {0} km",hrs_known:"hours known for {0} places",sv_session:"session {0}",sv_sea:"to the sea ≈ {0}",morefilt:"More filters",morefilt_n:"More filters · {0}",
+ fb_q:"Is this correct?",fb_ok:"👍 Yes",fb_flag:"⚑ Report a problem",fb_rate:"★ Rate",fb_own:"Are you the owner? Update this listing",fb_own_h:"The owner or manager can send prices, hours, description and photos; after review the listing is marked \"Verified by owner\"",fb_p_closed:"Closed",fb_p_hours:"Wrong hours",fb_p_price:"Wrong price",fb_p_nosauna:"No sauna here",fb_p_other:"Other",fb_comment:"What's wrong? (optional)",fb_send:"Send",fb_thanks:"✓ Thanks, we'll check",fb_thx:"✓ Thanks",fb_asform:"Open as a form",fb_star_n:"Rating {0} of 5",ov_badge:"Verified by owner",ov_line:"Verified by owner {0}",d_visitors:"Visitors",v_ok:"✓ {0} confirmed it's correct",v_rate:"★ {0} from {1} visitor ratings"});
+Object.assign(I18N.pt,{tolist:"Ir para a lista",openmap:"Abrir mapa",fromcascais:"Medir a partir do centro de Cascais",radius:"Raio",rad:"até {0} km",hrs_known:"horário conhecido em {0} locais",sv_session:"sessão {0}",sv_sea:"até ao mar ≈ {0}",morefilt:"Mais filtros",morefilt_n:"Mais filtros · {0}",
+ fb_q:"Está correto?",fb_ok:"👍 Sim",fb_flag:"⚑ Reportar um erro",fb_rate:"★ Avaliar",fb_own:"É o proprietário? Atualize esta ficha",fb_own_h:"O proprietário ou gerente pode enviar preços, horário, descrição e fotos; após revisão a ficha recebe a marca \"Confirmado pelo proprietário\"",fb_p_closed:"Fechado",fb_p_hours:"Horário errado",fb_p_price:"Preço errado",fb_p_nosauna:"Não tem sauna",fb_p_other:"Outro",fb_comment:"O que está errado? (opcional)",fb_send:"Enviar",fb_thanks:"✓ Obrigado, vamos verificar",fb_thx:"✓ Obrigado",fb_asform:"Abrir como formulário",fb_star_n:"Avaliação {0} de 5",ov_badge:"Confirmado pelo proprietário",ov_line:"Confirmado pelo proprietário em {0}",d_visitors:"Visitantes",v_ok:"✓ {0} confirmaram que está correto",v_rate:"★ {0} em {1} avaliações de visitantes"});
 I18N.ru._am.ice_fountain="ледяной фонтан";I18N.ru._am.ice_room="ледяная комната";I18N.en._am.ice_fountain="ice fountain";I18N.en._am.ice_room="ice room";I18N.pt._am.ice_fountain="fonte de gelo";I18N.pt._am.ice_room="sala de gelo";I18N.ru.inc.ice_fountain="ледяной фонтан";I18N.ru.inc.ice_room="ледяная комната";I18N.en.inc.ice_fountain="ice fountain";I18N.en.inc.ice_room="ice room";I18N.pt.inc.ice_fountain="fonte de gelo";I18N.pt.inc.ice_room="sala de gelo";
 const TFX={"en": {"has": "Features", "p_has": "On site", "x_hammam": "Hammam or steam room", "acc_walkin": "Walk-in", "b_recommended": "Recommended", "guests": "hotel guests only", "only_trt": "only with a treatment", "p_day": "Single visit", "s_price": "Single-visit price", "empty": "Nothing matches these filters. Loosen them or tap “Reset all”.", "d_social": "Social media", "d_via": "via {0}", "join": "+ {0} joining fee", "grp_cap": "per group up to {0} · from {1} per person", "sch_calendar": "Sessions on set dates", "sch_win": "Available slots this week", "rg_centro": "Central Portugal", "_area.Centro": "Central Portugal", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "_am.rooms": "{0} saunas", "inc.infrared": "infrared sauna", "cond.booking_required": "booking required", "cond.booking_recommended": "booking recommended", "cond.min_term_months": "{0}-month minimum term", "cond.sauna_after_class_only": "sauna after class only", "cond.trial_once": "one time only", "cond.cancel_24h": "cancel up to 24 h ahead"}, "pt": {"has": "Características", "p_has": "No local", "b_walk_in": "Sem reserva", "guests": "só para hóspedes", "x_cold": "Imersão em água fria", "_am.cold_plunge": "imersão em água fria", "inc.cold_plunge": "imersão em água fria", "_am.hot_tub": "hot tub", "inc.hot_tub": "hot tub", "_am.infrared": "sauna de infravermelhos", "inc.infrared": "sauna de infravermelhos", "empty": "Nada corresponde a estes filtros. Alargue-os ou toque em “Limpar tudo”.", "d_via": "via {0}", "d_fromme": "Distância", "reliab": "fiabilidade dos dados: {0}", "grp_cap": "por grupo até {0} · desde {1} por pessoa", "sch_calendar": "Sessões em datas marcadas", "sch_win": "Horários disponíveis esta semana", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "cond.booking_required": "reserva obrigatória", "cond.booking_recommended": "reserva recomendada", "cond.min_term_months": "fidelização de {0} meses", "cond.cancel_24h": "cancelamento até 24 h antes", "cond.sauna_after_class_only": "sauna só após a aula", "cond.trial_once": "só uma vez"}};
 for(const L in TFX){ for(const k in TFX[L]){ const parts=k.split("."); let o=I18N[L]; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]=o[parts[i]]||{}; } o[parts[parts.length-1]]=TFX[L][k]; } }
@@ -397,7 +511,7 @@ const KCOL={hotel:"#0f6b72",spa:"#7a55b0",gym:"#2f6fb2",sauna:"#c26a12",public:"
 const KINDS = new Proxy({}, {get:(o,k)=>KCOL[k]?[t("k_"+k),KCOL[k]]:undefined, ownKeys:()=>Object.keys(KCOL), getOwnPropertyDescriptor:()=>({enumerable:true,configurable:true})});
 const SAUNA_RU = {finnish:"финская",steam:"парная",hammam:"хаммам",bio:"био",infrared:"инфракрасная",banya:"баня"};
 const EXT_RU = {indoor_pool:"крытый бассейн",outdoor_pool:"открытый бассейн",heated_pool:"тёплый бассейн",jacuzzi:"джакузи",cold_plunge:"холодная купель",ice_bath:"ледяная ванна",sea_view:"вид на море",beach_access:"выход к пляжу",gym:"зал",massage:"массаж",relax_room:"зона отдыха"};
-function amen(p){ const A=I18N[LANG]._am; const ex=new Set(p.extras||[]); const o=[];
+function amen(p,LG){ const A=I18N[LG||LANG]._am; const ex=new Set(p.extras||[]); const o=[];
   ["finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if((p.sauna_types||[]).includes(s)) o.push(A[s]); });
   if(p.steam_rooms>1) o.push(A.rooms.replace("{0}",p.steam_rooms));
   if(p.capacity) o.push(A.cap.replace("{0}",p.capacity));
@@ -411,19 +525,20 @@ const RATE = ()=>({"0":t("r_0"),"4":t("r_4"),"4.5":t("r_45"),"ok":t("r_ok")});
 const BCL={required:"p-warn",recommended:"p-warn",walk_in:"p-ok"};
 const BOOK = new Proxy({}, {get:(o,k)=>BCL[k]?[t("b_"+k),BCL[k]]:undefined});
 const COLS = [
-  {k:"photo",t:"c_photo",sort:null,cls:""},
-  {k:"name",t:"c_name",sort:"name",cls:""},
-  {k:"kind",t:"type",sort:"kind",cls:"hide-m hide-l"},
-  {k:"day",t:"c_day",sort:"price",cls:""},
-  {k:"mem",t:"c_mem",sort:"mprice",cls:"hide-m"},
-  {k:"hours",t:"hours",sort:null,cls:"hide-m"},
-  {k:"rate",t:"rating",sort:"score",cls:"hide-m"},
+  {k:"photo",t:"c_photo",sort:null,cls:"c-photo"},
+  {k:"name",t:"c_name",sort:"name",cls:"c-name"},
+  {k:"kind",t:"type",sort:"kind",cls:"c-kind hide-m hide-l"},
+  {k:"day",t:"c_day",sort:"price",cls:"c-day"},
+  {k:"hours",t:"hours",sort:null,cls:"c-hrs hide-s"},
+  {k:"rate",t:"rating",sort:"score",cls:"c-rate hide-s"},
 ];
 const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:"0",price:null,mprice:null,sort:"score",dir:-1,open:null};
-try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
+const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:"0",price:null,mprice:null,sort:"score",dir:-1,open:null};
+try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
+try{ history.scrollRestoration="manual"; }catch(e){}
 
+let ME=null, meMarker=null;
 const esc = s => String(s==null?"":s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const safeUrl = u => /^https:\/\//i.test(u||"") ? u : null;
 const km = (a,b) => {const R=6371,t=Math.PI/180,dl=(b[0]-a[0])*t,dn=(b[1]-a[1])*t;const x=Math.sin(dl/2)**2+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(x));};
@@ -449,7 +564,24 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   const sparse=!r.google&&!r.booking&&a.day_pass_price_eur==null&&a.membership_month_eur==null&&!p.wk;
   p._weak = p.status==="soon"||p.status==="closed" ? "status" : p.confidence==="low" ? "low" : sparse ? "sparse" : null;
   if(p._weak) p._score-=0.6;
+  p._ses=hl.visit_minutes||a.session_minutes||null;
 });
+const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ё/g,"е");
+function hay(p){ if(p._hay) return p._hay;
+  const parts=[p.name,p.nm_lat,p.subtitle,p.address,p.muni,MUNI_RU[p.muni],p.area,AREA_RU[p.area],p.hours_short];
+  ["ru","en","pt"].forEach(L=>{ const D=I18N[L]; parts.push((D._area||{})[p.area], D["rg_"+p.reg], D["k_"+p.kind], p.tr&&p.tr[L]&&p.tr[L].subtitle, ...amen(p,L)); });
+  return p._hay=norm(parts.filter(Boolean).join(" ")); }
+const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
+const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
+const fmtDate=s=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||""); return m?`${m[3]}.${m[2]}.${m[1]}`:(s||""); };
+// images: small variants for Google photo URLs; other hosts keep their own thumb or the original (lazy)
+const isG=u=>/googleusercontent\.com\//.test(u||"")&&/=w\d+-h\d+-k-no$/.test(u);
+const gsz=(u,w,h)=>u.replace(/=w\d+-h\d+-k-no$/,`=w${w}-h${h}-k-no`);
+// hosts with a size parameter in the URL: Contentful (?w=), Google-style "=sNNN"
+const rsz=(u,w,h)=>{ if(/^https:\/\/images\.ctfassets\.net\//.test(u)) return u.replace(/\?.*$/,"")+`?w=${w}&h=${h}&fit=fill&q=70`; if(/=s\d+(\?|$)/.test(u)&&/paraty\.es\//.test(u)) return u.replace(/=s\d+/,`=s${w}`); return null; };
+const thumbSrc=x=>isG(x.u)?gsz(x.u,160,120):(x.t||rsz(x.u,160,120)||x.u);
+const galSrc=x=>isG(x.u)?gsz(x.u,320,240):(x.t||rsz(x.u,320,240)||x.u);
+const midSrc=x=>isG(x.u)?gsz(x.u,640,480):(rsz(x.u,640,480)||x.u);
 
 function chips(el,map,get,set){
   el.innerHTML="";
@@ -480,8 +612,12 @@ function drawChips(){
   chips(document.getElementById("f-ext"),extMap(),k=>st.ext.has(k),toggle(st.ext));
   chips(document.getElementById("f-hours"),HRS(),k=>st.hrs.has(k),toggle(st.hrs));
   chips(document.getElementById("f-rate"),RATE(),k=>st.rate===k,k=>{st.rate=k;});
-  document.getElementById("legend").innerHTML = Object.values(kindMap()).map(v=>`<span><i class="dot" style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("")+`<span>${esc(t("legend_eur"))}</span>`;
+  const lg=Object.values(kindMap()).map(v=>`<span><i class="dot" style="background:${v[1]}"></i>${esc(v[0])}</span>`).join("")+`<span>${esc(t("legend_eur"))}</span>`;
+  document.getElementById("legend").innerHTML=lg; document.getElementById("legend2").innerHTML=lg;
+  drawRad();
 }
+function drawRad(){ const el=document.getElementById("f-rad"); el.hidden=!ME; if(!ME){ el.innerHTML=""; return; }
+  chips(el,{"15":t("rad",15),"55":t("rad",55)},k=>String(st.rad)===k,k=>{ st.rad=String(st.rad)===k?null:+k; }); }
 function applyStatic(){ document.documentElement.lang=LANG; document.title=t("title");
   document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
   document.querySelectorAll("[data-th]").forEach(e=>e.innerHTML=t(e.dataset.th));
@@ -490,47 +626,74 @@ function applyStatic(){ document.documentElement.lang=LANG; document.title=t("ti
   document.querySelectorAll("#langsw button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.l===LANG)));
 }
 applyStatic(); drawChips();
-document.getElementById("langsw").addEventListener("click",e=>{ const b=e.target.closest("button[data-l]"); if(!b||b.dataset.l===LANG) return; LANG=b.dataset.l; try{localStorage.setItem("sauna-lang",LANG);}catch(_){}
-  applyStatic(); drawChips(); map.closePopup(); document.getElementById("priceout").textContent=st.price==null?t("anyf"):"€"+st.price; document.getElementById("mpriceout").textContent=st.mprice==null?t("anym"):"€"+st.mprice; drawFoot(); render(); });
+document.getElementById("langsw").addEventListener("click",e=>{ const b=e.target.closest("button[data-l]"); if(!b||b.dataset.l===LANG) return; LANG=b.dataset.l; lsSet("sauna-lang",LANG);
+  try{ const u=new URL(location.href); u.searchParams.set("lang",LANG); history.replaceState(history.state,"",u); }catch(_){}
+  applyStatic(); drawChips(); map.closePopup(); hpop.hidden=true; syncSliders(); drawFoot(); renderHead(); render(true); });
 
+let rafR=0; const scheduleRender=()=>{ if(rafR) return; rafR=requestAnimationFrame(()=>{ rafR=0; render(); }); };
+const SL=[];
 function slider(id,outId,vals,anyTxt,key){
   const el=document.getElementById(id), out=document.getElementById(outId);
   const mx=Math.max(50,...vals); el.max=Math.ceil(mx/10)*10; el.value=el.max;
-  el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; out.textContent= st[key]==null?anyTxt():"€"+st[key]; render();};
-  return ()=>{el.value=el.max; st[key]=null; out.textContent=anyTxt();};
+  const sync=()=>{ const txt=st[key]==null?anyTxt():"€"+st[key]; out.textContent=txt; el.setAttribute("aria-valuetext",txt); };
+  el.oninput=()=>{st[key]= +el.value>=+el.max?null:+el.value; sync(); scheduleRender();};
+  SL.push(sync); sync();
+  return ()=>{el.value=el.max; st[key]=null; sync();};
 }
+const syncSliders=()=>SL.forEach(f=>f());
 const resetPrice=slider("price","priceout",P.map(p=>p._vp||0),()=>t("anyf"),"price");
 const resetM=slider("mprice","mpriceout",P.map(p=>p._mp||0),()=>t("anym"),"mprice");
-document.getElementById("q").oninput=e=>{st.q=e.target.value.trim().toLowerCase(); render();};
+const qEl=document.getElementById("q"); let qTimer=0;
+const applyQ=()=>{ clearTimeout(qTimer); st.q=norm(qEl.value.trim()); st.qt=st.q.split(/\s+/).filter(Boolean); render(); };
+qEl.addEventListener("input",()=>{ clearTimeout(qTimer); qTimer=setTimeout(applyQ,150); });
+qEl.addEventListener("keydown",e=>{ if(e.key==="Enter"){ applyQ(); qEl.blur(); } });
 const sortEl=document.getElementById("sort");
-function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; try{localStorage.setItem("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir}))}catch(e){} render(); }
+function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; lsSet("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir})); renderHead(); render(); }
 sortEl.onchange=()=>setSort(sortEl.value);
 sortEl.value=st.sort;
-document.getElementById("reset").onclick=()=>{st.q="";document.getElementById("q").value="";[st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear());st.rate="0";
+function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear()); st.rate="0"; st.rad=null;
   document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed",String(b.dataset.k==="0"&&b.parentElement.id==="f-rate")); });
-  resetPrice(); resetM(); drawAreas(); lastAreaKey="*"; render();};
+  resetPrice(); resetM(); drawAreas(); drawRad(); lastAreaKey="*";
+  st.sort=ME?"dist":"score"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
+  renderHead(); if(!noRender) render(); }
+document.getElementById("reset").onclick=()=>resetAll();
 const ft=document.getElementById("ftoggle"), fbox=document.querySelector(".filters");
 ft.onclick=()=>{const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",String(o));};
+function updateFtoggle(){ const nAll=st.area.size+st.muni.size+st.kind.size+st.access.size+st.ext.size+st.hrs.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0)+(st.rad?1:0);
+  const nMore=st.access.size+st.ext.size+st.hrs.size+(st.price!=null?1:0)+(st.mprice!=null?1:0);
+  ft.textContent=isPhone()?(nAll?t("filt_n",nAll):t("filters")):(nMore?t("morefilt_n",nMore):t("morefilt")); }
 
 
 // header
 const thead=document.getElementById("thead");
 function renderHead(){
+  const ae=document.activeElement; const keep=ae&&ae.closest&&ae.closest("#thead")?ae.dataset.s:null;
   thead.innerHTML=COLS.map(c=>{ const s=c.sort; const on=s&&s===st.sort;
     if(!s) return `<th class="nosort ${c.cls}" scope="col">${esc(t(c.t))}</th>`;
     return `<th class="${c.cls}" scope="col"${on?` aria-sort="${st.dir>0?"ascending":"descending"}"`:""}><button type="button" data-s="${s}">${esc(t(c.t))}</button></th>`; }).join("");
+  if(keep){ const b=thead.querySelector(`button[data-s="${keep}"]`); if(b) b.focus(); }
 }
 thead.addEventListener("click",e=>{const b=e.target.closest("button[data-s]"); if(!b) return; const k=b.dataset.s; setSort(k, st.sort===k?-st.dir:DEFDIR[k]);});
 
 // map
-const map = L.map("map",{zoomControl:true,scrollWheelZoom:true,tapTolerance:12});
-// one-finger drag must move only the map, never the page
+const isPhone=()=>matchMedia("(max-width:900px)").matches;
+const isFull=()=>document.documentElement.classList.contains("mapfull");
+const map = L.map("map",{zoomControl:true,scrollWheelZoom:true,tapTolerance:12,zoomSnap:1});
+map.attributionControl.setPrefix(false);
+// one-finger drag moves only the map, never the page. On phones the inline map is a preview: page scrolls over it, a tap opens the full-screen map.
 (function(){const el=document.getElementById("map");
-  el.addEventListener("touchmove",e=>{ if(e.target.closest&&e.target.closest(".pp-sl")) return; if(e.cancelable) e.preventDefault(); },{passive:false});
-  el.addEventListener("wheel",e=>e.preventDefault(),{passive:false});
+  el.addEventListener("touchmove",e=>{ if(isPhone()&&!isFull()) return; if(e.target.closest&&e.target.closest(".pp-sl")) return; if(e.cancelable) e.preventDefault(); },{passive:false});
+  el.addEventListener("wheel",e=>{ if(isPhone()&&!isFull()) return; e.preventDefault(); },{passive:false});
+  document.getElementById("mapwrap").addEventListener("click",e=>{ if(!isPhone()||isFull()) return; if(e.target.closest(".mapfull-x,.mapfilt")) return; e.stopPropagation(); e.preventDefault(); openFull(); },true);
 })();
-const fitDefault=()=>map.fitBounds([[36.95,-9.55],[42.15,-6.25]],{padding:[6,6]});
-fitDefault();
+function syncMapMode(){ const preview=isPhone()&&!isFull(); [map.dragging,map.touchZoom,map.doubleClickZoom,map.scrollWheelZoom,map.boxZoom,map.keyboard].forEach(h=>{ if(h) preview?h.disable():h.enable(); }); }
+const MAINLAND=[[36.95,-9.52],[42.16,-6.19]], LISBON=[[38.45,-9.5],[38.95,-8.85]];
+function fitDefault(){ if(isPhone()&&!isFull()) map.fitBounds(LISBON,{padding:[2,2]}); else map.fitBounds(MAINLAND,{padding:[8,8]}); }
+function fitList(list){ let pts=list.filter(p=>p.lat!=null); const isl=st.area.has("madeira")||st.area.has("acores"); const ml=pts.filter(p=>p.lon>-10.5); if(!isl&&ml.length) pts=ml;
+  if(!pts.length) return fitDefault(); map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[28,28],maxZoom:14}); }
+const qActive=()=>!!(st.q&&LIST.length&&LIST.length<=15);
+function fitAuto(){ if(st.area.size||st.muni.size||qActive()) fitList(LIST); else if(isFull()) fitList(LIST); else fitDefault(); }
+syncMapMode(); fitDefault();
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
 const cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:14,iconCreateFunction:c=>L.divIcon({className:"",html:`<div class="mcl">${c.getChildCount()}</div>`,iconSize:[34,34]})});
 map.addLayer(cluster);
@@ -538,7 +701,7 @@ const markers={};
 P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=(KINDS[p.kind]||KINDS.sauna)[1];
   const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}"><span>${p._vp!=null?"€":""}</span></div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
-  const m=L.marker([p.lat,p.lon],{icon,title:p.name}); cluster.addLayer(m);
+  const m=L.marker([p.lat,p.lon],{icon,title:p.name,keyboard:false});
   m.bindPopup(()=>popup(p),{maxWidth:320,minWidth:280,autoPanPadding:[20,20]});
   markers[p._i]=m;
 });
@@ -566,7 +729,7 @@ function dayTxt(p){const a=p.access||{};
 }
 function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return t("per_month",eur(a.membership_month_eur)); if(p._mem) return t("mem_req"); if(a.membership===false) return t("no"); return null;}
 function popup(p){const a=p.access||{}; const k=KINDS[p.kind]||KINDS.sauna; const r=p.ratings||{};
-  const ph=p._ph.slice(0,8).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("openphoto"))}"><img src="${esc(x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("");
+  const ph=p._ph.slice(0,8).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("openphoto"))}"><img src="${esc(midSrc(x))}" data-full="${esc(x.u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("");
   const rows=[];
   const add=(k,v)=>{ if(v) rows.push(`<span>${k}</span><span>${v}</span>`); };
   const am=amen(p); if(am.length) rows.push(`<span>${esc(t("p_has"))}</span><span>${esc(am.join(", "))}</span>`);
@@ -594,9 +757,10 @@ function openState(wk){ if(!wk) return null; const {d,m}=NOW; const tt=wk[d];
 function todayBar(wk){ const x=wk[NOW.d]; const pct=v=>Math.max(0,Math.min(100,v/14.4));
   const seg=Array.isArray(x)?`<i class="tb-on" style="left:${pct(x[0])}%;width:${pct(Math.min(x[1],1440))-pct(x[0])}%"></i>`:"";
   return `<span class="tb" aria-hidden="true">${seg}<i class="tb-now" style="left:${pct(NOW.m)}%"></i></span>`; }
-function statusLine(p){ useNow(p); const s=openState(p.wk); if(!s) return ""; return `<div class="hs ${s.st}"><i class="hdot"></i><b>${esc(s.lab)}</b>${s.tm?` <span>${esc(s.tm)}</span>`:""}</div>`; }
+const live=p=>!(p.status==="soon"||p.status==="closed");
+function statusLine(p){ if(!live(p)) return ""; useNow(p); const s=openState(p.wk); if(!s) return ""; return `<div class="hs ${s.st}"><i class="hdot"></i><b>${esc(s.lab)}</b>${s.tm?` <span>${esc(s.tm)}</span>`:""}</div>`; }
 function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ const sm=p.sch['summary_'+LANG]||p.sch.summary_en||''; return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))} ▾</span></div></button>`; }
-  if(p.wk){ const x=p.wk[NOW.d]; const today=Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:(x==="x"?t("dayoff"):""); return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${statusLine(p)}${todayBar(p.wk)}${today?`<div class="tdy">${esc(today)} · <span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`:`<div class="tdy"><span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`}</button>`; } const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
+  if(p.wk){ const x=p.wk[NOW.d]; const today=Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:(x==="x"?t("dayoff"):""); return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${live(p)?statusLine(p)+todayBar(p.wk):""}${today?`<div class="tdy">${esc(today)} · <span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`:`<div class="tdy"><span class="wkmore">${esc(t("weekshort"))} ▾</span></div>`}</button>`; } const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
 function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b); const g=[];
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
   const rng={ru:" по ",en:" to ",pt:" a "}[LANG];
@@ -605,16 +769,16 @@ function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 function weekTableOld(wk){ return `<table class="wkt">${wk.map((x,i)=>`<tr class="${i===NOW.d?"td":""}"><td>${DN()[i]}</td><td>${Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:x==="x"?t("dayoff"):""}</td></tr>`).join("")}</table>`; }
 const n1=v=>Number(v).toFixed(1).replace(".",LANG==="en"?".":",");
 const nfmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,LANG==="en"?",":" ");
-function rb(r,compact){ if(!r) return ""; const o=[];
+function rb(r,compact,nocap){ if(!r) return ""; const o=[];
   if(r.google){ const n=r.google_reviews; const few=n!=null&&n<50; const c=few||n==null?"g3":r.google>=4.6?"g1":r.google>=4.2?"g2":"g3";
-    o.push(`<span class="rbw"><span class="rb ${c}"><b>${n1(r.google)}</b><span class="st">★</span>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span><span class="rcap">Google${few?" · "+t("few"):""}</span></span>`); }
-  if(r.booking){ const n=r.booking_reviews; o.push(`<span class="rbw"><span class="rb bk"><b>${n1(r.booking)}</b>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span><span class="rcap">Booking</span></span>`); }
+    o.push(`<span class="rbw"><span class="rb ${c}"><b>${n1(r.google)}</b><span class="st">★</span>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${nocap?(few?`<span class="rcap">${esc(t("few"))}</span>`:""):`<span class="rcap">Google${few?" · "+t("few"):""}</span>`}</span>`); }
+  if(r.booking){ const n=r.booking_reviews; o.push(`<span class="rbw"><span class="rb bk"><b>${n1(r.booking)}</b>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${nocap?"":`<span class="rcap">Booking</span>`}</span>`); }
   return o.join(""); }
 const bookUrl=p=>{ const u=(p.access||{}).booking_url||p.booking_url; return safeUrl(u); };
 const bookBtn=(p,cls)=>{ const u=bookUrl(p); return u?`<a class="${cls||"bookb"}" href="${esc(u)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""; };
 const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
-function photoCell(p){ if(!p._ph.length) return `<div class="nophoto">${esc(t("nophoto"))}</div>`;
-  return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
+function photoCell(p){ if(!p._ph.length) return "";
+  return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(p.status==="soon") return `<span class="pill p-na">${esc(t("soon"))}</span>`;
   if(p.status==="closed") return `<span class="pill p-no">${esc(t("closed"))}</span>`;
@@ -624,7 +788,7 @@ function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(p._trt) return `<span class="pill p-warn">${esc(t("w_trt"))}</span>${w}`;
   if(p._mem&&a.day_pass!==true) return `<span class="pill p-na">${esc(t("w_mem"))}</span>${w}`;
   if(a.day_pass===false) return `<span class="pill p-no">${esc(t("no"))}</span>`;
-  return w;
+  return "";
 }
 const sessCell = a => a.session_minutes?`<span class="num">${t("min",a.session_minutes)}</span>`:NA;
 function memCellOld(p){const a=p.access||{}; if(a.membership_month_eur!=null) return `<span class="num">${eur(a.membership_month_eur)}</span><span class="dim">${t("per_mo")}</span>`; if(p._mem) return `<span class="dim">${esc(t("onreq"))}</span>`; if(a.membership===false) return `<span class="dim">${esc(t("no"))}</span>`; return NA;}
@@ -683,31 +847,37 @@ function detail(p){const a=p.access||{};
   if(!p.of){ add(t("d_day"), esc([cap(dayTxt(p)), cap(tr(p,"day_note")||"")].filter(Boolean).join(". ")));
   add(t("d_mem"), esc([cap(memTxt(p)||""), cap(tr(p,"mem_note")||"")].filter(Boolean).join(". "))); }
   add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):"", link(a.booking_url||p.booking_url,t("d_bookpage"))].filter(Boolean).join(", "));
-  add(t("d_hours"), p.wk?(statusLine(p)+weekTable(p.wk)):esc(tr(p,"hours_text")||""));
+  add(t("d_hours"), p.wk?(statusLine(p)+weekTable(p.wk)):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
   add(t("d_phone"), p.phone?`<span style="user-select:all">${esc(p.phone)}</span>`:"");
   add(t("d_site"), link(p.website,t("d_official")));
   const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
   const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
   add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
-  add(t("d_rate"), (p.ratings&&(p.ratings.google||p.ratings.booking))?`${rb(p.ratings,true)}<div class="sub">${[p.ratings.google?"Google"+(p.ratings.google_reviews?`, ${nfmt(p.ratings.google_reviews)} ${t("d_ratings")}`:""):"",p.ratings.booking?"Booking"+(p.ratings.booking_reviews?`, ${nfmt(p.ratings.booking_reviews)} ${t("d_ratings")}`:""):""].filter(Boolean).join("; ")}</div>`:"");
+  add(t("d_rate"), (p.ratings&&(p.ratings.google||p.ratings.booking))?`${rb(p.ratings,true,true)}<div class="sub">${[p.ratings.google?"Google"+(p.ratings.google_reviews?`, ${nfmt(p.ratings.google_reviews)} ${t("d_ratings")}`:""):"",p.ratings.booking?"Booking"+(p.ratings.booking_reviews?`, ${nfmt(p.ratings.booking_reviews)} ${t("d_ratings")}`:""):""].filter(Boolean).join("; ")}</div>`:"");
   if(LANG==="ru") add(t("d_lists"), esc((p.lists||[]).join(", ")));
   add(t("d_sea"), p.sea_distance_m!=null?`≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" "+t("km"):p.sea_distance_m+" "+t("m")}`:"");
   add(t("d_region"), esc([muniName(p.muni), p.reg?regName(p.reg):""].filter(Boolean).join(", ")));
   if(ME) add(t("d_fromme"), p._d<900?`≈ ${kmTxt(p._d)} ${t("km")}, ${t("straight")}`:"");
   add(t("d_rules"), esc([p.min_age?t("from_age",p.min_age):"", cap(tr(p,"rules")||"")].filter(Boolean).join(". ")));
-  const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).slice(0,4).map((u,i)=>`<a href="${esc(u)}" target="_blank" rel="noopener">${i+1}</a>`).join(" ");
-  const gal=p._ph.length?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(x.t||x.u)}" alt="" loading="lazy" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
+  const fb=p.fb||{}; const vis=[]; if(fb.ok>0) vis.push(t("v_ok",fb.ok)); if(fb.n>=3&&fb.rating!=null) vis.push(t("v_rate",n1(fb.rating),fb.n));
+  if(vis.length) add(t("d_visitors"), `<span class="dim">${esc(vis.join(" · "))}</span>`);
+  const host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return u; } };
+  const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).slice(0,4).map((u,j,arr)=>{ const h=host(u); const n=arr.slice(0,j).filter(x=>host(x)===h).length; return `<a class="sd" href="${esc(u)}" target="_blank" rel="noopener">${esc(h)}${n?" ("+(n+1)+")":""}</a>`; }).join(" ");
+  const gal=p._ph.length?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(galSrc(x))}" data-full="${esc(x.u)}" width="120" height="84" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
   const conf=p.confidence?t("conf_"+p.confidence):"";
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
   const bu=bookUrl(p);
-  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${p.lat!=null?`<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>`:""}${dest?`<a class="act" target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">${esc(t("r_google"))}</a><a class="act" target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a class="act" target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
-  return `${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${esc(t("checked",p.verified_on||""))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${t("sources")}: ${src}`:""}</div>`;
+  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${p.lat!=null?`<button type="button" class="act" data-showmap="${p._i}">${esc(t("showmap"))}</button>`:""}${dest?`<details class="rt"><summary class="act">${esc(t("route"))}&nbsp;▾</summary><div class="rtm"><a target="_blank" rel="noopener" href="https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}">Google Maps</a><a target="_blank" rel="noopener" href="https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}">${esc(t("r_apple"))}</a><a target="_blank" rel="noopener" href="https://waze.com/ul?ll=${dest}&navigate=yes">Waze</a></div></details>`:""}<button type="button" class="act" data-share="${p._i}">${esc(t("copylink"))}</button></div>`;
+  const ov=p.owner&&p.owner.verified_on;
+  const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:`${esc(t("checked",fmtDate(p.verified_on)))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${esc(t("sources"))}: ${src}`:""}`;
+  return `${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">✓ ${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${tr(p,"notes")?`<p class="note">${esc(tr(p,"notes"))}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
 }
 
 function filtered(){
   const minR=st.rate==="ok"?0:+st.rate;
+  const coll=st.sort==="name"?new Intl.Collator(LANG,{ignorePunctuation:true,sensitivity:"base"}):null;
   return P.filter(p=>{const a=p.access||{};
-    if(st.q && !(`${p.name} ${p.subtitle||""} ${p.address||""} ${AREA_RU[p.area]||""} ${areaName(p.area)} ${p.area||""}`.toLowerCase().includes(st.q))) return false;
+    if(st.qt.length){ const h=hay(p); if(!st.qt.every(w=>h.includes(w))) return false; }
     if(st.hrs.size){ const w=p.wk;
       if(!w){ const sc=p.sch||{}; const wkd=sc.week||{}; const upW=(sc.upcoming||[]).some(u=>{ const d=new Date(u.date+"T12:00:00").getDay(); return d===0||d===6; });
         const hasWknd=!!((wkd.sat&&wkd.sat.length)||(wkd.sun&&wkd.sun.length))||upW;
@@ -723,6 +893,7 @@ function filtered(){
       if(st.hrs.has("wknd") && !(Array.isArray(w[5])||Array.isArray(w[6]))) return false;
       if(st.hrs.has("early") && !w.some(x=>Array.isArray(x)&&x[0]<=8*60)) return false; } }
     if(st.scope==="near" && !p._near) return false;
+    if(st.rad && ME && !(p.lat!=null && p._d<=st.rad)) return false;
     if(st.area.size && !st.area.has(p.reg)) return false;
     if(st.muni.size && !st.muni.has(p.muni)) return false;
     if(st.kind.size && !st.kind.has(p.kind)) return false;
@@ -740,110 +911,172 @@ function filtered(){
     if(st.mprice!=null && (p._mp==null || p._mp>st.mprice)) return false;
     if(st.access.has("private") && !p._grp) return false;
     return true;
-  }).sort((x,y)=>{const ax=x.access||{}, ay=y.access||{}, d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
+  }).sort((x,y)=>{const d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
     switch(st.sort){
       case "price": return nl(x._sp,y._sp)||y._score-x._score;
       case "mprice": return nl(x._mp,y._mp)||y._score-x._score;
-      case "session": return nl(ax.session_minutes,ay.session_minutes)||x._d-y._d;
+      case "session": return nl(x._ses,y._ses)||y._score-x._score;
       case "book": return d*(x._book-y._book)||x._d-y._d;
       case "kind": return d*((KINDS[x.kind]||[""])[0].localeCompare((KINDS[y.kind]||[""])[0]))||x._d-y._d;
       case "dist": return d*(x._d-y._d);
-      case "sea": return nl(x.sea_distance_m,y.sea_distance_m);
-      case "name": return d*x.name.localeCompare(y.name);
+      case "sea": return nl(x.sea_distance_m,y.sea_distance_m)||y._score-x._score;
+      case "name": return d*coll.compare(pname(x),pname(y));
       default: return d*(x._score-y._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
     }
   });
 }
 
 const tbody=document.getElementById("tbody");
-function fitNameCol(){ const w=document.querySelector(".tablewrap"); if(!w) return; document.documentElement.style.setProperty("--namew", Math.max(120, w.clientWidth-62-108-2)+"px"); }
-fitNameCol(); window.addEventListener("resize",fitNameCol); try{ new ResizeObserver(()=>fitNameCol()).observe(document.querySelector(".tablewrap")); }catch(e){}
-let lastAreaKey="";
-function render(){
-  renderHead();
-  const list=filtered(); const vis=new Set(list.map(p=>p._i));
-  Object.entries(markers).forEach(([i,m])=>{ const on=vis.has(+i); if(on&&!cluster.hasLayer(m)) cluster.addLayer(m); if(!on&&cluster.hasLayer(m)) cluster.removeLayer(m); });
-  const qk=(st.q&&list.length&&list.length<=15)?st.q:""; const ak=[...st.area].sort().join(",")+"|"+[...st.muni].sort().join(",")+"|"+qk; if(ak!==lastAreaKey){ lastAreaKey=ak; const pts=list.filter(p=>p.lat!=null).map(p=>[p.lat,p.lon]); if((st.area.size||st.muni.size||qk)&&pts.length) map.fitBounds(pts,{padding:[30,30],maxZoom:14}); else fitDefault(); }
+const KNOWN_HRS=P.filter(p=>p.wk||p.sch).length;
+const PAGE=40; let LIST=[], shown=0, lastAreaKey="", lastMk="";
+const CPL_SVG=`<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg>`;
+const seaTxt=m=>m>=1000?dec(Math.round(m/100)/10)+" "+t("km"):m+" "+t("m");
+function sortVal(p){ if(st.sort==="session"&&p._ses) return `<div class="sub sv">${esc(t("sv_session",fmtMinU(p._ses)))}</div>`;
+  if(st.sort==="sea"&&p.sea_distance_m!=null) return `<div class="sub sv">${esc(t("sv_sea",seaTxt(p.sea_distance_m)))}</div>`; return ""; }
+function memLine(p){ const h=p.hl||{}, a=p.access||{}; let v=null;
+  if(h.month_from_eur!=null) v=`${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}`; else if(!p.hl&&a.membership_month_eur!=null) v=`${eur(a.membership_month_eur)}${t("per_mo")}`;
+  return v?`<div class="sub mline">${esc(t("mx_mem"))} <span class="num">${esc(v)}</span></div>`:""; }
+function rowHTML(p){ const a=p.access||{}; const am=amen(p); const k=KINDS[p.kind]||KINDS.sauna; const open=st.open===p._i; const ph=p._ph.length>0;
+  const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(t("wt_"+p._weak))}</span>`:"";
+  const rbm=rb(p.ratings);
+  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}">${ph?`<td>${photoCell(p)}</td>`:""}<td class="nm"${ph?"":` colspan="2"`}><div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}<button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}">${CPL_SVG}</button></div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${sortVal(p)}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}${rbm?`<div class="rbm">${rbm}</div>`:""}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${priceCell(p)}${memLine(p)}<div class="bk2">${bookCell(a,p)}</div></td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
+const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
+const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
+const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
+function appendRows(n){ const end=Math.min(LIST.length,shown+n); if(end<=shown) return; let h="";
+  for(let k=shown;k<end;k++){ const p=LIST[k]; h+=rowHTML(p); if(st.open===p._i) h+=detailHTML(p); }
+  tbody.insertAdjacentHTML("beforeend",h); shown=end; }
+function ensureShown(i){ const k=LIST.findIndex(p=>p._i===i); if(k<0) return false; if(k>=shown) appendRows(k-shown+1+PAGE/2); return true; }
+const sentinel=document.getElementById("more-sentinel");
+function fill(){ if(shown<LIST.length && !isFull() && sentinel.getBoundingClientRect().top<innerHeight+1500){ appendRows(PAGE); requestAnimationFrame(fill); } }
+try{ new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)) fill(); },{rootMargin:"1500px 0px"}).observe(sentinel); }catch(e){ window.addEventListener("scroll",fill,{passive:true}); }
+function updateMarkers(list){ const ms=[]; let key=""; list.forEach(p=>{ const m=markers[p._i]; if(m){ ms.push(m); key+=p._i+","; } });
+  if(key===lastMk) return; lastMk=key; cluster.clearLayers(); cluster.addLayers(ms); }
+function render(keep){
+  const list=filtered(); LIST=list;
+  updateMarkers(list);
+  const ak=[...st.area].sort().join(",")+"|"+[...st.muni].sort().join(",")+"|"+(qActive()?st.q:""); if(ak!==lastAreaKey){ lastAreaKey=ak; fitAuto(); }
   document.getElementById("empty").hidden = list.length>0;
-  const VC=[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
-  tbody.innerHTML = list.map(p=>{const a=p.access||{};
-    const am=amen(p);
-    const k=KINDS[p.kind]||KINDS.sauna; const open=st.open===p._i;
-    const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(t("wt_"+p._weak))}</span>`:"";
-    const row=`<tr class="row${open?" active":""}${p._weak?" weak":""}" data-i="${p._i}" tabindex="0" aria-expanded="${open}">
-      <td>${photoCell(p)}</td>
-      <td><div class="name">${esc(pname(p))}${wk}<button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("copylink"))}" aria-label="${esc(t("copylink"))}"><svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1"/></svg></button></div>${tr(p,"subtitle")?`<div class="sub">${esc(tr(p,"subtitle"))}</div>`:""}<div class="sub"><span class="m-in"><span class="dot" style="background:${k[1]}"></span></span>${esc(muniName(p.muni)||areaName(p.area)||"")}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}<span class="m-in"> · ${esc(k[0])}</span></div>${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}</td>
-      <td class="hide-m hide-l">${kindCell(p)}</td>
-      <td>${priceCell(p)}<div class="bk2">${bookCell(a,p)}</div></td>
-      <td class="hide-m">${memCellNew(p)}</td>
-      <td class="hide-m hrs">${hoursCell(p)}</td>
-      <td class="hide-m">${rateCell(p.ratings)}</td>
-</tr>`;
-    return row+(open?`<tr class="detail"><td colspan="${VC}">${mobileExtra(p)}${detail(p)}</td></tr>`:"");}).join("");
-  const n=list.length, nd=list.filter(p=>p._vp!=null).length, nm=list.filter(p=>p._mp!=null).length;
-  document.getElementById("stats").innerHTML=`<span><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span><b>${nd}</b> ${t("withday")}</span><span><b>${nm}</b> ${t("withmem")}</span>`;
-  const nf=st.area.size+st.kind.size+st.access.size+st.ext.size+st.hrs.size+(st.rate!=="0"?1:0)+(st.price!=null?1:0)+(st.mprice!=null?1:0);
-  ft.textContent = nf?t("filt_n",nf):t("filters");
+  let need=keep?Math.max(shown,PAGE):PAGE;
+  if(st.open!=null){ const k=list.findIndex(p=>p._i===st.open); if(k>=need) need=k+1; }
+  shown=0; tbody.textContent=""; appendRows(need);
+  const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
+  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",KNOWN_HRS))}</span>`:""}`;
+  updateFtoggle();
+  requestAnimationFrame(fill);
 }
-function mobileExtra(p){ if(!matchMedia("(max-width:900px)").matches) return ""; const a=p.access||{};
-  const parts=[]; const mc=memCellNew(p); if(mc) parts.push(`<span><span class="dim">${t("mx_mem")}</span> ${mc}</span>`); const hc=hoursCell(p); if(hc) parts.push(`<span><span class="dim">${t("mx_hours")}</span> ${hc}</span>`);
-  return parts.length?`<div class="frow" style="margin-bottom:10px;gap:6px 14px;font-size:13px">${parts.join("")}</div>`:""; }
-const isPhone=()=>matchMedia("(max-width:900px)").matches;
-function openRow(i,fromMap){
-  const before=tbody.querySelector(`tr.row[data-i="${i}"]`); const y0=before?before.getBoundingClientRect().top:null;
-  st.open = (st.open===i && !fromMap) ? null : i; render();
-  document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active"));
-  const r=tbody.querySelector(`tr.row[data-i="${i}"]`);
-  if(fromMap){ if(document.documentElement.classList.contains("mapfull")) closeFull(); map.closePopup(); r&&r.scrollIntoView({block:"start",behavior:"smooth"}); }
-  else if(r&&y0!=null){ window.scrollBy(0, r.getBoundingClientRect().top-y0); }
-  if(st.open==null) return;
-  const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active");
-  try{ history.replaceState(null,"","#p-"+P[i].id); }catch(e){}
-  if(!fromMap && !isPhone() && markers[i]){ cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); }
+function setActiveMk(i){ document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active"); } }
+function scrollToRow(i){ const go=()=>{ const r=rowEl(i); if(r) r.scrollIntoView({block:"start"}); }; go(); requestAnimationFrame(go); setTimeout(go,150); }
+let pendingScroll=null;
+function openRow(i,fromMap,noMap){
+  const was=st.open; const next=(st.open===i&&!fromMap)?null:i;
+  if(next!=null && !ensureShown(i)){ resetAll(true); render(); ensureShown(i); }
+  const r0=rowEl(i); const y0=r0?r0.getBoundingClientRect().top:null;
+  if(was!=null && was!==next){ const pr=rowEl(was); if(pr){ pr.classList.remove("active"); const b=pr.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); } const d=document.getElementById("det-"+was); if(d) d.remove(); }
+  st.open=next;
+  const r=rowEl(i);
+  if(next!=null && r && !document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
+  if(next==null && r){ r.classList.remove("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); const d=document.getElementById("det-"+i); if(d) d.remove(); }
+  if(fromMap){ map.closePopup(); if(isFull()){ pendingScroll=i; closeFull(); } scrollToRow(i); }
+  else if(r&&y0!=null){ const dy=r.getBoundingClientRect().top-y0; if(Math.abs(dy)>1) window.scrollBy(0,dy); }
+  setActiveMk(st.open);
+  try{ history.replaceState(history.state,"",st.open==null?location.pathname+location.search:"#p-"+P[i].id); }catch(e){}
+  if(st.open==null||fromMap||noMap||isPhone()||!markers[i]) return;
+  const m=markers[i]; const vis=cluster.getVisibleParent(m);
+  // keep the zoom: pan if needed and open the popup in place (also when the pin sits inside a cluster)
+  if(vis===m){ map.panInside(m.getLatLng(),{padding:[80,80]}); m.openPopup(); }
+  else { map.panInside(m.getLatLng(),{padding:[120,120]}); L.popup({maxWidth:320,minWidth:280,autoPanPadding:[20,20],offset:[0,-2]}).setLatLng(m.getLatLng()).setContent(popup(P[i])).openOn(map); }
 }
-function showOnMap(i){ if(isPhone()) openFull(); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); },80); }
+function showOnMap(i){ if(isPhone()) openFull(true); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>markers[i].openPopup()); },80); }
 const fab=document.getElementById("fab");
-function openFull(){ document.documentElement.classList.add("mapfull"); try{history.pushState({mapfull:1},"");}catch(e){} setTimeout(()=>map.invalidateSize(),60); }
-function closeFull(fromPop){ if(!document.documentElement.classList.contains("mapfull")) return; document.documentElement.classList.remove("mapfull","fpanel"); setTimeout(()=>map.invalidateSize(),60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
-fab.onclick=openFull; document.getElementById("mapfull-x").onclick=()=>closeFull();
-window.addEventListener("popstate",()=>closeFull(true));
+function openFull(noFit){ if(isFull()) return; document.documentElement.classList.add("mapfull"); try{history.pushState({mapfull:1},"");}catch(e){} syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); },60); }
+function closeFull(fromPop){ if(!isFull()) return; document.documentElement.classList.remove("mapfull","fpanel"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
+fab.onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
+window.addEventListener("popstate",()=>{ closeFull(true); if(pendingScroll!=null){ const i=pendingScroll; pendingScroll=null; scrollToRow(i); } });
+const onMQ=()=>{ syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
+try{ matchMedia("(max-width:900px)").addEventListener("change",onMQ); matchMedia("(max-width:600px)").addEventListener("change",()=>render(true)); }catch(e){}
+// hover a row: highlight its pin (desktop)
+tbody.addEventListener("mouseover",e=>{ const r=e.target.closest("tr.row"); const i=r?r.dataset.i:null; if(i===tbody.dataset.hov) return; tbody.dataset.hov=i||"";
+  document.querySelectorAll(".mk.hover").forEach(x=>x.classList.remove("hover")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("hover"); } });
+tbody.addEventListener("mouseleave",()=>{ tbody.dataset.hov=""; document.querySelectorAll(".mk.hover").forEach(x=>x.classList.remove("hover")); });
 // near me
-let ME=null;
+function setMe(ll){ ME=ll; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); document.getElementById("opt-dist").hidden=false;
+  if(meMarker) meMarker.setLatLng(ME); else meMarker=L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1,interactive:false}).addTo(map);
+  drawRad(); setSort("dist",1); map.setView(ME,12); }
 document.getElementById("near").onclick=()=>{ const b=document.getElementById("near");
-  if(!navigator.geolocation){ b.textContent=t("geo_na"); return; }
+  if(!navigator.geolocation){ b.textContent=t("geo_na"); document.getElementById("nearc").hidden=false; return; }
   b.textContent=t("geo_wait");
-  navigator.geolocation.getCurrentPosition(pos=>{ ME=[pos.coords.latitude,pos.coords.longitude]; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); b.textContent=t("geo_ok"); document.getElementById("opt-dist").hidden=false; setSort("dist",1); L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1}).addTo(map); map.setView(ME,12); },
-    ()=>{ b.textContent=t("geo_no"); }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
+  navigator.geolocation.getCurrentPosition(pos=>{ b.textContent=t("geo_ok"); document.getElementById("nearc").hidden=true; setMe([pos.coords.latitude,pos.coords.longitude]); },
+    ()=>{ b.textContent=t("geo_no"); document.getElementById("nearc").hidden=false; }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
+document.getElementById("nearc").onclick=()=>{ document.getElementById("nearc").hidden=true; setMe(CASCAIS.slice()); };
 tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
   const sm=e.target.closest("[data-showmap]"); if(sm){ showOnMap(+sm.dataset.showmap); return; }
   const sh=e.target.closest("[data-share]"); if(sh){ const u=location.origin+location.pathname+"#p-"+P[+sh.dataset.share].id; const done=()=>{sh.textContent=t("copied");}; (navigator.clipboard?navigator.clipboard.writeText(u).then(done,()=>{prompt("Link",u)}):prompt("Link",u)); return; }
+  const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
+  if(e.target.closest("tr.detail")) return;
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) openRow(+r.dataset.i,false);});
-tbody.addEventListener("keydown",e=>{ if((e.key==="Enter"||e.key===" ")&&e.target.matches("tr.row")){ e.preventDefault(); openRow(+e.target.dataset.i,false);} });
 
 // copy link
-function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].id; const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} const tt=document.createElement("div"); tt.className="cptoast"; tt.textContent=t("copied"); document.body.appendChild(tt); setTimeout(()=>tt.remove(),1600); };
+function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].id; const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} const tt=document.createElement("div"); tt.className="cptoast"; tt.setAttribute("role","status"); tt.textContent=t("copied"); document.body.appendChild(tt); setTimeout(()=>tt.remove(),1600); };
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,()=>prompt("Link",u)); else prompt("Link",u); }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cpl"); if(b){ e.stopPropagation(); e.preventDefault(); copyLink(+b.dataset.cp,b); } },true);
+// route menu: keep inside the list, close on outside click
+document.addEventListener("toggle",e=>{ const d=e.target; if(!d.classList||!d.classList.contains("rt")||!d.open) return; const m=d.querySelector(".rtm"); m.style.left="0"; m.style.right="auto";
+  const r=m.getBoundingClientRect(), W=document.querySelector(".tablewrap").getBoundingClientRect(); if(r.right>W.right-4){ m.style.left="auto"; m.style.right="0"; } },true);
+document.addEventListener("click",e=>{ document.querySelectorAll("details.rt[open]").forEach(d=>{ if(!d.contains(e.target)) d.open=false; }); });
 // filters over full-screen map
-document.getElementById("mapfilt").onclick=()=>{ document.documentElement.classList.add("fpanel"); fbox.classList.add("open"); };
-document.getElementById("fdone").onclick=()=>{ document.documentElement.classList.remove("fpanel"); };
-// hours popover
-const hpop=document.getElementById("hpop");
-function placePop(btn){ hpop.hidden=false; const r=btn.getBoundingClientRect(); const w=hpop.offsetWidth, h=hpop.offsetHeight; let x=Math.min(r.left, innerWidth-w-10); let y=r.bottom+6; if(y+h>innerHeight-10) y=Math.max(10,r.top-h-6); hpop.style.left=Math.max(10,x)+"px"; hpop.style.top=y+"px"; }
+document.getElementById("mapfilt").onclick=()=>{ document.documentElement.classList.add("fpanel"); fbox.classList.add("open"); ft.setAttribute("aria-expanded","true"); };
+document.getElementById("fdone").onclick=()=>{ document.documentElement.classList.remove("fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); };
+// popovers (hours, schedule, feedback): anchored on desktop, bottom sheet on phones
+const hpop=document.getElementById("hpop"); let popOpener=null;
+function placePop(btn){ hpop.hidden=false; if(isPhone()){ hpop.style.left=""; hpop.style.top=""; return; } const r=btn.getBoundingClientRect(); const w=hpop.offsetWidth, h=hpop.offsetHeight; let x=Math.min(r.left, innerWidth-w-10); let y=r.bottom+6; if(y+h>innerHeight-10) y=Math.max(10,r.top-h-6); hpop.style.left=Math.max(10,x)+"px"; hpop.style.top=y+"px"; }
+function popShow(btn,html,o){ o=o||{}; popOpener=btn; hpop.classList.toggle("wide",!!o.wide); hpop.dataset.keep=o.keep?"1":"";
+  hpop.innerHTML=`<button type="button" class="hpop-x" aria-label="${esc(t("close"))}">×</button>`+html; hpop.setAttribute("aria-label",o.label||""); placePop(btn); }
+function closePop(refocus){ if(hpop.hidden) return; hpop.hidden=true; hpop.dataset.for=""; if(refocus&&popOpener&&popOpener.focus) popOpener.focus(); }
+hpop.addEventListener("click",e=>{ if(e.target.closest(".hpop-x")) closePop(true); });
 function showSched(btn){ const p=P[+btn.dataset.sch]; const c=p&&p.sch; if(!c) return; const dk=["mon","tue","wed","thu","fri","sat","sun"];
   const wk=c.week||c.windows; let grid="";
   if(wk){ grid=`<div class="sgrid">${dk.map((k,i)=>wk[k]&&wk[k].length?`<span>${DN()[i]}</span><span class="tm">${wk[k].map(x=>`<i>${esc(String(x).replace("-"," "+t("to")+" "))}</i>`).join("")}</span>`:"").join("")}</div>`; if(c.windows&&!c.week) grid=`<div class="sup">${esc(t("sch_win"))}</div>`+grid; }
   const fm=(c.formats||[]).map(f=>`<div><span>${esc(f["name_"+LANG]||f.name_en||f.name_ru||"")}${f.minutes?" · "+fmtMinU(f.minutes):""}</span><b class="num">${f.price_eur!=null?eur(f.price_eur):""}</b></div>`).join("");
   const up=(c.upcoming||[]).slice(0,5).map(u=>{ const d=new Date(u.date+"T12:00:00"); const ds=d.toLocaleDateString(LANG==="pt"?"pt-PT":LANG==="en"?"en-GB":"ru-RU",{day:"numeric",month:"short",weekday:"short"}); return `<div><b>${esc(ds)}${u.time?" "+esc(u.time):""}</b> ${esc(u.title||"")}</div>`; }).join("");
   const bu=safeUrl(c.booking_url)||bookUrl(p);
-  hpop.innerHTML=`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div style="font-size:12.5px">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}${bu?`<a class="bookb" href="${esc(bu)}" target="_blank" rel="noopener" style="margin-top:8px">${esc(t("book"))}</a>`:""}`;
-  hpop.classList.add("wide"); placePop(btn); }
-function showHours(btn){ hpop.classList.remove("wide"); const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); hpop.innerHTML=`<div class="hpt">${esc(t("weekhrs"))}</div>${statusLine(p)}${weekTable(p.wk)}`; hpop.hidden=false;
-  const r=btn.getBoundingClientRect(); const w=hpop.offsetWidth, h=hpop.offsetHeight; let x=Math.min(r.left, innerWidth-w-10); let y=r.bottom+6; if(y+h>innerHeight-10) y=Math.max(10,r.top-h-6); hpop.style.left=Math.max(10,x)+"px"; hpop.style.top=y+"px"; hpop.dataset.for=btn.dataset.hrs; }
-document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".hbtn"); if(b){ e.stopPropagation(); e.preventDefault(); const key=b.dataset.hrs||('s'+b.dataset.sch); if(!hpop.hidden&&hpop.dataset.for===key){ hpop.hidden=true; return; } if(b.dataset.sch!=null) showSched(b); else showHours(b); hpop.dataset.for=key; return; } if(!e.target.closest||!e.target.closest("#hpop")) hpop.hidden=true; },true);
-document.addEventListener("keydown",e=>{ if(e.key==="Escape") hpop.hidden=true; });
-window.addEventListener("scroll",()=>{ hpop.hidden=true; },{passive:true});
-map.on("movestart",()=>{ hpop.hidden=true; });
+  popShow(btn,`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div style="font-size:12.5px">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}${bu?`<a class="bookb" href="${esc(bu)}" target="_blank" rel="noopener" style="margin-top:8px">${esc(t("book"))}</a>`:""}`,{wide:true,label:t("sch_t")+" · "+p.name}); }
+function showHours(btn){ const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); popShow(btn,`<div class="hpt">${esc(t("weekhrs"))}</div>${statusLine(p)}${weekTable(p.wk)}`,{label:t("weekhrs")+" · "+p.name}); }
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".hbtn"); if(b){ e.stopPropagation(); e.preventDefault(); const key=b.dataset.hrs||('s'+b.dataset.sch); if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; } if(b.dataset.sch!=null) showSched(b); else showHours(b); hpop.dataset.for=key; return; } if(!e.target.closest||(!e.target.closest("#hpop")&&!e.target.closest("[data-fb]"))) closePop(); },true);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"&&!hpop.hidden) closePop(true); });
+window.addEventListener("scroll",()=>{ if(hpop.dataset.keep!=="1") closePop(); },{passive:true});
+map.on("movestart",()=>{ if(hpop.dataset.keep!=="1") closePop(); });
+// owner / visitor feedback (shown only when FB is configured)
+const fbDone=(p,k)=>!!lsGet(`fb:${p.id}:${k}`);
+function fbCid(){ let c=lsGet("sauna-cid"); if(!c){ c=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36); lsSet("sauna-cid",c); } return c; }
+function fbVals(p,data){ return {place_id:p.id,kind:data.kind,problem:data.problem||"",rating:data.rating!=null?String(data.rating):"",comment:String(data.comment||"").slice(0,300),cid:fbCid(),lang:LANG}; }
+function fbSend(p,data){ if(!FB.B) return; const v=fbVals(p,data); const fd=new FormData(); Object.keys(v).forEach(k=>{ if(FB.f[k]) fd.append(FB.f[k],v[k]); });
+  try{ fetch(FB.B,{method:"POST",mode:"no-cors",body:fd}).catch(()=>{}); }catch(e){}
+  lsSet(`fb:${p.id}:${data.kind}`,String(Date.now())); fbMark(p,data.kind); }
+function fbFormUrl(p,data){ const q=new URLSearchParams({usp:"pp_url"}); const v=fbVals(p,data); Object.keys(v).forEach(k=>{ if(FB.f[k]&&v[k]) q.set(FB.f[k],v[k]); }); return FB.B.replace(/formResponse.*$/,"viewform")+"?"+q.toString(); }
+function ownerUrl(p){ const q=new URLSearchParams({usp:"pp_url"}); if(FB.A_id) q.set(FB.A_id,p.id); if(FB.A_name) q.set(FB.A_name,p.name); return FB.A+(FB.A.includes("?")?"&":"?")+q.toString(); }
+const fbThx=k=>t(k==="problem"?"fb_thanks":"fb_thx");
+function fbBtn(p,k,lab){ return fbDone(p,k)?`<button type="button" class="fbb" aria-disabled="true" disabled>${esc(fbThx(k))}</button>`:`<button type="button" class="fbb" data-fb="${k}" data-i="${p._i}"${k==="ok"?"":` aria-haspopup="dialog"`}>${esc(lab)}</button>`; }
+function fbLine(p){ if(!FB.B&&!FB.A) return ""; const o=[];
+  if(FB.B) o.push(`<span>${esc(t("fb_q"))}</span>`, fbBtn(p,"ok",t("fb_ok")), fbBtn(p,"problem",t("fb_flag")), fbBtn(p,"rating",t("fb_rate")));
+  if(FB.A) o.push(`${FB.B?`<span class="sep" aria-hidden="true">·</span>`:""}<a class="fbo" href="${esc(ownerUrl(p))}" target="_blank" rel="noopener" title="${esc(t("fb_own_h"))}">${esc(t("fb_own"))} →</a>`);
+  return `<div class="fbl">${o.join("")}</div>`; }
+function fbMark(p,k){ document.querySelectorAll(`.fbb[data-fb="${k}"][data-i="${p._i}"]`).forEach(b=>{ b.removeAttribute("data-fb"); b.disabled=true; b.setAttribute("aria-disabled","true"); b.textContent=fbThx(k); }); }
+function fbClick(btn){ const p=P[+btn.dataset.i]; const k=btn.dataset.fb; if(!p||fbDone(p,k)) return;
+  if(k==="ok"){ fbSend(p,{kind:"ok"}); return; }
+  const key="fb"+k+p._i; if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; }
+  if(k==="problem"){
+    popShow(btn,`<div class="hpt">${esc(t("fb_flag").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><form class="fbf" data-i="${p._i}">${["closed","hours","price","nosauna","other"].map(c=>`<label><input type="radio" name="fbp" value="${c}"> ${esc(t("fb_p_"+c))}</label>`).join("")}<textarea name="c" maxlength="300" rows="2" placeholder="${esc(t("fb_comment"))}" aria-label="${esc(t("fb_comment"))}"></textarea><button type="submit" class="fbsend" disabled>${esc(t("fb_send"))}</button></form><a class="fbaf" href="${esc(fbFormUrl(p,{kind:"problem"}))}" target="_blank" rel="noopener">${esc(t("fb_asform"))}</a>`,{keep:true,label:t("fb_flag")+" · "+pname(p)});
+    const f=hpop.querySelector("form"); f.addEventListener("change",()=>{ f.querySelector(".fbsend").disabled=!f.querySelector("input[name=fbp]:checked"); });
+    f.addEventListener("submit",ev=>{ ev.preventDefault(); const c=f.querySelector("input[name=fbp]:checked"); if(!c) return; fbSend(p,{kind:"problem",problem:c.value,comment:f.querySelector("textarea").value}); closePop(true); });
+    const r0=f.querySelector("input"); if(r0) r0.focus({preventScroll:true});
+  } else {
+    popShow(btn,`<div class="hpt">${esc(t("fb_rate").replace(/^\S+\s/,""))} · ${esc(pname(p))}</div><div class="fbstars" role="group" aria-label="${esc(t("fb_rate"))}">${[1,2,3,4,5].map(n=>`<button type="button" data-star="${n}" aria-label="${esc(t("fb_star_n",n))}">★</button>`).join("")}</div><a class="fbaf" href="${esc(fbFormUrl(p,{kind:"rating"}))}" target="_blank" rel="noopener">${esc(t("fb_asform"))}</a>`,{keep:true,label:t("fb_rate")+" · "+pname(p)});
+    const g=hpop.querySelector(".fbstars"); g.addEventListener("mouseover",e=>{ const b=e.target.closest("[data-star]"); const n=b?+b.dataset.star:0; g.querySelectorAll("button").forEach(x=>x.classList.toggle("on",+x.dataset.star<=n)); });
+    g.addEventListener("click",e=>{ const b=e.target.closest("[data-star]"); if(!b) return; fbSend(p,{kind:"rating",rating:+b.dataset.star}); closePop(true); });
+    const s0=g.querySelector("button"); if(s0) s0.focus({preventScroll:true});
+  }
+  hpop.dataset.for=key; }
 // lightbox
 const lb=document.getElementById("lb"); const lbImg=document.createElement("img"); lbImg.alt=""; document.getElementById("lb-imgslot").appendChild(lbImg);
 let lbP=null, lbJ=0, lastFocus=null;
@@ -851,7 +1084,7 @@ function lbShow(){ const x=lbP._ph[lbJ]; lbImg.src=x.u; lbImg.alt=lbP.name;
   document.getElementById("lb-title").textContent=pname(lbP);
   document.getElementById("lb-count").textContent=t("n_of",lbJ+1,lbP._ph.length);
   const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
-  const many=lbP._ph.length>1; document.getElementById("lb-prev").hidden=!many; document.getElementById("lb-next").hidden=!many;
+  const many=lbP._ph.length>1; ["lb-prev","lb-next","lb-tl","lb-tr"].forEach(id=>document.getElementById(id).hidden=!many);
   const nx=lbP._ph[(lbJ+1)%lbP._ph.length]; if(nx){ const im=new Image(); im.referrerPolicy="no-referrer"; im.src=nx.u; } }
 function openLB(i,j){ lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbShow(); document.getElementById("lb-x").focus(); }
 function closeLB(){ lb.hidden=true; document.body.style.overflow=""; lbImg.removeAttribute("src"); lastFocus&&lastFocus.focus&&lastFocus.focus(); }
@@ -860,19 +1093,23 @@ lbImg.referrerPolicy="no-referrer";
 document.getElementById("lb-x").onclick=closeLB;
 document.getElementById("lb-prev").onclick=()=>step(-1);
 document.getElementById("lb-next").onclick=()=>step(1);
+document.getElementById("lb-tl").onclick=()=>step(-1);
+document.getElementById("lb-tr").onclick=()=>step(1);
 document.getElementById("lb-stage").addEventListener("click",e=>{ if(e.target.id==="lb-stage") closeLB(); });
-document.addEventListener("keydown",e=>{ if(lb.hidden) return; if(e.key==="Escape") closeLB(); if(e.key==="ArrowLeft") step(-1); if(e.key==="ArrowRight") step(1); });
+document.addEventListener("keydown",e=>{ if(lb.hidden) return; if(e.key==="Escape") closeLB(); if(e.key==="ArrowLeft") step(-1); if(e.key==="ArrowRight") step(1);
+  if(e.key==="Tab"){ const f=["lb-x","lb-prev","lb-next","lb-src"].map(id=>document.getElementById(id)).filter(x=>x&&!x.hidden); if(!f.length) return; const k=f.indexOf(document.activeElement); e.preventDefault(); f[(k+(e.shiftKey?-1:1)+f.length)%f.length].focus(); } });
 let tx=null, ty=null;
 lb.addEventListener("touchstart",e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
 lb.addEventListener("touchend",e=>{ if(tx==null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(Math.abs(dx)>45&&Math.abs(dx)>Math.abs(dy)) step(dx<0?1:-1); else if(dy>90) closeLB(); tx=null; },{passive:true});
 lbImg.onerror=()=>{ if(lbP && lbP._ph.length>1){ lbP._ph.splice(lbJ,1); if(lbJ>=lbP._ph.length) lbJ=0; lbShow(); } };
-document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; } },true);
+document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.dataset.full && t.getAttribute("src")!==t.dataset.full){ t.src=t.dataset.full; return; } if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; const nx=b.nextElementSibling; if(nx&&b.parentElement.classList.contains("thumbs")) nx.style.display="block"; } },true);
 
-setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(); },300000);
-render();
-(function(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]); if(!p) return;
-  openRow(p._i,false); const r=tbody.querySelector(`tr.row[data-i="${p._i}"]`); r&&r.scrollIntoView({block:"start"}); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); })();
-const m=D.meta||{};
+setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
+renderHead(); render();
+function openFromHash(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]); if(!p) return;
+  if(st.open!==p._i) openRow(p._i,false,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
+openFromHash();
+window.addEventListener("hashchange",openFromHash);
 const drawFoot=()=>{ document.getElementById("foot").textContent = t("foot",t("updated")); }; drawFoot();
 })();
 </script>
