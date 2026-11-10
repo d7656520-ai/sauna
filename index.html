@@ -17,10 +17,16 @@
 <meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f1513" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f6b72'/%3E%3Cpath d='M22 44c-4-6 4-10 0-17M32 44c-4-6 4-10 0-17M42 44c-4-6 4-10 0-17' fill='none' stroke='%23fff' stroke-width='4.5' stroke-linecap='round'/%3E%3Crect x='14' y='47' width='36' height='5' rx='2.5' fill='%23f0a24a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
+<link rel="preconnect" href="https://tile.openstreetmap.org">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap">
+<link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
+<link rel="preload" href="data.js" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<!-- fonts do not block the first paint: system font first, swap when loaded -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap"></noscript>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.min.css">
 <style>
 /* Layout: split screen. Left: header, filters, sortable table. Right: sticky map. Phone: header, map preview, sticky search bar, compact rows, bottom sheets. */
@@ -94,9 +100,7 @@ b,strong{font-weight:600}
 .fcnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--on-sea);color:var(--sea);font-size:11.5px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
 .fhead{display:none;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
 .fhead b{color:var(--ink);font-variant-numeric:tabular-nums}
-.fhead .reset{margin-left:auto;padding:6px 12px;min-height:32px;text-decoration:none;background:var(--chip);border-radius:999px;color:var(--ink);font-size:13px}
-.fhead .reset:hover{color:var(--sea)}
-.fhead .reset[hidden]{display:none}
+.fhead .reset{margin-left:auto}
 /* region filter: collapsed <details> at the bottom */
 .fd{display:block}
 .fd > summary{list-style:none;cursor:pointer;width:auto}
@@ -117,7 +121,11 @@ html.fpanel .fx:hover{background:var(--chip);color:var(--ink)}
 .search{flex:1 1 200px;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 12px;min-height:32px}
 .range{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
 select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--bg) var(--sel-chev) no-repeat right 8px center/16px 16px;border-radius:10px;padding:5px 30px 5px 10px;font-size:13px;min-height:32px;cursor:pointer}
-.reset{background:none;border:none;color:var(--sea);cursor:pointer;font-size:13px;padding:4px 2px;text-decoration:underline}
+/* reset: a warm pill while there is something to reset, quiet text when there is nothing */
+.reset{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;cursor:pointer;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:600;color:var(--heat-text);background:var(--heat-soft);white-space:nowrap}
+.reset:not(:disabled):hover{text-decoration:underline;text-underline-offset:2px}
+.reset:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.reset:disabled{cursor:default;color:var(--muted);background:transparent;font-weight:400}
 .hint{font-size:13px;color:var(--muted);margin:0 0 8px}
 .warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:600;vertical-align:1px;margin-left:4px}
 .tablewrap{overflow:visible;overflow:clip;background:var(--panel);border:1px solid var(--line);border-radius:12px}
@@ -175,7 +183,8 @@ tr.detail > td{background:var(--bg);padding:12px;max-width:0}
 .meta > span{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .meta .mk-k{flex:0 0 auto}
 .meta .mk-t{flex:0 1 auto}
-.cptoast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:3000}
+.cptoast{position:fixed;left:50%;width:max-content;max-width:calc(100vw - 32px);text-align:center;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:13px;z-index:3000}
+html.mapfull .cptoast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
 /* floating pills over the map: "Open map" cue on the preview, "List · Filters" bar on the full-screen map */
 .pillb{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:36px;padding:0 14px;border-radius:999px;font-weight:600;font-size:13px;white-space:nowrap;border:1px solid transparent;box-shadow:0 4px 16px rgba(0,0,0,.22)}
 .pillb.dark{background:var(--ink);color:var(--bg)}
@@ -373,6 +382,29 @@ tr.row{scroll-margin-top:44px}
 .fbstars button .ic{width:28px;height:28px}
 .fbstars button:hover,.fbstars button:focus-visible,.fbstars button.on{color:var(--star)}
 #more-sentinel{height:1px}
+/* live counts inside rating chips */
+.chip .cn{font-size:11.5px;opacity:.7;font-variant-numeric:tabular-nums;margin-left:-2px}
+.chip[aria-pressed="true"] .cn{opacity:.85}
+/* my location: round button over the map above the "List · Filters" bar (phone) or above the attribution (desktop); blue dot + accuracy circle on the map */
+.locb{all:unset;box-sizing:border-box;display:none;place-items:center;cursor:pointer;position:absolute;z-index:1600;width:40px;height:40px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:0 4px 16px rgba(0,0,0,.22);right:max(12px,env(safe-area-inset-right,0px));bottom:calc(62px + env(safe-area-inset-bottom,0px))}
+.locb .ic{width:22px;height:22px}
+.locb.on{color:var(--sea)}
+.locb.wait .ic{animation:locpulse 1s ease-in-out infinite}
+@keyframes locpulse{50%{opacity:.3}}
+.locb:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+html.mapfull .locb{display:grid}
+html.mapfull.psopen .locb,html.mapfull.fpanel .locb{display:none}
+@media (min-width:901px){.locb{display:grid;bottom:34px;right:12px}}
+/* back to the map, shown in a card opened from a pin */
+.tomap{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:2px;cursor:pointer;min-height:32px;padding:0 12px 0 6px;border-radius:999px;background:var(--sea-soft);color:var(--sea);font-weight:600;font-size:13px;margin:0 0 10px}
+.tomap:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+/* list skeleton until data.js has arrived */
+tr.skel td{padding:10px 8px}
+.sk{display:flex;gap:10px;align-items:flex-start}
+.sk i{display:block;border-radius:6px;background:var(--chip)}
+.sk .skp{width:58px;height:44px;border-radius:8px;flex:0 0 auto}
+.sk .skl{flex:1 1 auto;display:grid;gap:8px;padding-top:2px}
+.sk .skl i{height:12px}
 @media (max-width:900px){
   .app{display:block}
   .hd{padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right));padding-block:8px}
@@ -422,7 +454,8 @@ tr.row{scroll-margin-top:44px}
   .sub{margin-top:1px}
   .rbm{margin-top:4px;align-items:center}
   .rbm .hs{flex-wrap:nowrap;white-space:nowrap}
-  .near,.reset{padding:6px 4px;display:inline-block;min-height:32px;box-sizing:border-box}
+  .near{padding:6px 4px;display:inline-block;min-height:32px;box-sizing:border-box}
+  .sk .skp{width:52px;height:52px}
   select{min-height:36px}
   #sort{max-width:56vw}
   .main > .hint{display:none}
@@ -478,7 +511,7 @@ tr.row{scroll-margin-top:44px}
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><button type="button" class="locb" id="locb" data-ta="locate"></button><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
   <main class="main">
     <section class="fwrap" data-ta="filters">
     <div class="fscrim" id="fscrim" aria-hidden="true"></div>
@@ -489,12 +522,12 @@ tr.row{scroll-margin-top:44px}
     </div>
     <div class="filters" id="filters">
       <div class="fgrab" id="fgrab" aria-hidden="true"></div>
-      <div class="fhead" id="fhead"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset">Сбросить всё</button><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="fhead" id="fhead"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
       <div class="frow" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
       <div class="frow" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Вход</span><div class="frow" id="f-access"></div></div>
       <div class="frow" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
       <div class="frow" role="group" aria-labelledby="lab-has"><span class="flabel" id="lab-has" data-t="has">Ещё есть</span><div class="frow" id="f-ext"></div></div>
-      <div class="frow" role="group" aria-labelledby="lab-rate"><span class="flabel" id="lab-rate" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"></div></div>
+      <div class="frow" role="group" aria-labelledby="lab-rate"><span class="flabel" id="lab-rate" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"><span class="frow" id="f-rmin"></span><span class="frow" id="f-rok"></span></div></div>
       <div class="frow more" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
       <div class="frow more" role="group" aria-labelledby="lab-hours"><span class="flabel" id="lab-hours" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
       <details class="fd" id="area-d">
@@ -514,7 +547,7 @@ tr.row{scroll-margin-top:44px}
         <button class="near" id="near" type="button" data-t="nearme">Рядом со мной</button>
         <button class="near" id="nearc" type="button" data-t="fromcascais" hidden>От центра Кашкайша</button>
         <span class="frow" id="f-rad" role="group" data-ta="radius" hidden></span>
-        <button class="reset" id="reset" type="button" data-t="reset">Сбросить всё</button>
+        <button class="reset" id="reset" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button>
       </div>
       <div class="frow fdrow"><button type="button" class="fdone" id="fdone" data-t="showres">Показать</button></div>
     </div>
@@ -524,7 +557,7 @@ tr.row{scroll-margin-top:44px}
     <div class="tablewrap" id="list" tabindex="-1">
       <table>
         <thead><tr id="thead"></tr></thead>
-        <tbody id="tbody"></tbody>
+        <tbody id="tbody"><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:58%"></i><i style="width:36%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:70%"></i><i style="width:30%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:48%"></i><i style="width:40%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:64%"></i><i style="width:34%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:54%"></i><i style="width:42%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:66%"></i><i style="width:28%"></i></span></div></td></tr></tbody>
       </table>
       <div id="more-sentinel"></div>
       <div class="empty" id="empty" role="status" hidden><p data-t="empty"></p><button type="button" class="act" id="reset3" data-t="reset">Сбросить всё</button></div>
@@ -549,6 +582,15 @@ tr.row{scroll-margin-top:44px}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.js"></script>
+<script>
+// the map first: tiles start loading while data.js (the heavy part) is still downloading; the rest of the app continues below
+(function(){ const phone=matchMedia("(max-width:900px)").matches;
+  const map=window.__map=L.map("map",{zoomControl:true,scrollWheelZoom:!phone,dragging:!phone,doubleClickZoom:!phone,boxZoom:!phone,keyboard:!phone,tapTolerance:12,zoomSnap:1});
+  map.attributionControl.setPrefix(false);
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
+  map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
+})();
+</script>
 <script src="data.js"></script>
 <script>
 (function(){
@@ -613,6 +655,10 @@ I18N.ru._am.sauna="сауна"; I18N.en._am.sauna="sauna"; I18N.pt._am.sauna="sa
 Object.assign(I18N.ru,{heat:"Жар",x_sauna:"Сауна",map:"Карта",acc_rent:"аренда бани",share:"Поделиться",call:"Позвонить",site:"Сайт",empty:"Под эти фильтры ничего не нашлось. Ослабь фильтры или сбрось их.",lang:"Язык"});
 Object.assign(I18N.en,{heat:"Heat",x_sauna:"Sauna",map:"Map",acc_rent:"private rental",share:"Share",call:"Call",site:"Website",empty:"Nothing matches these filters. Loosen or reset them.",lang:"Language"});
 Object.assign(I18N.pt,{heat:"Calor",x_sauna:"Sauna",map:"Mapa",acc_rent:"aluguer privado",share:"Partilhar",call:"Ligar",site:"Site",empty:"Nada corresponde a estes filtros. Alargue-os ou limpe-os.",lang:"Idioma"});
+// round 3: rating thresholds, back to the map, my location, filters reset toast
+Object.assign(I18N.ru,{r_40:"От 4,0",r_47:"От 4,7",tomap:"К карте",locate:"Моё местоположение",f_reset:"Фильтры сброшены, чтобы показать место"});
+Object.assign(I18N.en,{r_40:"4.0+",r_47:"4.7+",tomap:"To the map",locate:"My location",f_reset:"Filters reset to show this place"});
+Object.assign(I18N.pt,{r_40:"4,0+",r_47:"4,7+",tomap:"Ao mapa",locate:"A minha localização",f_reset:"Filtros limpos para mostrar este local"});
 const LANGN={ru:"Русский",en:"English",pt:"Português"};
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
@@ -635,7 +681,8 @@ const ICO={cl:"M15 18l-6-6 6-6",cr:"M9 18l6-6-6-6",cd:"M6 9l6 6 6-6",cu:"M18 15l
   share:"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13",globe:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
   ext:"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",sort:"m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16",map:"M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zM8 2v16M16 6v16",list:"M4 6h16M4 12h16M4 18h16",
   check:"M20 6 9 17l-5-5",flag:"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7",thumb:"M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3",
-  star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",sliders:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"};
+  star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",sliders:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
+  loc:"M12 2v3M12 19v3M2 12h3M19 12h3M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16M12 10.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 1 0 0-3"};
 const ico=(k,cls)=>`<svg class="ic${cls?" "+cls:""}" viewBox="0 0 24 24" aria-hidden="true"><path ${k==="star"?'fill="currentColor" stroke="none"':'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'} d="${ICO[k]}"/></svg>`;
 function amen(p,LG){ const A=I18N[LG||LANG]._am; const ex=new Set(p.extras||[]); const o=[];
   const sts=new Set(p.sauna_types||[]); if(sts.has("hammam")) sts.delete("steam"); // steam room and hammam are the same facility, show it once
@@ -649,7 +696,8 @@ const ACCESS = ()=>({day:t("acc_day"),treatment:t("acc_treatment"),membership:t(
 const HEATF = ()=>({sauna:t("x_sauna"),hammam:t("x_hammam"),banya:t("x_banya"),ir:t("x_ir")});
 const EXTF = ()=>({cold:t("x_cold"),pool:t("x_pool"),sea:t("x_sea")});
 const HRS = ()=>({now:t("h_now"),eve:t("h_eve")});
-const RATE = ()=>({"4.5":t("r_45"),"ok":t("r_ok")});
+const RMIN = ()=>({"4":t("r_40"),"4.5":t("r_45"),"4.7":t("r_47")}); // one threshold at a time, tap again to clear
+const ROK = ()=>({"ok":t("r_ok")});
 const PRICES=[20,30,50]; // caps from the visit-price distribution: 33 / 66 / 89 of 102 priced places
 const PRICEF=()=>{ const m={}; PRICES.forEach(v=>m[String(v)]=t("upto",v)); return m; };
 const SORTS=new Set(["score","price","name","dist"]);
@@ -665,7 +713,7 @@ const COLS = [
 ];
 const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:new Set(),price:null,sort:"score",dir:-1,open:null};
+const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:new Set(),rmin:null,price:null,sort:"score",dir:-1,open:null};
 try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&SORTS.has(s.sort)&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 try{ history.scrollRestoration="manual"; }catch(e){}
 
@@ -697,11 +745,6 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   if(p._weak) p._score-=0.6;
   p._ses=hl.visit_minutes||a.session_minutes||null;
 });
-const norm=s=>String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ё/g,"е");
-function hay(p){ if(p._hay) return p._hay;
-  const parts=[p.name,p.nm_lat,p.subtitle,p.address,p.muni,MUNI_RU[p.muni],p.area,AREA_RU[p.area],p.hours_short];
-  ["ru","en","pt"].forEach(L=>{ const D=I18N[L]; parts.push((D._area||{})[p.area], D["rg_"+p.reg], D["k_"+kg(p)], D["kf_"+kg(p)], p.tr&&p.tr[L]&&p.tr[L].subtitle, ...amen(p,L)); });
-  parts.push(...(p.alias_names||[])); return p._hay=norm(parts.filter(Boolean).join(" ")); }
 const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
 const fmtDate=s=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||""); return m?`${m[3]}.${m[2]}.${m[1]}`:(s||""); };
@@ -728,8 +771,65 @@ const toggle = s => k => s.has(k)?s.delete(k):s.add(k);
 const hasFar=P.some(p=>!p._near);
 const REGS=["lisboa","setubal","oeste","centro","norte","alentejo","algarve","madeira","acores"];
 const regName=r=>t("rg_"+r);
-const MUNI_RU={"Lisboa":"Лиссабон","Cascais":"Кашкайш","Sintra":"Синтра","Oeiras":"Оэйраш","Mafra":"Мафра","Vila Franca de Xira":"Вила-Франка-ди-Шира","Almada":"Алмада","Sesimbra":"Сезимбра","Moita":"Мойта","Alcochete":"Алкошете","Setúbal":"Сетубал","Seixal":"Сейшал","Amadora":"Амадора","Loures":"Лориш","Odivelas":"Одивелаш","Torres Vedras":"Торреш-Ведраш","Lourinhã":"Лориньян","Peniche":"Пениш","Óbidos":"Обидуш","Nazaré":"Назаре","Alcobaça":"Алкобаса","Porto":"Порту","Vila Nova de Gaia":"Вила-Нова-ди-Гая","Albufeira":"Албуфейра","Loulé":"Лоле","Portimão":"Портиман","Lagos":"Лагуш","Faro":"Фару","Funchal":"Фуншал","Évora":"Эвора","Coimbra":"Коимбра","Grândola":"Грандула"};
+// Russian names of the towns in the data (RU interface and search aliases)
+const MUNI_RU={"Lisboa":"Лиссабон","Cascais":"Кашкайш","Sintra":"Синтра","Oeiras":"Оэйраш","Mafra":"Мафра","Vila Franca de Xira":"Вила-Франка-ди-Шира","Almada":"Алмада","Sesimbra":"Сезимбра","Moita":"Мойта","Alcochete":"Алкошете","Setúbal":"Сетубал","Seixal":"Сейшал","Amadora":"Амадора","Loures":"Лориш","Odivelas":"Одивелаш","Torres Vedras":"Торреш-Ведраш","Lourinhã":"Лориньян","Peniche":"Пениш","Óbidos":"Обидуш","Nazaré":"Назаре","Alcobaça":"Алкобаса","Porto":"Порту","Vila Nova de Gaia":"Вила-Нова-ди-Гая","Albufeira":"Албуфейра","Loulé":"Лоле","Portimão":"Портиман","Lagos":"Лагуш","Faro":"Фару","Funchal":"Фуншал","Évora":"Эвора","Coimbra":"Коимбра","Grândola":"Грандула",
+  "Ponta Delgada":"Понта-Делгада","Lagoa":"Лагоа","Angra do Heroísmo":"Ангра-ду-Эроишму","Vila do Conde":"Вила-ду-Конде","Covilhã":"Ковильян","Santa Cruz":"Санта-Круш","Figueira da Foz":"Фигейра-да-Фош","Matosinhos":"Матозиньюш","Viana do Castelo":"Виана-ду-Каштелу","Chaves":"Шавеш","Braga":"Брага","Manteigas":"Мантейгаш","Leiria":"Лейрия","Tomar":"Томар","Lamego":"Ламегу","Viseu":"Визеу","Calheta":"Калета","Arcos de Valdevez":"Аркуш-ди-Валдевеш","Póvoa de Varzim":"Повуа-ди-Варзин","Odemira":"Одемира","Câmara de Lobos":"Камара-ди-Лобуш","Guimarães":"Гимарайнш","Porto Santo":"Порту-Санту","Tavira":"Тавира","Amarante":"Амаранте","São Vicente":"Сан-Висенте","Aveiro":"Авейру","Horta":"Орта","Sines":"Синеш","Montemor-o-Novo":"Монтемор-у-Нову","Vila Real de Santo António":"Вила-Реал-ди-Санту-Антониу","Espinho":"Эшпинью","Seia":"Сейя","Fundão":"Фундан","Silves":"Силвеш","Machico":"Машику","Porto Moniz":"Порту-Мониш","Maia":"Майя","Elvas":"Элваш","Ponte de Lima":"Понте-де-Лима","Bragança":"Браганса","Beja":"Бежа","Monchique":"Моншике","Caldas da Rainha":"Калдаш-да-Раинья","Olhão":"Ольян","Estremoz":"Эштремош","Aljezur":"Алжезур","Guarda":"Гуарда","Castelo Branco":"Каштелу-Бранку","Palmela":"Палмела","Barreiro":"Баррейру","Santarém":"Сантарен","Ourém":"Орен"};
+// resorts, neighbourhoods, islands and regions that are not municipalities, plus English exonyms (search only)
+const AREA_RU2={"Estoril":"Эшторил","Carcavelos":"Каркавелуш","Vilamoura":"Виламора","Carvoeiro":"Карвоэйру","Alvor":"Алвор","Quarteira":"Куартейра","Almancil":"Алмансил","Comporta":"Компорта","Tróia":"Тройя","Caparica":"Капарика","Ericeira":"Эрисейра","Belém":"Белен","Chiado":"Шиаду","Guincho":"Гиншу","Fátima":"Фатима","Gerês":"Жереш","Furnas":"Фурнаш","Parede":"Пареде","Caxias":"Кашиаш","Algés":"Алжеш","Monte Estoril":"Монте-Эшторил","Praia da Rocha":"Прайя-да-Роша","Monte Gordo":"Монте-Горду","Sagres":"Сагреш","Terceira":"Терсейра","Pico":"Пику","Faial":"Файял","Graciosa":"Грасиоза","Madeira":"Мадейра","Açores":"Азоры","Algarve":"Алгарве","Alentejo":"Алентежу","Douro":"Дору","Minho":"Минью","Serra da Estrela":"Серра-да-Эштрела"};
+const TOWN_EN={"Lisboa":"Lisbon","Porto":"Oporto","Açores":"Azores","Évora":"Evora"};
+const townRu=n=>n?(MUNI_RU[n]||AREA_RU[n]||AREA_RU2[n]||""):"";
 const muniName=m=>m?(LANG==="ru"?(MUNI_RU[m]||m):m):"";
+// ===== search: all three languages, Cyrillic <-> Latin by sound, accent-insensitive, prefix, typo tolerance, field tiers (name > town > type > notes) =====
+// fieldsOf(p) returns [[name strings],[town strings],[type and amenity strings],[notes, address]]; no library: a scan over ~4 900 tokens takes a few ms
+function makeSearch(fieldsOf){
+  const TW=[1000,100,10,1]; // tier weights: a notes match can never outrank a name match, a town match never a name match
+  // Cyrillic letters -> key alphabet (S = sh, Z = zh, C = ch, T = ts; х is silent like the Portuguese h: Хорта = Horta)
+  const C={ш:"S",щ:"S",ж:"Z",ч:"C",ц:"T",а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",з:"z",и:"i",й:"i",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"",ъ:"",ы:"i",ь:"",э:"e",ю:"iu",я:"ia"};
+  const strip=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
+  const fin=w=>w.replace(/o(?=S$)/,"u").replace(/o$/,"u").replace(/(.)\1+/g,"$1").replace(/S/g,"sh").replace(/Z/g,"zh").replace(/C/g,"ch").replace(/T/g,"ts").replace(/G/g,"g").replace(/X/g,"s");
+  const rkey=w=>fin(w.replace(/[а-яё]/g,c=>C[c]??c));
+  // Latin word in Portuguese spelling -> the way Russians write it: Cascais -> kashkaish, Estoril -> eshtoril, Alentejo -> alentezhu, Funchal -> funshal, Lagos -> lagush, Guimarães -> gimarainsh
+  // (G = hard g in gue/gui, X = the s of c before e/i and of ç, which never voices to z)
+  const pkey=w=>fin(strip(w.replace(/ões/g,"oinS").replace(/ães/g,"ainS").replace(/ão|ã/g,"an").replace(/õ/g,"on").replace(/ç/g,"X"))
+    .replace(/ch|sh|x/g,"S").replace(/lh/g,"l").replace(/nh/g,"n").replace(/ph/g,"f").replace(/th/g,"t").replace(/ck/g,"k")
+    .replace(/qu(?=[ei])/g,"k").replace(/qu/g,"ku").replace(/gu(?=[ei])/g,"G")
+    .replace(/c(?=[eiy])/g,"X").replace(/c/g,"k").replace(/g(?=[eiy])/g,"Z").replace(/j/g,"Z").replace(/h/g,"").replace(/y/g,"i").replace(/w/g,"v")
+    .replace(/z$/,"S").replace(/s$/,"S").replace(/(?<=.)s(?=[ptkf])/g,"S").replace(/(?<=.)s(?=[bdgmnlrvzZ])/g,"Z").replace(/([aeiou])s(?=[aeiou])/g,"$1z"));
+  const key=w=>/[а-яё]/.test(w)?rkey(w):pkey(w);
+  const toks=s=>String(s||"").toLowerCase().replace(/ё/g,"е").split(/[^\p{L}\p{N}]+/u).filter(w=>w.length>1);
+  // optimal string alignment distance (one edit = insert, delete, replace or swap two neighbours) with a cutoff
+  function lev(a,b,max){ if(Math.abs(a.length-b.length)>max) return max+1; let p2=null,p1=[],cur=[]; for(let j=0;j<=b.length;j++) p1[j]=j;
+    for(let i=1;i<=a.length;i++){ cur=[i]; let best=i; for(let j=1;j<=b.length;j++){ let v=Math.min(p1[j]+1,cur[j-1]+1,p1[j-1]+(a[i-1]===b[j-1]?0:1)); if(p2&&i>1&&j>1&&a[i-1]===b[j-2]&&a[i-2]===b[j-1]) v=Math.min(v,p2[j-2]+1); cur[j]=v; if(v<best) best=v; } if(best>max) return max+1; p2=p1; p1=cur; }
+    return p1[b.length]; }
+  let VOC=null; // normalized token -> {n, k (sound key), d: Map(place index -> best tier)}
+  function build(docs){ VOC=new Map();
+    docs.forEach((p,i)=>fieldsOf(p).forEach((strs,tier)=>strs.forEach(s=>toks(s).forEach(w=>{ const n=strip(w); let e=VOC.get(n); if(!e){ e={n,k:key(w),d:new Map()}; VOC.set(n,e); } const t=e.d.get(i); if(t==null||tier<t) e.d.set(i,tier); }))));
+    return VOC; }
+  // one query word -> Map(place index -> score). Exact 3, prefix 2, same sound 2.5, sound prefix 1.8; typos and near sounds (1) count a hundred times less, so an exact amenity still beats a misspelt name
+  function term(q){ const qn=strip(q), qk=key(q), L=qn.length; if(L<2) return null; const out=new Map(); const md=L>=8?2:L>=5?1:0, mk=qk.length>=4?1:0;
+    for(const e of VOC.values()){ let m=0;
+      if(e.n===qn) m=3; else if(e.n.startsWith(qn)) m=2; else if(qk.length>=3&&e.k===qk) m=2.5; else if(qk.length>=4&&e.k.startsWith(qk)) m=1.8;
+      else if(md&&lev(qn,e.n,md)<=md) m=1; else if(md&&e.n.length>L&&lev(qn,e.n.slice(0,L),1)<=1) m=0.9; else if(mk&&lev(qk,e.k,mk)<=mk) m=1;
+      if(!m) continue; e.d.forEach((tier,i)=>{ if(m<1.8&&tier>1) return; const s=TW[tier]*(m>=1.8?m:m*0.01); if((out.get(i)||0)<s) out.set(i,s); }); }
+    return out; }
+  // every word must match (AND); the score is the sum over words. Returns null when no word is long enough to search
+  function query(words,docs){ if(!VOC) build(docs); let acc=null;
+    for(const w of words){ const r=term(w); if(!r) continue; if(!acc){ acc=r; continue; } const n=new Map(); acc.forEach((s,i)=>{ const s2=r.get(i); if(s2!=null) n.set(i,s+s2); }); acc=n; }
+    return acc; }
+  return {build,query,toks};
+}
+const LANGS3=["ru","en","pt"];
+const TOWNS=Object.assign({},AREA_RU2,MUNI_RU,AREA_RU);
+function srchFields(p){ const k=kg(p);
+  const name=[p.name,p.nm_lat,...(p.alias_names||[]),...(p.alt_names||[])];
+  // a town inside the name gets its Russian and English spellings as name words too, so "лиссабон" ranks "Sheraton Lisboa" above the rest of Lisbon
+  Object.keys(TOWNS).forEach(tn=>{ if(p.name.includes(tn)){ name.push(TOWNS[tn]); if(TOWN_EN[tn]) name.push(TOWN_EN[tn]); } });
+  const town=[p.muni,townRu(p.muni),TOWN_EN[p.muni],p.area,townRu(p.area),TOWN_EN[p.area],...LANGS3.map(L=>(I18N[L]._area||{})[p.area])];
+  const type=[...LANGS3.map(L=>I18N[L]["rg_"+p.reg]),...LANGS3.flatMap(L=>[I18N[L]["k_"+k],I18N[L]["kf_"+k],...amen(p,L)]),...(p.sauna_types||[]),...(p.extras||[]).map(x=>x.replace(/_/g," "))];
+  const text=[p.subtitle,p.address,p.hours_short,...(p.lists||[]),...LANGS3.flatMap(L=>{ const T=(p.tr||{})[L]||{}; return [T.subtitle,T.notes,T.day_note,T.mem_note,T.hours_text,T.rules]; }),p.notes,p.rules];
+  return [name,town,type,text]; }
+const SRCH=makeSearch(srchFields);
+(window.requestIdleCallback||(f=>setTimeout(f,1200)))(()=>SRCH.query([],P)); // build the index while idle (or at the first keystroke)
 function areaMap(){const m={}; REGS.forEach(r=>{ if(P.some(p=>p.reg===r)) m[r]=regName(r); }); return m;}
 function muniMap(){ const c={}; P.forEach(p=>{ if(st.area.has(p.reg)&&p.muni) c[p.muni]=(c[p.muni]||0)+1; }); const m={}; Object.keys(c).sort((a,b)=>c[b]-c[a]).forEach(k=>m[k]=muniName(k)); return m; }
 function drawMuni(){ const row=document.getElementById("muni-row"); const mm=muniMap(); [...st.muni].forEach(k=>{ if(!mm[k]) st.muni.delete(k); }); row.hidden=Object.keys(mm).length<2; chips(document.getElementById("f-muni"),mm,k=>st.muni.has(k),toggle(st.muni)); }
@@ -741,13 +841,18 @@ function drawChips(){
   chips(document.getElementById("f-access"),ACCESS(),k=>st.access.has(k),toggle(st.access));
   chips(document.getElementById("f-heat"),HEATF(),k=>st.ext.has(k),toggle(st.ext));
   chips(document.getElementById("f-ext"),EXTF(),k=>st.ext.has(k),toggle(st.ext));
-  chips(document.getElementById("f-rate"),RATE(),k=>st.rate.has(k),toggle(st.rate));
+  chips(document.getElementById("f-rmin"),RMIN(),k=>String(st.rmin)===k,k=>{ st.rmin=String(st.rmin)===k?null:+k; });
+  chips(document.getElementById("f-rok"),ROK(),k=>st.rate.has(k),toggle(st.rate));
   chips(document.getElementById("f-price"),PRICEF(),k=>String(st.price)===k,k=>{ st.price=String(st.price)===k?null:+k; });
   chips(document.getElementById("f-hours"),HRS(),k=>st.hrs.has(k),toggle(st.hrs));
   const lg=Object.values(kindMap()).map(v=>`<span>${kico(v[2])}${esc(v[0])}</span>`).join("");
   document.getElementById("legend").innerHTML=lg; document.getElementById("legend2").innerHTML=lg;
   drawRad();
 }
+// live counts in the rating chips: places passing every other filter plus the threshold (or the verified rule)
+function setCounts(el,fn){ el.querySelectorAll(".chip").forEach(b=>{ let c=b.querySelector(".cn"); if(!c){ c=document.createElement("span"); c.className="cn"; c.setAttribute("aria-hidden","true"); b.appendChild(c); } c.textContent=fn(b.dataset.k); }); }
+function rateCounts(){ if(!passFn) return; const A=[],B=[]; P.forEach(p=>{ if(passFn(p,"rmin")) A.push(p); if(passFn(p,"ok")) B.push(p); });
+  setCounts(document.getElementById("f-rmin"),k=>A.filter(p=>p._g>=+k).length); setCounts(document.getElementById("f-rok"),()=>B.filter(p=>!p._weak).length); }
 function drawRad(){ const el=document.getElementById("f-rad"); el.hidden=!ME; if(!ME){ el.innerHTML=""; return; }
   chips(el,{"15":t("rad",15),"55":t("rad",55)},k=>String(st.rad)===k,k=>{ st.rad=String(st.rad)===k?null:+k; }); }
 function applyStatic(){ document.documentElement.lang=LANG; document.title=t("title");
@@ -759,6 +864,7 @@ function applyStatic(){ document.documentElement.lang=LANG; document.title=t("ti
   document.getElementById("mapcue").innerHTML=ico("map","ic-s")+esc(t("openmap"));
   document.getElementById("mapfull-x").innerHTML=ico("list","ic-s")+esc(t("list"));
   document.getElementById("mapbtn").innerHTML=ico("map","ic-s")+esc(t("map"));
+  document.getElementById("locb").innerHTML=ico("loc");
 }
 applyStatic(); drawChips();
 function setLang(l){ if(!I18N[l]||l===LANG) return; LANG=l; lsSet("sauna-lang",LANG);
@@ -767,14 +873,14 @@ function setLang(l){ if(!I18N[l]||l===LANG) return; LANG=l; lsSet("sauna-lang",L
 function showLang(btn){ popShow(btn,`<div class="hpt">${esc(t("lang"))}</div><div class="menu">${Object.keys(LANGN).map(l=>`<button type="button" class="mi" data-l="${l}"${l===LANG?' aria-current="true"':""}>${LANGN[l]}${l===LANG?ico("check","ic-s mi-c"):""}</button>`).join("")}</div>`,{label:t("lang")}); }
 
 const qEl=document.getElementById("q"); let qTimer=0;
-const applyQ=()=>{ clearTimeout(qTimer); st.q=norm(qEl.value.trim()); st.qt=st.q.split(/\s+/).filter(Boolean); render(); };
+const applyQ=()=>{ clearTimeout(qTimer); st.q=qEl.value.trim().toLowerCase(); st.qt=SRCH.toks(st.q); render(); };
 qEl.addEventListener("input",()=>{ clearTimeout(qTimer); qTimer=setTimeout(applyQ,150); });
 qEl.addEventListener("keydown",e=>{ if(e.key==="Enter"){ applyQ(); qEl.blur(); } });
 const sortEl=document.getElementById("sort");
 function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; lsSet("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir})); renderHead(); render(); }
 sortEl.onchange=()=>setSort(sortEl.value);
 sortEl.value=st.sort;
-function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs,st.rate].forEach(s=>s.clear()); st.price=null; st.rad=null;
+function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs,st.rate].forEach(s=>s.clear()); st.price=null; st.rmin=null; st.rad=null;
   document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed","false"); });
   drawAreas(); drawRad(); lastAreaKey="*";
   st.sort=ME?"dist":"score"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
@@ -786,13 +892,15 @@ const ft=document.getElementById("ftoggle"), fbox=document.querySelector(".filte
 ft.onclick=()=>{ if(isPhone()){ openSheet(); return; } const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",String(o)); };
 // active-filter state: filled toggle + count badge (list toggle, full-screen map button, region summary), live counts in the sheet header and "Show" button
 function updateFtoggle(){ const nArea=st.area.size+st.muni.size; const nMore=st.hrs.size+(st.price!=null?1:0);
-  const nAll=nArea+st.kind.size+st.access.size+st.ext.size+st.rate.size+nMore+(st.rad?1:0);
+  const nAll=nArea+st.kind.size+st.access.size+st.ext.size+st.rate.size+(st.rmin!=null?1:0)+nMore+(st.rad?1:0);
   const badge=n=>n?`<b class="fcnt">${n}</b>`:"";
   const n=isPhone()?nAll:nMore; const lab=isPhone()?t("filters"):t("morefilt");
   ft.innerHTML=(isPhone()?ico("sliders","ic-s"):"")+esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
   const mf=document.getElementById("mapfilt"); mf.innerHTML=ico("sliders","ic-s")+esc(t("filters"))+badge(nAll); mf.classList.toggle("on",nAll>0); mf.setAttribute("aria-label",nAll?t("filt_n",nAll):t("filters"));
   const an=document.getElementById("area-n"); an.hidden=!nArea; an.textContent=nArea; document.getElementById("area-sum").classList.toggle("on",nArea>0); if(nArea) document.getElementById("area-d").open=true;
-  document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,P.length); document.getElementById("reset2").hidden=!(nAll||st.q);
+  document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,P.length);
+  // reset buttons: coloured and live while there is something to reset, quiet and disabled otherwise
+  const any=!!(nAll||st.q); ["reset","reset2"].forEach(id=>{ const b=document.getElementById(id); b.disabled=!any; b.setAttribute("aria-disabled",String(!any)); });
   document.getElementById("fdone").textContent=t("showres_n",LIST.length); }
 
 
@@ -810,8 +918,7 @@ thead.addEventListener("click",e=>{const b=e.target.closest("button[data-s]"); i
 // map
 const isPhone=()=>matchMedia("(max-width:900px)").matches;
 const isFull=()=>document.documentElement.classList.contains("mapfull");
-const map = L.map("map",{zoomControl:true,scrollWheelZoom:true,tapTolerance:12,zoomSnap:1});
-map.attributionControl.setPrefix(false);
+const map = window.__map; // created before data.js loads, so the tiles are already on their way
 // one-finger drag moves only the map, never the page. On phones the inline map is a preview: page scrolls over it, a tap opens the full-screen map.
 (function(){const el=document.getElementById("map");
   el.addEventListener("touchmove",e=>{ if(isPhone()&&!isFull()) return; if(e.target.closest&&e.target.closest(".pp-sl")) return; if(e.cancelable) e.preventDefault(); },{passive:false});
@@ -831,9 +938,10 @@ function fitList(list){ let pts=list.filter(p=>p.lat!=null); const isl=st.area.h
   if(!pts.length) return fitDefault(); map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[28,28],maxZoom:14}); }
 const qActive=()=>!!(st.q&&LIST.length&&LIST.length<=15);
 function fitAuto(){ if(st.area.size||st.muni.size||qActive()) fitList(LIST); else if(isFull()) fitList(LIST); else fitDefault(); }
-syncMapMode(); fitDefault();
-L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(map);
-const cluster=L.markerClusterGroup({showCoverageOnHover:false,maxClusterRadius:40,disableClusteringAtZoom:14,iconCreateFunction:c=>L.divIcon({className:"",html:`<div class="mcl">${c.getChildCount()}</div>`,iconSize:[34,34]})});
+syncMapMode();
+// clusters below zoom 14; from 14 on only pins that would overlap (within 14 px, a gym inside a hotel) are grouped, and a tap fans them out instead of hiding one under the other
+const cluster=L.markerClusterGroup({chunkedLoading:true,showCoverageOnHover:false,maxClusterRadius:z=>z>=14?14:40,zoomToBoundsOnClick:false,iconCreateFunction:c=>L.divIcon({className:"",html:`<div class="mcl">${c.getChildCount()}</div>`,iconSize:[34,34]})});
+cluster.on("clusterclick",e=>{ if(map.getZoom()>=14) e.layer.spiderfy(); else e.layer.zoomToBounds({padding:[20,20]}); });
 map.addLayer(cluster);
 const markers={};
 P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
@@ -866,7 +974,7 @@ function wirePreview(el){
     const go=d=>sl.scrollTo({left:((cur()+d+n)%n)*sl.clientWidth,behavior:"smooth"});
     const l=el.querySelector(".pp-nav.l"), r=el.querySelector(".pp-nav.r"); if(l) l.onclick=ev=>{ev.stopPropagation();go(-1);}; if(r) r.onclick=ev=>{ev.stopPropagation();go(1);}; }
   el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
-  const mb=el.querySelector("[data-more]"); if(mb) mb.onclick=()=>{ const i=+mb.dataset.more; closePreview(); openRow(i,true); };
+  const mb=el.querySelector("[data-more]"); if(mb) mb.onclick=()=>openFromMap(+mb.dataset.more);
   const xb=el.querySelector("[data-pvx]"); if(xb) xb.onclick=ev=>{ ev.stopPropagation(); if(el===ps) closePreview(); else map.closePopup(); };
 }
 map.on("popupopen",e=>{ const el=e.popup.getElement(); if(el) wirePreview(el); });
@@ -1013,18 +1121,22 @@ function detail(p){const a=p.access||{};
   const bu=bookUrl(p); const tel=p.phone?String(p.phone).replace(/[^\d+]/g,""):""; const site=safeUrl(p.website)||(/^http:\/\//i.test(p.website||"")?p.website:null);
   // phone: icon tiles in one row (the website tile says "Website", the domain shows on desktop)
   const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${dest?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}<span class="al">${esc(t("route"))}</span></button>`:""}${tel?`<a class="act" href="tel:${esc(tel)}">${ico("phone")}<span class="al">${esc(t("call"))}</span></a>`:""}${site?`<a class="act" href="${esc(site)}" target="_blank" rel="noopener">${ico("globe")}<span class="al hide-m">${esc(host(site))}</span><span class="al m-only">${esc(t("site"))}</span></a>`:""}<button type="button" class="act" data-share="${p._i}">${ico("share")}<span class="al">${esc(t("share"))}</span></button>${p.lat!=null?`<button type="button" class="act m-only" data-showmap="${p._i}">${ico("map")}<span class="al">${esc(t("showmap"))}</span></button>`:""}</div>`;
+  // a card opened from a pin starts with "To the map": back to the same map view and preview (the browser's back does the same)
+  const hs=HS(); const tomap=(hs.v==="card"&&hs.back==="map"&&(hs.id===p.id||(p.alias_ids||[]).includes(hs.id)))?`<button type="button" class="tomap" data-tomap>${ico("cl","ic-s")}${esc(t("tomap"))}</button>`:"";
   const ov=p.owner&&p.owner.verified_on;
   const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:`${esc(t("checked",fmtDate(p.verified_on)))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${esc(t("sources"))}: ${src}`:""}`;
-  return `${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
+  return `${tomap}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
 }
 // leading "Ещё не открыто." / "Not open yet." / "Temporarily closed." (any of the three languages) is dropped from a text when the status pill is shown
 const STATUS_RX=new RegExp("^\\s*(?:"+["ru","en","pt"].flatMap(L=>[I18N[L].soon,I18N[L].closed]).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\s*[.;:,]?\\s*","i");
 function noStatus(p,s){ s=s||""; return p._weak==="status"?s.replace(STATUS_RX,""):s; }
 
+let passFn=null; // the predicate of the last render, reused for the live counts in the rating chips
 function filtered(){
   const coll=st.sort==="name"?new Intl.Collator(LANG,{ignorePunctuation:true,sensitivity:"base"}):null;
-  return P.filter(p=>{
-    if(st.qt.length){ const h=hay(p); if(!st.qt.every(w=>h.includes(w))) return false; }
+  const R=st.qt.length?SRCH.query(st.qt,P):null; // place index -> relevance; null when there is no usable query word
+  const pass=(p,skip)=>{
+    if(R&&!R.has(p._i)) return false;
     if(st.hrs.size){ const w=p.wk;
       if(!w){ const sc=p.sch||{}; const wkd=sc.week||{};
         const lateStart=Object.values(wkd).some(a=>(a||[]).some(x=>parseInt(String(x))>=20));
@@ -1049,11 +1161,14 @@ function filtered(){
     if(st.ext.has("sea") && !p._sea) return false;
     if(st.ext.has("banya") && !p._banya) return false;
     if(st.ext.has("ir") && !p._ir) return false;
-    if(st.rate.has("ok") && p._weak) return false;
-    if(st.rate.has("4.5") && !(p._g>=4.5)) return false;
+    if(skip!=="ok" && st.rate.has("ok") && p._weak) return false;
+    if(skip!=="rmin" && st.rmin!=null && !(p._g>=st.rmin)) return false;
     if(st.price!=null && (p._vp==null || p._vp>st.price)) return false;
     return true;
-  }).sort((x,y)=>{const d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
+  };
+  passFn=pass;
+  // with a query the order is relevance first (name > town > type > notes), the chosen sort breaks ties
+  return P.filter(p=>pass(p)).sort((x,y)=>{ if(R){ const dr=(R.get(y._i)||0)-(R.get(x._i)||0); if(dr) return dr; } const d=st.dir; const nl=(u,v)=> (u==null&&v==null)?0:u==null?1:v==null?-1:d*(u-v);
     switch(st.sort){
       case "price": return nl(x._sp,y._sp)||y._score-x._score;
       case "book": return d*(x._book-y._book)||x._d-y._d;
@@ -1103,36 +1218,56 @@ function render(keep){
   shown=0; tbody.textContent=""; appendRows(need);
   const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
   document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",KNOWN_HRS))}</span>`:""}`;
-  updateFtoggle();
+  updateFtoggle(); rateCounts();
   requestAnimationFrame(fill);
 }
 function setActiveMk(i){ document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active"); } }
 function scrollToRow(i){ const go=()=>{ const r=rowEl(i); if(r) r.scrollIntoView({block:"start"}); }; go(); requestAnimationFrame(go); setTimeout(go,150); }
-let pendingScroll=null;
-function openRow(i,fromMap,noMap){
-  const was=st.open; const next=(st.open===i&&!fromMap)?null:i;
-  if(next!=null && !ensureShown(i)){ resetAll(true); render(); ensureShown(i); }
-  const r0=rowEl(i); const y0=r0?r0.getBoundingClientRect().top:null;
-  if(was!=null && was!==next){ const pr=rowEl(was); if(pr){ pr.classList.remove("active"); const b=pr.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); } const d=document.getElementById("det-"+was); if(d) d.remove(); }
-  st.open=next;
-  const r=rowEl(i);
-  if(next!=null && r && !document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
-  if(next==null && r){ r.classList.remove("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); const d=document.getElementById("det-"+i); if(d) d.remove(); }
-  if(fromMap){ map.closePopup(); closePreview(); if(isFull()){ pendingScroll=i; closeFull(); } scrollToRow(i); }
-  else if(r&&y0!=null){ const dy=r.getBoundingClientRect().top-y0; if(Math.abs(dy)>1) window.scrollBy(0,dy); }
-  setActiveMk(st.open);
-  try{ history.replaceState(history.state,"",st.open==null?location.pathname+location.search:"#p-"+P[i].id); }catch(e){}
-  if(st.open==null||fromMap||noMap||isPhone()||!markers[i]) return;
+// ----- navigation = history entries: list -> card (#p-id) -> full-screen map -> card opened from a pin. Every move through history
+// goes through applyState(), so the browser's back (and the iOS edge swipe) returns to exactly the previous view, including the map's
+// centre, zoom and open preview. Before this, "Details" on a pin did history.back() and then replaced the hash on the entry being
+// popped; when another card had been open before the map, the back landed on #p-old, hashchange reopened the old card instead. -----
+const HS=()=>history.state||{};
+const listUrl=()=>location.pathname+location.search;
+const cardUrl=id=>listUrl()+"#p-"+id;
+function hPush(s,url){ try{ history.pushState(s,"",url); }catch(e){} }
+function hReplace(s,url){ try{ history.replaceState(s,"",url); }catch(e){} }
+const byId=id=>P.find(x=>x.id===id||(x.alias_ids||[]).includes(id));
+// expand a card (DOM only). If the current filters hide the place, they are reset with a toast so the card can always be shown
+function openCard(i,noMap){ if(st.open===i) return; const was=st.open;
+  if(!ensureShown(i)){ resetAll(true); render(); ensureShown(i); toast(t("f_reset")); }
+  if(was!=null) closeCard(was,true);
+  st.open=i; const r=rowEl(i);
+  if(r&&!document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
+  setActiveMk(i);
+  if(noMap||isPhone()||!markers[i]) return;
+  // desktop: keep the zoom, pan if needed and open the popup in place (also when the pin sits inside a cluster)
   const m=markers[i]; const vis=cluster.getVisibleParent(m);
-  // keep the zoom: pan if needed and open the popup in place (also when the pin sits inside a cluster)
   if(vis===m){ map.panInside(m.getLatLng(),{padding:[80,80]}); openPin(i); }
-  else { map.panInside(m.getLatLng(),{padding:[120,120]}); openPin(i,-2); }
-}
+  else { map.panInside(m.getLatLng(),{padding:[120,120]}); openPin(i,-2); } }
+function closeCard(i,keepMk){ const r=rowEl(i); if(r){ r.classList.remove("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); } const d=document.getElementById("det-"+i); if(d) d.remove(); if(st.open===i) st.open=null; if(!keepMk) setActiveMk(null); }
+// a tap on a row: open (one history entry per open card, replaced when switching cards) or close
+function toggleRow(i){ const r0=rowEl(i); const y0=r0?r0.getBoundingClientRect().top:null; const hs=HS();
+  if(st.open===i){ if(hs.v==="card"&&!hs.back){ history.back(); return; } closeCard(i); if(hs.v==="card") hReplace({v:"list"},listUrl()); }
+  else { const s={v:"card",id:P[i].id}; if(hs.v==="card") hReplace(s,cardUrl(s.id)); else hPush(s,cardUrl(s.id)); openCard(i); }
+  const r=rowEl(i); if(r&&y0!=null){ const dy=r.getBoundingClientRect().top-y0; if(Math.abs(dy)>1) window.scrollBy(0,dy); } }
+// "Details" in a pin preview: the map entry remembers its view and preview, the card goes on top of it
+function openFromMap(i){ const p=P[i];
+  if(isFull()&&HS().v==="map"){ const c=map.getCenter(); hReplace({v:"map",view:{c:[c.lat,c.lng],z:map.getZoom(),pv:i}},location.href); hPush({v:"card",id:p.id,back:"map"},cardUrl(p.id)); closePreview(); hideFull(); openCard(i,true); scrollToRow(i); return; }
+  map.closePopup(); closePreview(); const s={v:"card",id:p.id}; if(HS().v==="card") hReplace(s,cardUrl(s.id)); else hPush(s,cardUrl(s.id)); openCard(i,true); scrollToRow(i); }
+function showFull(noFit,after){ if(isFull()) return; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); if(after) after(); },60); }
+function hideFull(){ if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); }
+function openFull(noFit){ if(isFull()) return; hPush({v:"map"},location.href); showFull(noFit); }
+function closeFull(){ if(HS().v==="map") history.back(); else hideFull(); }
 function showOnMap(i){ if(isPhone()) openFull(true); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>openPin(i)); },80); }
-function openFull(noFit){ if(isFull()) return; document.documentElement.classList.add("mapfull"); try{history.pushState({mapfull:1},"");}catch(e){} syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); },60); }
-function closeFull(fromPop){ if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); if(!fromPop){ try{ if(history.state&&history.state.mapfull) history.back(); }catch(e){} } }
+function applyState(s){ s=s||{v:"list"};
+  if(s.v==="map"){ const v=s.view; const restore=()=>{ if(!v) return; map.setView(v.c,v.z,{animate:false}); if(v.pv!=null&&markers[v.pv]) openPin(v.pv); };
+    if(isFull()) restore(); else showFull(true,restore); return; }
+  hideFull();
+  if(s.v==="card"){ const p=byId(s.id); if(p){ openCard(p._i,true); scrollToRow(p._i); } return; }
+  if(st.open!=null) closeCard(st.open); }
 document.getElementById("mapbtn").onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
-window.addEventListener("popstate",()=>{ closeFull(true); if(pendingScroll!=null){ const i=pendingScroll; pendingScroll=null; scrollToRow(i); } });
+window.addEventListener("popstate",e=>{ let s=e.state; if(!s){ const m=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); if(m&&byId(m[1])){ s={v:"card",id:m[1]}; hReplace(s,location.href); } } applyState(s); });
 const onMQ=()=>{ if(!isPhone()) closeSheet(); closePreview(); map.closePopup(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
 try{ matchMedia("(max-width:900px)").addEventListener("change",onMQ); matchMedia("(max-width:600px)").addEventListener("change",()=>render(true)); }catch(e){}
 // hover a row: highlight its pin (desktop)
@@ -1140,24 +1275,34 @@ tbody.addEventListener("mouseover",e=>{ const r=e.target.closest("tr.row"); cons
   document.querySelectorAll(".mk.hover").forEach(x=>x.classList.remove("hover")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("hover"); } });
 tbody.addEventListener("mouseleave",()=>{ tbody.dataset.hov=""; document.querySelectorAll(".mk.hover").forEach(x=>x.classList.remove("hover")); });
 // near me
-function setMe(ll){ ME=ll; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); document.getElementById("opt-dist").hidden=false;
+// my location, shared by "Near me" (filters) and the locate button on the map: blue dot + accuracy circle, distances, sort by distance
+let meAcc=null;
+function setMe(ll,acc,view){ ME=ll; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); document.getElementById("opt-dist").hidden=false;
   if(meMarker) meMarker.setLatLng(ME); else meMarker=L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1,interactive:false}).addTo(map);
-  drawRad(); setSort("dist",1); map.setView(ME,12); }
-document.getElementById("near").onclick=()=>{ const b=document.getElementById("near");
-  if(!navigator.geolocation){ b.textContent=t("geo_na"); document.getElementById("nearc").hidden=false; return; }
-  b.textContent=t("geo_wait");
-  navigator.geolocation.getCurrentPosition(pos=>{ b.innerHTML=esc(t("geo_ok"))+ico("check","ic-s"); document.getElementById("nearc").hidden=true; setMe([pos.coords.latitude,pos.coords.longitude]); },
-    ()=>{ b.textContent=t("geo_no"); document.getElementById("nearc").hidden=false; }, {enableHighAccuracy:false,timeout:10000,maximumAge:600000}); };
-document.getElementById("nearc").onclick=()=>{ document.getElementById("nearc").hidden=true; setMe(CASCAIS.slice()); };
+  if(acc!=null&&acc<5000){ if(meAcc) meAcc.setLatLng(ME).setRadius(acc); else meAcc=L.circle(ME,{radius:acc,color:"#2f6fb2",weight:1,opacity:.5,fillColor:"#2f6fb2",fillOpacity:.12,interactive:false}).addTo(map); meAcc.bringToBack(); }
+  document.getElementById("near").innerHTML=esc(t("geo_ok"))+ico("check","ic-s"); document.getElementById("nearc").hidden=true; locb.classList.add("on");
+  drawRad(); setSort("dist",1);
+  if(view==="loc") map.setView(ME,Math.max(map.getZoom(),13)); else map.setView(ME,12); }
+function geoGet(ok,fail){ if(!navigator.geolocation){ fail("geo_na"); return; }
+  navigator.geolocation.getCurrentPosition(pos=>ok([pos.coords.latitude,pos.coords.longitude],pos.coords.accuracy),()=>fail("geo_no"),{enableHighAccuracy:false,timeout:10000,maximumAge:600000}); }
+document.getElementById("near").onclick=()=>{ const b=document.getElementById("near"); b.textContent=t("geo_wait");
+  geoGet((ll,acc)=>setMe(ll,acc,"near"),k=>{ b.textContent=t(k); document.getElementById("nearc").hidden=false; }); };
+document.getElementById("nearc").onclick=()=>{ document.getElementById("nearc").hidden=true; setMe(CASCAIS.slice(),null,"near"); };
+// locate button on the map: first tap finds and centres, the next taps re-centre; denied permission shows a short toast
+const locb=document.getElementById("locb");
+locb.onclick=()=>{ if(locb.classList.contains("wait")) return; if(ME) map.setView(ME,Math.max(map.getZoom(),13)); locb.classList.add("wait");
+  geoGet((ll,acc)=>{ locb.classList.remove("wait"); setMe(ll,acc,"loc"); },k=>{ locb.classList.remove("wait"); toast(t(k)); }); };
 tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
-  const sm=e.target.closest("[data-showmap]"); if(sm){ showOnMap(+sm.dataset.showmap); return; }
+  const tm=e.target.closest("[data-tomap]"); if(tm){ history.back(); return; }
+  const sm=e.target.closest("[data-showmap]"); if(sm){ if(HS().v==="card"&&HS().back==="map") history.back(); else showOnMap(+sm.dataset.showmap); return; }
   const sh=e.target.closest("[data-share]"); if(sh){ shareLink(+sh.dataset.share,sh); return; }
   const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
   if(e.target.closest("tr.detail")) return;
-  const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) openRow(+r.dataset.i,false);});
+  const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) toggleRow(+r.dataset.i);});
 
 // copy link
-function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].id; const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} const tt=document.createElement("div"); tt.className="cptoast"; tt.setAttribute("role","status"); tt.textContent=t("copied"); document.body.appendChild(tt); setTimeout(()=>tt.remove(),1600); };
+function toast(msg){ document.querySelectorAll(".cptoast").forEach(e=>e.remove()); const tt=document.createElement("div"); tt.className="cptoast"; tt.setAttribute("role","status"); tt.textContent=msg; document.body.appendChild(tt); setTimeout(()=>tt.remove(),1800); }
+function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].id; const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} toast(t("copied")); };
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,()=>prompt("Link",u)); else prompt("Link",u); }
 // share: native sheet on phones, copy link elsewhere (one implementation, one toast)
 function shareLink(i,btn){ const p=P[i]; const u=location.origin+location.pathname+"#p-"+p.id; if(navigator.share&&isPhone()){ navigator.share({title:pname(p),url:u}).catch(()=>{}); return; } copyLink(i,btn); }
@@ -1271,10 +1416,12 @@ setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
   fetch(FB_API+"/api/health",{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(j=>{ if(!j||!j.ok) return; FB.B="api"; FB.A="owner.html";
     return fetch(FB_API+"/api/stats").then(r=>r.ok?r.json():{}).then(sx=>{ P.forEach(p=>{ if(sx[p.id]) p.fb=sx[p.id]; }); }).catch(()=>{}).then(()=>{ if(hpop.hidden&&lb.hidden) render(true); }); }).catch(()=>{}); })();
 renderHead(); render();
-function openFromHash(){ const h=decodeURIComponent(location.hash||""); const mm=h.match(/^#p-(.+)$/); if(!mm) return; const p=P.find(x=>x.id===mm[1]||(x.alias_ids||[]).includes(mm[1])); if(!p) return;
-  if(st.open!==p._i) openRow(p._i,false,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
-openFromHash();
-window.addEventListener("hashchange",openFromHash);
+// first view: a saved state (reload) is restored; a deep link #p-id (alias ids too) opens as a card entry, so the browser's back collapses it
+function initNav(){ const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); const p=mm?byId(mm[1]):null;
+  if(s.v){ applyState(s); return; }
+  if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
+  else hReplace({v:"list"},location.href); }
+initNav();
 const drawFoot=()=>{ document.getElementById("foot").textContent = t("foot",t("updated")); }; drawFoot();
 })();
 </script>
