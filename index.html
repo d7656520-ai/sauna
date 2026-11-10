@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=3c52f38be6" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=73b16dcaad" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -685,7 +685,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=3c52f38be6"></script>
+<script src="data.js?v=73b16dcaad"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1215,8 +1215,8 @@ function dayTxt(p){const a=p.access||{};
   if(p._grp&&!p._day) return t("acc_rent");
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return t("guests");
   if(p._day) return t("yes_noprice");
-  if(p._trt) return t("only_trt");
-  if(p._mem&&a.day_pass!==true) return t("only_mem");
+  if(p._trt) return t("w_trt");
+  if(p._mem&&a.day_pass!==true) return t(a.day_pass===false?"only_mem":"acc_membership");
   if(a.day_pass===false) return t("no");
   return "";
 }
@@ -1298,7 +1298,7 @@ function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="dim">${esc(t("guests"))}</span>`;
   if(p._day) return `<span class="pill p-ok">${esc(t("yes"))}</span>${w}`;
   if(p._trt) return `<span class="dim">${esc(t("w_trt"))}</span>${w}`;
-  if(p._mem&&a.day_pass!==true) return `<span class="dim">${esc(t("only_mem"))}</span>${w}`;
+  if(p._mem&&a.day_pass!==true) return `<span class="dim">${esc(t(a.day_pass===false?"only_mem":"acc_membership"))}</span>${w}`;
   return "";
 }
 function rateCell(r){ const h=rb(r); return h?`<div class="rbs">${h}</div>`:""; }
