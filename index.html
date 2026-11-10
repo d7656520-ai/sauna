@@ -37,6 +37,8 @@
   --ok:#276b43; --ok-soft:#e3f2e8; --warn:#7a5400; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
   --on-sea:#fff; --heat-text:#9a5410; --star:#e7a300;
   --g1:#1e7d4a; --g2:#3d7a53; --g3:#5f6d67; --bk:#003580;
+  --a-heat:#91451e; --a-steam:#684c85; --a-cold:#17618a; --a-water:#08666b; --a-rose:#ad2f5c; --a-gym:#4a5868; --a-sea:#233f8c;
+  --chip-bd:#d6dedb;
   --chip:#eef2f0; --scrim:rgba(8,14,12,.985); --tilefilter:none;
   --sel-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%235d6a65' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   --f-display:"Unbounded","Onest",system-ui,sans-serif;
@@ -49,7 +51,9 @@
   --ok:#6fcf93; --ok-soft:#173326; --warn:#e5bf55; --warn-soft:#3a3010; --no:#ef8a8a; --no-soft:#3d1c1c;
   --chip:#1d2723; --scrim:rgba(0,0,0,.99);
   --on-sea:#0f1513; --heat-text:#f0a24a; --star:#f2b53a;
-  --g1:#2a8f58; --g2:#3f8a5c; --g3:#6b7a74; --bk:#1d5bbf;
+  --g1:#237a4b; --g2:#237a4b; --g3:#5f6d67; --bk:#1d5bbf;
+  --a-heat:#f0a24a; --a-steam:#cfa6f0; --a-cold:#7fc2f2; --a-water:#5fcabe; --a-rose:#f39bbd; --a-gym:#aab7c5; --a-sea:#9db3f0;
+  --chip-bd:#2c3935;
   --sel-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%2397a6a0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   --tilefilter:invert(1) hue-rotate(180deg) brightness(.9) contrast(.9) saturate(.6);
   color-scheme:dark;
@@ -86,21 +90,34 @@ b,strong{font-weight:600}
 .fwrap{display:grid;gap:8px;margin:16px 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
 .filters{display:grid;gap:8px}
 .frow{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.flabel{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);min-width:84px}
+/* group label: weight contrast, not shouting caps */
+.flabel{font-size:13px;font-weight:600;letter-spacing:.005em;color:var(--ink);min-width:84px}
+.filters > .fg{border-top:1px solid var(--line);padding-top:8px;row-gap:6px}
+.filters .frow{gap:6px}
+.filters > .fd,.filters > .sortrow{border-top:1px solid var(--line);padding-top:10px}
+@media (min-width:901px){.filters > .fg{display:grid;grid-template-columns:96px minmax(0,1fr);align-items:start;gap:8px}.filters > .fg > .flabel{padding-top:7px;min-width:0}}
+#fhead + .fg,html.fpanel .filters > .sortrow{border-top:0;padding-top:0}
 /* chips: soft fill, no outline (the outline appears on hover and for the open state only) */
-.chip{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid transparent;background:var(--chip);border-radius:999px;padding:5px 12px;font-size:13px;line-height:1.2;cursor:pointer;white-space:nowrap;color:var(--ink)}
+.chip{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid var(--chip-bd);background:var(--panel);border-radius:9px;padding:5px 12px;font-size:13px;line-height:1.2;cursor:pointer;white-space:nowrap;color:var(--ink);transition:background-color .15s,border-color .15s}
 .chip:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
-.chip[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
-.chip[aria-pressed="true"] .ki{color:var(--on-sea)!important}
+.chip[aria-pressed="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
+.chip[aria-pressed="true"] .ki,.chip[aria-pressed="true"] .ai{color:var(--on-sea)!important}
+.chip .ai{display:inline-flex}.chip .aic{width:16px;height:16px}
+.chip.zero:not([aria-pressed="true"]){color:var(--muted);background:transparent;border-style:dashed}
 .chip[aria-expanded="true"]{background:var(--sea-soft);border-color:var(--sea);color:var(--sea)}
-.chip:hover{border-color:var(--sea)}
+.chip:hover{border-color:color-mix(in srgb,var(--sea) 55%,var(--chip-bd))}
 .chip.mapbtn{display:none}
 /* filter toggles with active filters: filled accent + count badge */
 .chip.on,.chip.on[aria-expanded="true"]{background:var(--sea);border-color:var(--sea);color:var(--on-sea)}
 .fcnt{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:999px;background:var(--on-sea);color:var(--sea);font-size:11.5px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
 .fhead{display:none;justify-content:space-between;align-items:center;gap:12px;font-size:13px;color:var(--muted)}
 .fhead b{color:var(--ink);font-variant-numeric:tabular-nums}
-.fhead .reset{margin-left:auto}
+.fsum{display:flex;align-items:center;flex-wrap:wrap;gap:4px 14px;min-width:0;flex:1 1 auto}
+#fh-n{white-space:nowrap;min-width:0}
+#fh-n b{font:600 18px/1 var(--f-display);letter-spacing:-.01em;color:var(--ink);margin-right:2px}
+.fsum .reset{position:relative}
+.fsum .reset::before{content:"";position:absolute;left:-8px;top:7px;bottom:7px;width:1px;background:var(--line)}
+.fhead .fx{margin-left:auto;flex:0 0 auto}
 /* region filter: collapsed <details> at the bottom */
 .fd{display:block}
 .fd > summary{list-style:none;cursor:pointer;width:auto}
@@ -148,11 +165,17 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 tr.row.w-status td:not(:first-child){opacity:.78}
 tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .mk.weak{opacity:.6;filter:grayscale(.4)}
+/* town-centroid position: dashed ring, lighter, so it does not read as an exact point */
+.mk.approx{border-style:dashed;opacity:.8}
+.gapx{font-size:11.5px;color:var(--muted);margin-top:2px}
 @media (min-width:901px) and (max-width:2099px){.hide-l{display:none!important} .m-in{display:inline!important}}
 @media (min-width:901px) and (max-width:1399px){#tbody td.nm{min-width:140px!important}}
-@media (min-width:901px){#tbody td.nm{min-width:165px} .filters:not(.open) > .more{display:none} .m-only{display:none!important}}
+@media (min-width:901px){#tbody td.nm{min-width:165px} .m-only{display:none!important}
+  /* desktop: a compact bar (search, Filters with the active count, sort); the groups open in the panel with one click */
+  .filters:not(.open) > .fg,.filters:not(.open) > .fd{display:none}
+  .filters:not(.open) > .sortrow{border-top:0;padding-top:0}
+  .filters.open{padding-top:4px}}
 .sub{color:var(--muted);font-size:13px;margin-top:2px}
-.am{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.35}
 .pill{display:inline-block;font-size:13px;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .p-ok{background:var(--ok-soft);color:var(--ok)}
 .kind{display:inline-flex;align-items:center;font-size:13px;white-space:nowrap}
@@ -193,9 +216,10 @@ html.mapfull .cptoast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
 .pillb .fcnt{margin-left:-2px}
 .mapbar,.mapcue{display:none}
 html.mapfull .mapbar{display:flex;gap:8px;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px))}
-html.mapfull.psopen .mapbar{display:none}
 /* one filter sheet for list and map modes (phone): fixed bottom sheet, live filtering, sticky "Show N" footer, reset + close in the header */
-html.fpanel .filters{display:grid;gap:8px;position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:76vh;max-height:76svh;overflow:auto;overscroll-behavior:contain;margin:0;border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);padding:8px 16px 0;background:var(--panel)}
+html.fpanel .filters{display:grid;gap:6px;position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:78vh;max-height:78svh;overflow:auto;overscroll-behavior:contain;margin:0;border-radius:20px 20px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.22);padding:8px 16px 0;background:var(--panel)}
+html.fpanel .filters > .fhead{padding-bottom:8px;border-bottom:1px solid var(--line)}
+html.fpanel .filters > .sortrow{padding-bottom:2px}
 html.fpanel .filters > .frow:not([hidden]):not(.fdrow){display:flex!important}
 html.fpanel .filters > .fd{display:block!important}
 html.fpanel .filters > .fhead{display:flex!important}
@@ -203,9 +227,10 @@ html.fpanel .filters > .fgrab{order:-3}
 html.fpanel .filters > .fhead{order:-2}
 html.fpanel .filters > .sortrow{order:-1}
 .fdrow{display:none}
-html.fpanel .fdrow{display:flex!important;justify-content:center;position:sticky;bottom:0;z-index:2;margin:4px -16px 0;padding:8px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line)}
+html.fpanel .fdrow{display:flex!important;justify-content:center;position:sticky;bottom:0;z-index:2;margin:2px -16px 0;padding:10px 16px calc(12px + env(safe-area-inset-bottom,0px));background:var(--panel);border-top:1px solid var(--line)}
 .fdone{display:none}
-html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);color:var(--on-sea);padding:10px 24px;border-radius:999px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums}
+html.fpanel .fdone{all:unset;box-sizing:border-box;display:block;width:100%;max-width:440px;min-height:46px;line-height:46px;cursor:pointer;background:var(--sea);color:var(--on-sea);padding:0 24px;border-radius:10px;font-size:15px;font-weight:600;text-align:center;font-variant-numeric:tabular-nums}
+html.fpanel .fdone:active{transform:translateY(1px)}
 .price + .sub, td .sub.num{white-space:normal}
 .ofgt{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px}
 .ofgt.top{margin:0 0 4px;font-weight:600;color:var(--ink)}
@@ -225,8 +250,8 @@ html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);
 .langb:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 .langb .ic-s{color:var(--muted)}
 .langb:hover .ic-s,.langb[aria-expanded="true"] .ic-s{color:inherit}
-.hs{display:flex;align-items:center;gap:5px;font-size:13px;line-height:1.3;flex-wrap:wrap}
-.hs .hdot{width:7px;height:7px;border-radius:50%;flex:0 0 7px}
+.hs{display:block;font-size:13px;line-height:1.35}
+.hs .hdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
 .hs b{font-weight:600} .hs span{color:var(--muted)}
 .hs.open .hdot{background:var(--ok)} .hs.open b{color:var(--ok)}
 .hs.soon .hdot{background:var(--warn)} .hs.soon b{color:var(--warn)}
@@ -237,10 +262,7 @@ html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);
 .sfm{font-size:13px;margin:8px 0 0}.sfm div{display:flex;gap:8px;justify-content:space-between}
 .sup{font-size:13px;color:var(--muted);margin-top:8px}.sup b{color:var(--ink);font-weight:600}
 .hpop.wide{max-width:320px}
-.tb{position:relative;display:block;width:104px;max-width:100%;height:6px;border-radius:3px;background:var(--line);margin:5px 0 3px;overflow:visible}
-.tb-on{position:absolute;top:0;bottom:0;border-radius:3px;background:var(--ok);opacity:.85}
-.tb-now{position:absolute;top:-2px;width:2px;height:9px;border-radius:1px;background:var(--ink);transform:translateX(-1px)}
-.tdy{font-size:11.5px;color:var(--muted);line-height:1.35}
+.tdy{font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:2px}
 .tdy .wkmore{white-space:nowrap}
 .hbtn{all:unset;cursor:pointer;display:block;border-radius:6px}
 .hbtn:hover .wkmore,.hbtn:focus-visible .wkmore{color:var(--sea);text-decoration:underline}
@@ -258,20 +280,42 @@ html.fpanel .fdone{all:unset;display:block;cursor:pointer;background:var(--sea);
 .mi:hover,.mi:focus-visible{background:var(--sea-soft)}
 .os.o{color:var(--ok)} .os.c{color:var(--muted)}
 .wkt{border-collapse:collapse;font-size:13px;width:auto;table-layout:auto;margin-top:2px} tr.detail .wkt td,.wkt td{padding:1px 14px 1px 0;border:0;background:none!important;line-height:1.45;max-width:none;overflow-wrap:normal;white-space:nowrap} .wkt tr.td td{font-weight:600}
-/* rating badges (Booking style, square with one sharp corner): green = Google, blue = Booking, grey = under 50 ratings; star, count and platform caption inline */
-.rbs{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
-.rbw{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-.rb{display:inline-flex;align-items:center;gap:4px;font-variant-numeric:tabular-nums}
-.rb b{display:inline-grid;place-items:center;min-width:30px;height:20px;padding:0 5px;border-radius:6px 6px 6px 0;color:#fff;font-size:13px;font-weight:600;line-height:1}
-.rb.g1 b{background:var(--g1)}.rb.g2 b{background:var(--g2)}.rb.g3 b{background:var(--g3)}.rb.bk b{background:var(--bk)}
-.rb .st{color:var(--star);width:14px;height:14px;margin-left:-1px}
-.rb .rc{color:var(--muted)}
-.rcap{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+/* rating badge: score over a thin strip of the same colour naming the platform (green Google, blue Booking, grey under 50 ratings); reviews beside it */
+.rbs{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.rbw{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:middle}
+.rb{--rbc:var(--g1);display:inline-flex;flex-direction:column;align-items:stretch;min-width:46px;border-radius:7px 7px 7px 2px;overflow:hidden;color:#fff;background:var(--rbc);font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.rb.g3{--rbc:var(--g3)}.rb.bk{--rbc:var(--bk)}
+.rb b{display:block;text-align:center;font-size:14px;font-weight:600;line-height:18px;padding:1px 6px 0}
+.rb i{display:block;font-style:normal;text-align:center;font-size:11px;font-weight:600;line-height:13px;padding:0 5px 1px;background:rgba(0,0,0,.2);letter-spacing:.01em}
+.rc{display:inline-flex;flex-direction:column;font-size:11.5px;line-height:1.2;color:var(--muted);font-variant-numeric:tabular-nums}
+.rc .rn{display:block;color:var(--ink);font-weight:600;font-size:12px}
+.rc.few .rn{display:inline;color:inherit;font-weight:400;font-size:inherit}
+.rc .rfew{font-size:11px}
+/* amenities: pictogram + label, one hue per family (heat, hammam, cold, water, massage, gym, sea); one line in rows and popups, wrapped in an open card */
+.am{display:flex;flex-wrap:wrap;gap:0 10px;margin-top:4px;font-size:13px;line-height:20px;max-height:20px;overflow:hidden}
+.ai{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;color:var(--af);min-width:0;max-width:100%}
+.ai .al{overflow:hidden;text-overflow:ellipsis;min-width:0}
+.aic{width:15px;height:15px;flex:0 0 auto}
+.a-heat{--af:var(--a-heat)}.a-steam{--af:var(--a-steam)}.a-cold{--af:var(--a-cold)}.a-water{--af:var(--a-water)}.a-rose{--af:var(--a-rose)}.a-gym{--af:var(--a-gym)}.a-sea{--af:var(--a-sea)}
+tr.row.active .am{max-height:none}
+/* booking ahead */
+.bkt{display:inline-block;font-size:11.5px;font-weight:600;line-height:1.3}
+.bk-required{color:var(--heat-text)}.bk-recommended{color:var(--muted)}.bk-walk_in{color:var(--ok)}
+.bkr{margin-top:3px}
+.hrm{display:none}
+.pcm{display:none}
+/* placeholder thumbnail (no photo or every photo failed): type glyph on a soft tint of the type colour */
+.phd{display:grid;place-items:center;flex:0 0 auto;width:58px;height:44px;border-radius:8px;background:color-mix(in srgb,var(--kc) 13%,var(--panel));color:color-mix(in srgb,var(--kc) 78%,var(--ink))}
+.phd svg{width:22px;height:22px}
+.phd.big{width:100%;height:100%;border-radius:0}
+.phd.big svg{width:46px;height:46px}
+.dload{font-size:13px;color:var(--muted);margin:0 0 10px}
+.dload.err{display:flex;align-items:center;flex-wrap:wrap;gap:8px;color:var(--ink)}
 a.act.prim,a.act.prim:visited,.act.prim{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
 html.mapfull{overflow:hidden}
 html.mapfull .mapwrap{position:fixed!important;inset:0;height:100%!important;z-index:1500;border:none}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
-.act{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink);text-decoration:none;white-space:nowrap}
+.act{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:5px 12px;font-size:13px;color:var(--ink);text-decoration:none;white-space:nowrap}
 a.act{color:var(--ink)}
 .act:hover{border-color:var(--sea)}
 .act:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
@@ -304,30 +348,28 @@ a.act{color:var(--ink)}
 .pv-x{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;top:8px;right:8px;z-index:3;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center}
 .pv-x:focus-visible{outline:2px solid #fff}
 .pp-b{padding:12px 14px 14px}
-.pp-b.nop{padding-right:52px}
 .pp-b .pv-h{display:flex;align-items:flex-start;gap:4px}
 .pp-b b.t{font-size:15px;line-height:1.3;flex:1 1 auto;min-width:0}
 .pp-b .m-in{display:inline}
 .pv-l{margin-top:6px}
-.pv-l.pv-p{font-size:15px;font-weight:600;line-height:1.3}
-.pv-l .tb{display:none}
-.pv-l .tdy{font-size:13px;margin-top:2px}
-.pp-b .am{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;font-size:11.5px;margin-top:6px}
+.pv-pr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.pv-pr .pv-p{font-size:15px;font-weight:600;line-height:1.3}
+.pv-l .tdy{font-size:13px}
+.pp-b .am{font-size:11.5px;line-height:18px;max-height:18px;margin-top:6px}
+.pp-b .aic{width:14px;height:14px}
+.pp-sw.pp-ph{height:176px}
+/* phone: the same popup, anchored at the pin, a little wider and with a shorter photo */
+.pv-m .leaflet-popup-content{width:min(92vw,360px)!important;max-width:none}
+.pv-m .pp-sl,.pv-m .pp-sw.pp-ph{height:160px}
+.pv-m .pp-b{padding:10px 14px 12px}
+.pp-b .pv-acts{margin:12px 0 0;gap:8px;flex-wrap:nowrap}
+.pv-m .pv-acts{margin-top:10px}
 .pp-b .rbm{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:center;margin-top:6px}
 .pp-b .rbm .rbw{margin-right:0}
 .pv-acts{margin:12px 0 0}
 .pv-acts .act{flex:1 1 auto;justify-content:center;min-height:36px}
 .wnote{font-size:13px;color:var(--warn);margin:2px 0}
 .leaflet-container a.leaflet-popup-close-button{display:none}
-/* phone place preview: bottom sheet over the full-screen map (tap the map, swipe down or the close button to dismiss) */
-.ps{position:fixed;z-index:1600;left:0;right:0;bottom:0;background:var(--panel);color:var(--ink);border-radius:16px 16px 0 0;box-shadow:0 -8px 30px rgba(0,0,0,.25);max-height:72vh;max-height:72svh;overflow:auto;overscroll-behavior:contain;padding-bottom:env(safe-area-inset-bottom,0px);font-size:13px;line-height:1.38}
-.ps .pp-sw{border-radius:16px 16px 0 0}
-.ps .pp-sl{height:200px}
-.ps-grab{position:absolute;z-index:3;left:50%;top:8px;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:rgba(255,255,255,.9);box-shadow:0 1px 3px rgba(0,0,0,.35)}
-.ps > .pv-x + .pp-b{padding-top:20px}
-.ps > .pv-x ~ .ps-grab,.ps:not(:has(.pp-sw)) .ps-grab{background:var(--line);box-shadow:none}
-.ps .pp-b{padding:12px 16px 16px}
-.ps .pv-acts .act{min-height:40px}
 /* lightbox */
 .lb{position:fixed;inset:0;z-index:2000;background:var(--scrim);display:grid;grid-template-rows:auto 1fr auto;color:#fff;touch-action:pan-y}
 .lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));font-size:15px}
@@ -383,8 +425,9 @@ tr.row{scroll-margin-top:44px}
 .fbstars button:hover,.fbstars button:focus-visible,.fbstars button.on{color:var(--star)}
 #more-sentinel{height:1px}
 /* live counts inside rating chips */
-.chip .cn{font-size:11.5px;opacity:.7;font-variant-numeric:tabular-nums;margin-left:-2px}
-.chip[aria-pressed="true"] .cn{opacity:.85}
+/* live counts: a small raised figure after the label */
+.chip .cn{font-size:11px;font-weight:600;line-height:1;color:var(--muted);font-variant-numeric:tabular-nums;align-self:flex-start;margin:1px 0 0 -2px}
+.chip[aria-pressed="true"] .cn{color:inherit;opacity:.8}
 /* my location: round button over the map above the "List · Filters" bar (phone) or above the attribution (desktop); blue dot + accuracy circle on the map */
 .locb{all:unset;box-sizing:border-box;display:none;place-items:center;cursor:pointer;position:absolute;z-index:1600;width:40px;height:40px;border-radius:50%;background:var(--panel);color:var(--ink);border:1px solid var(--line);box-shadow:0 4px 16px rgba(0,0,0,.22);right:max(12px,env(safe-area-inset-right,0px));bottom:calc(62px + env(safe-area-inset-bottom,0px))}
 .locb .ic{width:22px;height:22px}
@@ -434,26 +477,34 @@ tr.skel td{padding:10px 8px}
   tr.row{scroll-margin-top:58px}
   .sortrow .reset{display:none}
   .search{padding:6px 12px}
-  .flabel{min-width:100%;margin-bottom:-4px}
+  .flabel{min-width:100%;margin-bottom:-2px;line-height:18px}
   .hide-m{display:none}
   .show-m{display:block}
   .m-in{display:inline}
   .hint{margin:0 0 8px}
   table{table-layout:fixed}
   thead th.c-photo{width:68px}
-  thead th.c-day{width:98px}
+  thead th.c-day{width:104px}
   td{overflow-wrap:anywhere;padding:8px 6px}
   td:first-child{padding-left:10px}
   td:last-child{padding-right:10px}
   th{top:env(safe-area-inset-top,0px)}
   .pill{white-space:normal;font-size:11.5px;padding:2px 8px;hyphens:auto}
   .thumbs button{width:52px;height:52px}
-  .am{display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;margin-top:3px;font-size:11.5px}
-  tr.row.active .am{-webkit-line-clamp:unset}
+  .am{margin-top:3px;font-size:11.5px;line-height:18px;max-height:18px}
+  .am .aic{width:14px;height:14px}
+  tr.row.active .am{max-height:none}
+  .phd{width:52px;height:52px}
   .c-day .sub{font-size:11.5px}
   .sub{margin-top:1px}
-  .rbm{margin-top:4px;align-items:center}
-  .rbm .hs{flex-wrap:nowrap;white-space:nowrap}
+  td .rbm{margin-top:4px;align-items:center}
+  .hrm{display:block;margin-top:4px}
+  .hrm .hs{font-size:12px;line-height:1.35}
+  td .rbm .rb b{font-size:13px;line-height:16px}
+  td .rbm .rb{min-width:44px}
+  td .rbm .rb i{padding:0 4px 1px}
+  td .rbm .rbw{gap:4px}
+  td .rbm .rc .rw{font-size:11px}
   .near{padding:6px 4px;display:inline-block;min-height:32px;box-sizing:border-box}
   .sk .skp{width:52px;height:52px}
   select{min-height:36px}
@@ -476,7 +527,7 @@ tr.skel td{padding:10px 8px}
   .acts .act:not(.prim):active .ic{background:var(--sea-soft)}
   .acts .act:not(.prim) .al{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .acts .act.prim{flex:1 0 100%;justify-content:center;min-height:44px;font-size:15px;margin-bottom:8px}
-  .pv-acts .act:not(.prim){flex:1 1 auto;flex-direction:row;gap:6px;padding:5px 12px;min-height:40px;max-width:none;border:1px solid var(--line);background:var(--panel);border-radius:999px;font-size:13px;letter-spacing:0}
+  .pv-acts .act:not(.prim){flex:1 1 auto;flex-direction:row;gap:6px;padding:5px 12px;min-height:40px;max-width:none;border:1px solid var(--line);background:var(--panel);border-radius:10px;font-size:13px;letter-spacing:0}
   .pv-acts .act:not(.prim) .ic{width:16px;height:16px;padding:0;border:0;background:none;color:var(--muted)}
   .pv-acts .act.prim{flex:1 1 auto;margin:0;font-size:13px;min-height:40px}
 }
@@ -485,16 +536,46 @@ tr.skel td{padding:10px 8px}
   thead th.c-hrs{width:126px}
   thead th.c-rate{width:110px}
   .hrs{min-width:0;max-width:none}
+  /* the hours have their own column here: no second hours line under the amenities */
+  .hrm{display:none}
+  /* narrow rating column: the review count goes under its badge on one line ("1 877 отзывов"), so nothing is clipped */
+  td .rbs .rbw{flex-direction:column;align-items:flex-start;gap:2px;white-space:normal}
+  td .rbs .rc{display:block;font-size:11px;line-height:1.25}
+  td .rbs .rc .rn{display:inline;font-size:11.5px}
+  td .rbs .rc .rfew{display:block}
 }
 @media (max-width:600px){
   .hide-s{display:none}
-  .rbm{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:5px}
-  .rbm .rbw{margin-right:0}
+  /* row: the price column is hidden; price, duration and booking tag float at the right of the main cell (as narrow as their text), so the name and
+     the lines below the float get the full width; the rating badges sit on one line at the bottom, Google and Booking side by side, the count to the right */
+  thead th.c-day,td.c-day{display:none}
+  .pcm{display:block;float:right;max-width:104px;margin:0 0 2px 10px;text-align:right}
+  .pcm .sub{font-size:11.5px}
+  .pcm .bkr{margin-top:2px}
+  tr.row td{padding-top:7px;padding-bottom:7px}
+  /* one line: if the two badges do not fit with their counts, a count folds over its word ("1 877" / "отзывов") rather than the line breaking */
+  td .rbm{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:4px 12px;margin-top:4px;clear:both}
+  td .rbm .rbw{flex:0 1 auto;min-width:0;flex-direction:row;align-items:center;gap:5px;white-space:normal}
+  td .rbm .rb{flex:0 0 auto}
+  td .rbm .rb b{padding-top:0}
+  td .rbm .rc{display:flex;flex-direction:column;min-width:0;font-size:11px;line-height:1.25}
+  td .rbm .rc .rn{display:inline;font-size:11.5px}
+  td .rbm .rc .rfew{display:block}
+  td .rbm .rbw{margin-right:0}
 }
 @media (max-width:360px){
-  thead th.c-day{width:88px}
+  #fh-n b{font-size:16px}
+  .fsum{column-gap:12px}
+  .fsum .reset{padding:0 8px}
+
+  thead th.c-day{width:94px}
   thead th.c-photo{width:64px}
-  .thumbs button{width:48px;height:48px}
+  /* rating line with Google and Booking: each count goes over its word ("1 877" / "отзывов") so both still share one line; if even that is too wide, the line wraps */
+  td .rbm:has(.rbw + .rbw){column-gap:10px;flex-wrap:wrap}
+  td .rbm .rbw:first-child:nth-last-child(2) .rc .rn,td .rbm .rbw + .rbw .rc .rn{display:block}
+  td .rbm .rbw .rc.few .rn{display:inline}
+  .pcm{max-width:96px}
+  .thumbs button,.phd{width:48px;height:48px}
   .r-search .chip .ic{display:none}
   .acts .act:not(.prim){font-size:11px;letter-spacing:-.02em}
   .acts .act:not(.prim) .al{overflow:visible}
@@ -522,14 +603,14 @@ tr.skel td{padding:10px 8px}
     </div>
     <div class="filters" id="filters">
       <div class="fgrab" id="fgrab" aria-hidden="true"></div>
-      <div class="fhead" id="fhead"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-      <div class="frow" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
-      <div class="frow" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Вход</span><div class="frow" id="f-access"></div></div>
-      <div class="frow" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
-      <div class="frow" role="group" aria-labelledby="lab-has"><span class="flabel" id="lab-has" data-t="has">Ещё есть</span><div class="frow" id="f-ext"></div></div>
-      <div class="frow" role="group" aria-labelledby="lab-rate"><span class="flabel" id="lab-rate" data-t="rating">Рейтинг</span><div class="frow" id="f-rate"><span class="frow" id="f-rmin"></span><span class="frow" id="f-rok"></span></div></div>
-      <div class="frow more" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
-      <div class="frow more" role="group" aria-labelledby="lab-hours"><span class="flabel" id="lab-hours" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
+      <div class="fhead" id="fhead"><div class="fsum"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button></div><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="frow fg" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
+      <div class="frow fg" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
+      <div class="frow fg" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
+      <div class="frow fg" role="group" aria-labelledby="lab-hours"><span class="flabel" id="lab-hours" data-t="hours">Часы</span><div class="frow" id="f-hours"></div></div>
+      <div class="frow fg" id="f-more" role="group" aria-labelledby="lab-access"><span class="flabel" id="lab-access" data-t="access">Вход</span><div class="frow" id="f-access"></div></div>
+      <div class="frow fg" role="group" aria-labelledby="lab-has"><span class="flabel" id="lab-has" data-t="has">Ещё есть</span><div class="frow" id="f-ext"></div></div>
+      <div class="frow fg" role="group" aria-labelledby="lab-rate"><span class="flabel" id="lab-rate" data-t="rating">Рейтинг</span><div class="frow" id="f-rmin"></div></div>
       <details class="fd" id="area-d">
         <summary class="chip" id="area-sum"><span data-t="area">Район</span><b class="fcnt" id="area-n" hidden></b><span class="car" aria-hidden="true"><svg class="ic ic-s" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6"/></svg></span></summary>
         <div class="frow" id="f-area" role="group" data-ta="area"></div>
@@ -560,7 +641,7 @@ tr.skel td{padding:10px 8px}
         <tbody id="tbody"><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:58%"></i><i style="width:36%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:70%"></i><i style="width:30%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:48%"></i><i style="width:40%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:64%"></i><i style="width:34%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:54%"></i><i style="width:42%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:66%"></i><i style="width:28%"></i></span></div></td></tr></tbody>
       </table>
       <div id="more-sentinel"></div>
-      <div class="empty" id="empty" role="status" hidden><p data-t="empty"></p><button type="button" class="act" id="reset3" data-t="reset">Сбросить всё</button></div>
+      <div class="empty" id="empty" role="status" hidden><p id="empty-t" data-t="empty"></p><p id="nores" hidden></p><button type="button" class="act prim" id="tryq" hidden></button><button type="button" class="act" id="reset3" data-t="reset">Сбросить всё</button></div>
     </div>
     <p class="foot fintro" data-t="intro"></p>
     <p class="hint fhint" data-th="hint"></p>
@@ -568,7 +649,6 @@ tr.skel td{padding:10px 8px}
     <p class="foot" id="foot"></p>
   </main>
 </div>
-<div class="ps" id="ps" hidden role="dialog"></div>
 <div class="hpop" id="hpop" hidden role="dialog" tabindex="-1"></div>
 <div class="lb" id="lb" hidden role="dialog" aria-modal="true" data-ta="photos">
   <div class="lb-top"><span class="lbl"><b id="lb-title"></b><span class="lbc" id="lb-count"></span></span><button class="lb-x" id="lb-x" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
@@ -600,11 +680,13 @@ tr.skel td{padding:10px 8px}
 const FB_API="https://sheldon-dev.tail289d1a.ts.net"; const FB={A:"", B:"", API:FB_API};
 const D = window.SAUNA_DATA || {places:[],meta:{}};
 const P = D.places;
+// details (photos 4+, long texts, contacts, sources) come from data_more.js, loaded after the first render or as soon as a card, a photo or a pin needs them
+let MORE=false, morePr=null, MORE_ERR=false, moreTry=0;
 const CASCAIS = [38.6968, -9.4215];
 const AREAS = ["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra","Lisboa e Setúbal","Oeste","Centro","Porto e Norte","Douro","Alentejo","Algarve","Madeira","Açores"];
 const NEAR = new Set(["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra"]);
 const AREA_RU = {Cascais:"Кашкайш",Estoril:"Эшторил",Carcavelos:"Каркавелуш",Oeiras:"Оэйраш",Sintra:"Синтра",Lisboa:"Лиссабон",Mafra:"Мафра","Lisboa e Setúbal":"Сетубал и окрестности",Oeste:"Запад, Оэште",Centro:"Центр","Porto e Norte":"Порту и север",Douro:"Долина Дору",Alentejo:"Алентежу",Algarve:"Алгарве",Madeira:"Мадейра","Açores":"Азоры"};
-const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.", "list": "Список", "filters": "Фильтры", "search": "Поиск по названию или району", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото. <span class=\"warn-i\">?</span> значит, что данные лучше уточнить.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "есть, цена не указана", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "tomorrow": "завтра", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "photo_n": "Фото {0}", "yes": "есть", "w_trt": "с процедурой", "per_mo": " /мес", "beach": "на пляже", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_hours": "Часы", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_rules": "Правила", "from_age": "С {0} лет", "conf_low": "низкая, лучше уточнить", "showmap": "На карте", "r_apple": "Apple Карты", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.", "list": "List", "filters": "Filters", "search": "Search by name or area", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos. <span class=\"warn-i\">?</span> means the data is worth double-checking.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "yes, price not listed", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "tomorrow": "tomorrow", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "photo_n": "Photo {0}", "yes": "yes", "w_trt": "with treatment", "per_mo": " /mo", "beach": "on the beach", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_hours": "Hours", "d_social": "Social", "d_rate": "Rating", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_rules": "Rules", "from_age": "Age {0}+", "conf_low": "low, worth checking", "showmap": "On map", "r_apple": "Apple Maps", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.", "list": "Lista", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos. <span class=\"warn-i\">?</span> indica dados a confirmar.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "sim, preço não indicado", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "tomorrow": "amanhã", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "photo_n": "Foto {0}", "yes": "sim", "w_trt": "com tratamento", "per_mo": " /mês", "beach": "na praia", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_hours": "Horário", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_low": "baixa, convém confirmar", "showmap": "No mapa", "r_apple": "Apple Maps", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
+const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.", "list": "Список", "filters": "Фильтры", "search": "Поиск по названию или району", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото. <span class=\"warn-i\">?</span> значит, что данные лучше уточнить.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "есть, цена не указана", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "tomorrow": "завтра", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "photo_n": "Фото {0}", "yes": "есть", "w_trt": "с процедурой", "per_mo": " /мес", "beach": "на пляже", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_hours": "Часы", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_rules": "Правила", "from_age": "С {0} лет", "conf_low": "низкая", "showmap": "На карте", "r_apple": "Apple Карты", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.", "list": "List", "filters": "Filters", "search": "Search by name or area", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos. <span class=\"warn-i\">?</span> means the data is worth double-checking.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "yes, price not listed", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "tomorrow": "tomorrow", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "photo_n": "Photo {0}", "yes": "yes", "w_trt": "with treatment", "per_mo": " /mo", "beach": "on the beach", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_hours": "Hours", "d_social": "Social", "d_rate": "Rating", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_rules": "Rules", "from_age": "Age {0}+", "conf_low": "low", "showmap": "On map", "r_apple": "Apple Maps", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.", "list": "Lista", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos. <span class=\"warn-i\">?</span> indica dados a confirmar.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "sim, preço não indicado", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "tomorrow": "amanhã", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "photo_n": "Foto {0}", "yes": "sim", "w_trt": "com tratamento", "per_mo": " /mês", "beach": "na praia", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_hours": "Horário", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_low": "baixa", "showmap": "No mapa", "r_apple": "Apple Maps", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
 
 Object.assign(I18N.ru,{sch_weekly:"По расписанию",sch_calendar:"По датам",sch_on_request:"По записи",sch_open:"расписание",sch_t:"Расписание",sch_up:"Ближайшие",sch_win:"Свободные окна на этой неделе"});Object.assign(I18N.en,{sch_weekly:"Scheduled sessions",sch_calendar:"Dated sessions",sch_on_request:"By appointment",sch_open:"schedule",sch_t:"Schedule",sch_up:"Upcoming",sch_win:"Free slots this week"});Object.assign(I18N.pt,{sch_weekly:"Sessões com horário",sch_calendar:"Sessões por data",sch_on_request:"Por marcação",sch_open:"horário",sch_t:"Horário",sch_up:"Próximas",sch_win:"Horários livres esta semana"});
 Object.assign(I18N.ru,{showres:"Показать"});Object.assign(I18N.en,{showres:"Show results"});Object.assign(I18N.pt,{showres:"Ver resultados"});
@@ -613,9 +695,9 @@ Object.assign(I18N.ru,{fb_err:"Не отправилось, попробуйте
 Object.assign(I18N.ru,{per_yr:" /год",per_wk:" /нед."});Object.assign(I18N.en,{per_yr:" /yr",per_wk:" /wk"});Object.assign(I18N.pt,{per_yr:" /ano",per_wk:" /sem."});
 Object.assign(I18N.ru,{few:"мало оценок"});Object.assign(I18N.en,{few:"few ratings"});Object.assign(I18N.pt,{few:"poucas avaliações"});
 Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"неделя"});Object.assign(I18N.en,{weekhrs:"Opening hours by day",weekshort:"week"});Object.assign(I18N.pt,{weekhrs:"Horário por dia",weekshort:"semana"});
-Object.assign(I18N.ru,{r_ok:"Только проверенные",wt_low:"не подтверждено",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Данные не подтверждены официальным сайтом, лучше уточнить",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
-Object.assign(I18N.en,{r_ok:"Verified only",wt_low:"unconfirmed",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site, check before going",wt_sparse_h:"Little info so far: no price, hours or reviews"});
-Object.assign(I18N.pt,{r_ok:"Só verificados",wt_low:"por confirmar",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial, confirme antes de ir",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
+Object.assign(I18N.ru,{wt_low:"не подтверждено",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Данные не подтверждены официальным сайтом, лучше уточнить",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
+Object.assign(I18N.en,{wt_low:"unconfirmed",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site, check before going",wt_sparse_h:"Little info so far: no price, hours or reviews"});
+Object.assign(I18N.pt,{wt_low:"por confirmar",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial, confirme antes de ir",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
 Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
 Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
 Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Península de Setúbal",rg_oeste:"Oeste",rg_centro:"Centro",rg_norte:"Porto e Norte",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Açores",s_dist:"Mais perto de mim",d_fromme:"De si"});
@@ -645,11 +727,11 @@ I18N.ru._am.ice_fountain="ледяной фонтан";I18N.ru._am.ice_room="л�
 const TFX={"en": {"has": "Features", "x_hammam": "Hammam or steam room", "b_recommended": "Recommended", "guests": "hotel guests only", "only_trt": "only with a treatment", "s_price": "Single-visit price", "empty": "Nothing matches these filters. Loosen them or tap “Reset all”.", "d_social": "Social media", "d_via": "via {0}", "grp_cap": "per group up to {0} · from {1} per person", "sch_calendar": "Sessions on set dates", "sch_win": "Available slots this week", "rg_centro": "Central Portugal", "_area.Centro": "Central Portugal", "_am.rooms": "{0} saunas", "inc.infrared": "infrared sauna", "cond.booking_required": "booking required", "cond.booking_recommended": "booking recommended", "cond.min_term_months": "{0}-month minimum term", "cond.sauna_after_class_only": "sauna after class only", "cond.trial_once": "one time only", "cond.cancel_24h": "cancel up to 24 h ahead"}, "pt": {"has": "Características", "b_walk_in": "Sem reserva", "guests": "só para hóspedes", "x_cold": "Imersão em água fria", "_am.cold_plunge": "imersão em água fria", "inc.cold_plunge": "imersão em água fria", "_am.hot_tub": "hot tub", "inc.hot_tub": "hot tub", "_am.infrared": "sauna de infravermelhos", "inc.infrared": "sauna de infravermelhos", "empty": "Nada corresponde a estes filtros. Alargue-os ou toque em “Limpar tudo”.", "d_via": "via {0}", "d_fromme": "Distância", "reliab": "fiabilidade dos dados: {0}", "grp_cap": "por grupo até {0} · desde {1} por pessoa", "sch_calendar": "Sessões em datas marcadas", "sch_win": "Horários disponíveis esta semana", "cond.booking_required": "reserva obrigatória", "cond.booking_recommended": "reserva recomendada", "cond.min_term_months": "fidelização de {0} meses", "cond.cancel_24h": "cancelamento até 24 h antes", "cond.sauna_after_class_only": "sauna só após a aula", "cond.trial_once": "só uma vez"}};
 for(const L in TFX){ for(const k in TFX[L]){ const parts=k.split("."); let o=I18N[L]; for(let i=0;i<parts.length-1;i++){ o=o[parts[i]]=o[parts[i]]||{}; } o[parts[parts.length-1]]=TFX[L][k]; } }
 // 09.11.2026 filter redesign: sauna-first groups ("where the sauna is"), entry / extras / rating / price / hours, hammam = steam room (one facility)
-Object.assign(I18N.ru,{type:"Где сауна",kf_sauna:"Отдельная сауна",kf_spa:"В спа-центре",kf_hotel:"В отеле",kf_fit:"В фитнес-клубе",k_sauna:"Сауна",k_spa:"Спа-центр",k_hotel:"Отель",k_fit:"Фитнес/бассейн",access:"Вход",acc_day:"Разовый вход",acc_treatment:"С процедурой",acc_membership:"Абонемент",acc_private:"Аренда для компании",has:"Ещё есть",x_cold:"Холодная купель",x_pool:"Бассейн",x_hammam:"Хаммам",x_sea:"Море рядом",x_banya:"Русская баня",x_ir:"Инфракрасная",hours:"Часы",h_now:"Открыто сейчас",h_eve:"После 21:00",rating:"Рейтинг",r_45:"От 4,5",r_ok:"Только проверенные",price:"Цена входа",upto:"до €{0}",s_price:"Цена входа",showres_n:"Показать · {0}",fh_n:"{0} из {1} мест",filt_n:"Фильтры · {0}"});
+Object.assign(I18N.ru,{type:"Где сауна",kf_sauna:"Отдельная сауна",kf_spa:"В спа-центре",kf_hotel:"В отеле",kf_fit:"В фитнес-клубе",k_sauna:"Сауна",k_spa:"Спа-центр",k_hotel:"Отель",k_fit:"Фитнес/бассейн",access:"Вход",acc_day:"Разовый вход",acc_treatment:"С процедурой",acc_membership:"Абонемент",acc_private:"Аренда для компании",has:"Ещё есть",x_cold:"Холодная купель",x_pool:"Бассейн",x_hammam:"Хаммам",x_sea:"Море рядом",x_banya:"Русская баня",x_ir:"Инфракрасная",hours:"Часы",h_now:"Открыто сейчас",h_eve:"После 21:00",rating:"Рейтинг",r_45:"От 4,5",price:"Цена входа",upto:"до €{0}",s_price:"Цена входа",showres_n:"Показать · {0}",fh_n:"{0} из {1} мест",filt_n:"Фильтры · {0}"});
 I18N.ru._am.steam="хаммам"; I18N.ru._am.rooms="{0} саун"; I18N.ru._am.cap="сауна до {0} чел."; I18N.ru.inc.steam="хаммам";
-Object.assign(I18N.en,{type:"Sauna at",kf_sauna:"Standalone",kf_spa:"Day spa",kf_hotel:"Hotel",kf_fit:"Gym or pool",k_sauna:"Sauna",k_spa:"Day spa",k_hotel:"Hotel",k_fit:"Gym/pool",access:"Entry",acc_day:"Single visit",acc_treatment:"With a treatment",acc_membership:"Membership",acc_private:"Private hire",has:"Also has",x_cold:"Cold plunge",x_pool:"Pool",x_hammam:"Hammam",x_sea:"Near the sea",x_banya:"Russian banya",x_ir:"Infrared",hours:"Hours",h_now:"Open now",h_eve:"After 9 pm",rating:"Rating",r_45:"4.5+",r_ok:"Verified only",price:"Visit price",upto:"up to €{0}",s_price:"Visit price",showres_n:"Show · {0}",fh_n:"{0} of {1} places",filt_n:"Filters · {0}"});
+Object.assign(I18N.en,{type:"Sauna at",kf_sauna:"Standalone",kf_spa:"Day spa",kf_hotel:"Hotel",kf_fit:"Gym or pool",k_sauna:"Sauna",k_spa:"Day spa",k_hotel:"Hotel",k_fit:"Gym/pool",access:"Entry",acc_day:"Single visit",acc_treatment:"With a treatment",acc_membership:"Membership",acc_private:"Private hire",has:"Also has",x_cold:"Cold plunge",x_pool:"Pool",x_hammam:"Hammam",x_sea:"Near the sea",x_banya:"Russian banya",x_ir:"Infrared",hours:"Hours",h_now:"Open now",h_eve:"After 9 pm",rating:"Rating",r_45:"4.5+",price:"Visit price",upto:"up to €{0}",s_price:"Visit price",showres_n:"Show · {0}",fh_n:"{0} of {1} places",filt_n:"Filters · {0}"});
 I18N.en._am.steam="hammam"; I18N.en._am.rooms="{0} saunas"; I18N.en.inc.steam="hammam";
-Object.assign(I18N.pt,{type:"Sauna em",kf_sauna:"Independente",kf_spa:"Spa",kf_hotel:"Hotel",kf_fit:"Ginásio ou piscina",k_sauna:"Sauna",k_spa:"Spa",k_hotel:"Hotel",k_fit:"Ginásio/piscina",access:"Acesso",acc_day:"Entrada avulsa",acc_treatment:"Com tratamento",acc_membership:"Mensalidade",acc_private:"Aluguer privado",has:"Tem também",x_cold:"Imersão em água fria",x_pool:"Piscina",x_hammam:"Banho turco",x_sea:"Perto do mar",x_banya:"Banya russa",x_ir:"Infravermelhos",hours:"Horário",h_now:"Aberto agora",h_eve:"Depois das 21h",rating:"Avaliação",r_45:"4,5+",r_ok:"Só verificados",price:"Preço da entrada",upto:"até €{0}",s_price:"Preço da entrada",showres_n:"Ver · {0}",fh_n:"{0} de {1} locais",filt_n:"Filtros · {0}"});
+Object.assign(I18N.pt,{type:"Sauna em",kf_sauna:"Independente",kf_spa:"Spa",kf_hotel:"Hotel",kf_fit:"Ginásio ou piscina",k_sauna:"Sauna",k_spa:"Spa",k_hotel:"Hotel",k_fit:"Ginásio/piscina",access:"Acesso",acc_day:"Entrada avulsa",acc_treatment:"Com tratamento",acc_membership:"Mensalidade",acc_private:"Aluguer privado",has:"Tem também",x_cold:"Imersão em água fria",x_pool:"Piscina",x_hammam:"Banho turco",x_sea:"Perto do mar",x_banya:"Banya russa",x_ir:"Infravermelhos",hours:"Horário",h_now:"Aberto agora",h_eve:"Depois das 21h",rating:"Avaliação",r_45:"4,5+",price:"Preço da entrada",upto:"até €{0}",s_price:"Preço da entrada",showres_n:"Ver · {0}",fh_n:"{0} de {1} locais",filt_n:"Filtros · {0}"});
 I18N.pt._am.steam="banho turco"; I18N.pt._am.hammam="banho turco"; I18N.pt._am.rooms="{0} saunas"; I18N.pt.inc.steam="banho turco"; I18N.pt.inc.hammam="banho turco";
 I18N.ru._am.sauna="сауна"; I18N.en._am.sauna="sauna"; I18N.pt._am.sauna="sauna";
 Object.assign(I18N.ru,{heat:"Жар",x_sauna:"Сауна",map:"Карта",acc_rent:"аренда бани",share:"Поделиться",call:"Позвонить",site:"Сайт",empty:"Под эти фильтры ничего не нашлось. Ослабь фильтры или сбрось их.",lang:"Язык"});
@@ -659,6 +741,16 @@ Object.assign(I18N.pt,{heat:"Calor",x_sauna:"Sauna",map:"Mapa",acc_rent:"aluguer
 Object.assign(I18N.ru,{r_40:"От 4,0",r_47:"От 4,7",tomap:"К карте",locate:"Моё местоположение",f_reset:"Фильтры сброшены, чтобы показать место"});
 Object.assign(I18N.en,{r_40:"4.0+",r_47:"4.7+",tomap:"To the map",locate:"My location",f_reset:"Filters reset to show this place"});
 Object.assign(I18N.pt,{r_40:"4,0+",r_47:"4,7+",tomap:"Ao mapa",locate:"A minha localização",f_reset:"Filtros limpos para mostrar este local"});
+// round 4: search helper, compact hours, review counts, booking tags, hours and price chips with counts, lazy details
+Object.assign(I18N.ru,{search:"Название, город, удобства",nores:"Ничего не нашлось по запросу «{0}»",try_q:"Искать «{0}»",daily:"ежедневно",reviews:["{0} отзыв","{0} отзыва","{0} отзывов"],
+ bk_required:"бронь нужна",bk_recommended:"бронь желательна",bk_walk_in:"без брони",h_19:"Открыто после 19:00",h_early:"С утра до 8:00",today:"сегодня",loading:"Загружаем подробности…",more_err:"Подробности не загрузились.",retry:"Повторить",geo_ap:"примерное положение",
+ foot:"Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка это Google, синяя это Booking, серая значит мало оценок; рядом число отзывов. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник."});
+Object.assign(I18N.en,{search:"Name, town, features",nores:"Nothing found for “{0}”",try_q:"Search for “{0}”",daily:"daily",reviews:["{0} review","{0} reviews"],
+ bk_required:"booking required",bk_recommended:"booking advised",bk_walk_in:"walk-in",h_19:"Open after 7 pm",h_early:"Before 8 am",today:"today",loading:"Loading details…",more_err:"Details did not load.",retry:"Retry",geo_ap:"approximate location",
+ foot:"Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge is Google, the blue one is Booking, grey means few ratings; the number of reviews is next to it. Distances are in a straight line. Photos belong to their authors; each one links to its source."});
+Object.assign(I18N.pt,{search:"Nome, cidade, comodidades",nores:"Nada encontrado para «{0}»",try_q:"Pesquisar «{0}»",daily:"todos os dias",reviews:["{0} avaliação","{0} avaliações"],
+ bk_required:"reserva obrigatória",bk_recommended:"reserva recomendada",bk_walk_in:"sem reserva",h_19:"Aberto depois das 19h",h_early:"Antes das 8h",today:"hoje",loading:"A carregar detalhes…",more_err:"Os detalhes não carregaram.",retry:"Tentar de novo",geo_ap:"localização aproximada",
+ foot:"Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde é do Google, o azul é do Booking, o cinzento indica poucas avaliações; ao lado está o número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte."});
 const LANGN={ru:"Русский",en:"English",pt:"Português"};
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
@@ -684,20 +776,38 @@ const ICO={cl:"M15 18l-6-6 6-6",cr:"M9 18l6-6-6-6",cd:"M6 9l6 6 6-6",cu:"M18 15l
   star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",sliders:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
   loc:"M12 2v3M12 19v3M2 12h3M19 12h3M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16M12 10.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 1 0 0-3"};
 const ico=(k,cls)=>`<svg class="ic${cls?" "+cls:""}" viewBox="0 0 24 24" aria-hidden="true"><path ${k==="star"?'fill="currentColor" stroke="none"':'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'} d="${ICO[k]}"/></svg>`;
-function amen(p,LG){ const A=I18N[LG||LANG]._am; const ex=new Set(p.extras||[]); const o=[];
+// amenities: one item per facility with its family (colour) and pictogram; amen() keeps the plain labels for search
+const AFAM={sauna:"heat",finnish:"heat",banya:"heat",bio:"heat",infrared:"heat",rooms:"heat",cap:"heat",steam:"steam",hammam:"steam",cold_plunge:"cold",ice_bath:"cold",ice_fountain:"cold",ice_room:"cold",pool:"water",heated_pool:"water",jacuzzi:"water",hot_tub:"water",massage:"rose",gym:"gym",sea_view:"sea",beach_access:"sea"};
+// pictograms on the same 24 grid with 2px round strokes as ICO and the type glyphs
+const AICO={heat:"M8 18c-3-3.5 3-6.5 0-10M12 18c-3-3.5 3-6.5 0-10M16 18c-3-3.5 3-6.5 0-10",banya:"M3 11l9-7 9 7M5.5 9v11h13V9M10 20v-5h4v5",bio:"M5 19c0-8 6-14 14-14 0 8-6 14-14 14zM5 19l7-7",
+  ir:"M12 8.5a3.5 3.5 0 1 0 0 7a3.5 3.5 0 1 0 0-7M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4",
+  cap:"M9 11a3.5 3.5 0 1 0 0-7a3.5 3.5 0 1 0 0 7M2.5 20v-1a5 5 0 0 1 5-5h3a5 5 0 0 1 5 5v1M16 4.2a3.5 3.5 0 0 1 0 6.6M18.5 14.2a5 5 0 0 1 3 4.8v1",
+  steam:"M3 20h18M5 20v-6a7 7 0 0 1 14 0v6M12 7V4M9.5 20v-3.5a2.5 2.5 0 0 1 5 0V20",
+  cold:"M12 2.5v19M3.8 7.25l16.4 9.5M3.8 16.75l16.4-9.5M9.5 4l2.5 2 2.5-2M9.5 20l2.5-2 2.5 2",
+  pool:"M7 14V5.5a2 2 0 0 1 4 0M15 14V5.5a2 2 0 0 1 4 0M7 9.5h8M2 18c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2",
+  tub:"M3 12h18v2.5a5.5 5.5 0 0 1-5.5 5.5h-7A5.5 5.5 0 0 1 3 14.5zM8 8.5v.01M12 6.5v.01M16 8.5v.01",
+  massage:"M5 19a7 2.5 0 1 0 14 0a7 2.5 0 1 0-14 0M7 13.5a5 2 0 1 0 10 0a5 2 0 1 0-10 0M9.2 8.5a2.8 1.6 0 1 0 5.6 0a2.8 1.6 0 1 0-5.6 0",
+  gym:"M6 8v8M18 8v8M3 10v4M21 10v4M6 12h12",
+  sea:"M2 16c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M2 20.5c2.5 0 2.5-2 5-2s2.5 2 5 2 2.5-2 5-2 2.5 2 5 2M8 11a4 4 0 0 1 8 0",
+  beach:"M12 11v10M3 11a9 9 0 0 1 18 0zM12 2v1M8 21h8"};
+const AIK={sauna:"heat",finnish:"heat",rooms:"heat",banya:"banya",bio:"bio",infrared:"ir",cap:"cap",steam:"steam",hammam:"steam",cold_plunge:"cold",ice_bath:"cold",ice_fountain:"cold",ice_room:"cold",pool:"pool",heated_pool:"pool",jacuzzi:"tub",hot_tub:"tub",massage:"massage",gym:"gym",sea_view:"sea",beach_access:"beach"};
+const aico=(k,cls)=>`<svg class="aic${cls?" "+cls:""}" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${AICO[k]}"/></svg>`;
+function amenItems(p,LG){ const A=I18N[LG||LANG]._am, R=I18N.ru._am; const ex=new Set(p.extras||[]); const o=[]; const add=(k,l)=>{ if(l) o.push({k,l,f:AFAM[k]||"heat"}); };
   const sts=new Set(p.sauna_types||[]); if(sts.has("hammam")) sts.delete("steam"); // steam room and hammam are the same facility, show it once
-  ["sauna","finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if(sts.has(s)) o.push(A[s]||I18N.ru._am[s]); });
-  if(p.steam_rooms>1) o.push(A.rooms.replace("{0}",p.steam_rooms));
-  if(p.capacity) o.push(A.cap.replace("{0}",p.capacity));
-  if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) o.push(ex.has("heated_pool")?A.heated_pool:A.pool);
-  ["jacuzzi","hot_tub","cold_plunge","ice_bath","ice_fountain","ice_room","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) o.push(A[k]||(I18N.ru._am[k])); });
+  ["sauna","finnish","banya","steam","hammam","bio","infrared"].forEach(s=>{ if(sts.has(s)) add(s,A[s]||R[s]); });
+  if(p.steam_rooms>1) add("rooms",(A.rooms||R.rooms).replace("{0}",p.steam_rooms));
+  if(p.capacity) add("cap",(A.cap||R.cap).replace("{0}",p.capacity));
+  if(ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool")) add(ex.has("heated_pool")?"heated_pool":"pool",ex.has("heated_pool")?A.heated_pool:A.pool);
+  ["jacuzzi","hot_tub","cold_plunge","ice_bath","ice_fountain","ice_room","massage","gym","sea_view","beach_access"].forEach(k=>{ if(ex.has(k)) add(k,A[k]||R[k]); });
   return o; }
+const amen=(p,LG)=>amenItems(p,LG).map(x=>x.l);
+// pictogram + label in the family colour; the row clamps to one line, the open card wraps
+const amenHTML=p=>{ const a=amenItems(p); return a.length?`<div class="am">${a.map(x=>`<span class="ai a-${x.f}">${aico(AIK[x.k]||"heat")}<span class="al">${esc(x.l)}</span></span>`).join("")}</div>`:""; };
 const ACCESS = ()=>({day:t("acc_day"),treatment:t("acc_treatment"),membership:t("acc_membership"),private:t("acc_private")});
-const HEATF = ()=>({sauna:t("x_sauna"),hammam:t("x_hammam"),banya:t("x_banya"),ir:t("x_ir")});
-const EXTF = ()=>({cold:t("x_cold"),pool:t("x_pool"),sea:t("x_sea")});
-const HRS = ()=>({now:t("h_now"),eve:t("h_eve")});
+const HEATF = ()=>({sauna:{l:t("x_sauna"),i:aico("heat"),f:"heat"},hammam:{l:t("x_hammam"),i:aico("steam"),f:"steam"},banya:{l:t("x_banya"),i:aico("banya"),f:"heat"},ir:{l:t("x_ir"),i:aico("ir"),f:"heat"}});
+const EXTF = ()=>({cold:{l:t("x_cold"),i:aico("cold"),f:"cold"},pool:{l:t("x_pool"),i:aico("pool"),f:"water"},sea:{l:t("x_sea"),i:aico("sea"),f:"sea"}});
+const HRS = ()=>({now:t("h_now"),h19:t("h_19"),eve:t("h_eve"),early:t("h_early")});
 const RMIN = ()=>({"4":t("r_40"),"4.5":t("r_45"),"4.7":t("r_47")}); // one threshold at a time, tap again to clear
-const ROK = ()=>({"ok":t("r_ok")});
 const PRICES=[20,30,50]; // caps from the visit-price distribution: 33 / 66 / 89 of 102 priced places
 const PRICEF=()=>{ const m={}; PRICES.forEach(v=>m[String(v)]=t("upto",v)); return m; };
 const SORTS=new Set(["score","price","name","dist"]);
@@ -713,7 +823,7 @@ const COLS = [
 ];
 const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rate:new Set(),rmin:null,price:null,sort:"score",dir:-1,open:null};
+const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rmin:null,price:null,sort:"score",dir:-1,open:null};
 try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&SORTS.has(s.sort)&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 try{ history.scrollRestoration="manual"; }catch(e){}
 
@@ -727,6 +837,7 @@ const pname = p => (LANG!=="ru"&&p.nm_lat)?p.nm_lat:p.name;
 const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
 const kmTxt = d => d<1?t("lt1"):String(Math.round(d));
 
+const phOf=p=>(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u||""));
 P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._d=(p.lat!=null&&p.lon!=null)?km(CASCAIS,[p.lat,p.lon]):999; p._near=p._d<=55;
   const g=r.google?r.google:(r.booking?r.booking/2:0); const n=r.google?(r.google_reviews||10):(r.booking?(r.booking_reviews||10):0);
@@ -736,7 +847,7 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._pool=ex.has("indoor_pool")||ex.has("outdoor_pool")||ex.has("heated_pool");
   p._cold=ex.has("cold_plunge")||ex.has("ice_bath"); p._ham=sa.has("hammam")||sa.has("steam"); p._banya=sa.has("banya"); p._ir=sa.has("infrared"); p._sauna=["sauna","finnish","bio","banya","infrared"].some(s=>sa.has(s));
   p._sea=ex.has("sea_view")||ex.has("beach_access")||p.beach||(p.sea_distance_m!=null&&p.sea_distance_m<=600);
-  p._ph=(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u||""));
+  p._ph=phOf(p);
   const hl=p.hl||{}; p._vp=hl.visit_from_eur!=null?hl.visit_from_eur:(p.of?null:a.day_pass_price_eur); if(typeof p._vp!=="number"||!isFinite(p._vp)) p._vp=null; p._mp=hl.month_from_eur!=null?hl.month_from_eur:(p.of?null:a.membership_month_eur); p._sp=hl.sort_eur!=null?hl.sort_eur:p._vp;
   if(p.of){ if(p.of.some(o=>o.kind==='membership')) p._mem=true; if(p.of.some(o=>o.kind==='treatment')) p._trt=true; if(hl.visit_from_eur!=null) p._day=true; p._grp=p.of.some(o=>o.kind==='private'&&o.per==='group'); }
   p._book={walk_in:0,recommended:1,required:2}[a.booking]; if(p._book==null) p._book=3;
@@ -761,7 +872,7 @@ function chips(el,map,get,set){
   el.innerHTML="";
   Object.entries(map).forEach(([k,label])=>{
     const b=document.createElement("button"); b.type="button"; b.className="chip"; b.dataset.k=k;
-    b.innerHTML=Array.isArray(label)?`${label[2]?kico(label[2]):`<span class="dot" style="background:${label[1]}"></span>`}${esc(label[0])}`:esc(label);
+    b.innerHTML=Array.isArray(label)?`${label[2]?kico(label[2]):`<span class="dot" style="background:${label[1]}"></span>`}<span class="cl">${esc(label[0])}</span>`:label&&label.l?`<span class="ai a-${label.f}">${label.i}</span><span class="cl">${esc(label.l)}</span>`:`<span class="cl">${esc(label)}</span>`;
     b.setAttribute("aria-pressed",String(get(k)));
     b.onclick=()=>{set(k); el.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed",String(get(c.dataset.k)))); render();};
     el.appendChild(b);
@@ -777,6 +888,34 @@ const MUNI_RU={"Lisboa":"Лиссабон","Cascais":"Кашкайш","Sintra":"
 // resorts, neighbourhoods, islands and regions that are not municipalities, plus English exonyms (search only)
 const AREA_RU2={"Estoril":"Эшторил","Carcavelos":"Каркавелуш","Vilamoura":"Виламора","Carvoeiro":"Карвоэйру","Alvor":"Алвор","Quarteira":"Куартейра","Almancil":"Алмансил","Comporta":"Компорта","Tróia":"Тройя","Caparica":"Капарика","Ericeira":"Эрисейра","Belém":"Белен","Chiado":"Шиаду","Guincho":"Гиншу","Fátima":"Фатима","Gerês":"Жереш","Furnas":"Фурнаш","Parede":"Пареде","Caxias":"Кашиаш","Algés":"Алжеш","Monte Estoril":"Монте-Эшторил","Praia da Rocha":"Прайя-да-Роша","Monte Gordo":"Монте-Горду","Sagres":"Сагреш","Terceira":"Терсейра","Pico":"Пику","Faial":"Файял","Graciosa":"Грасиоза","Madeira":"Мадейра","Açores":"Азоры","Algarve":"Алгарве","Alentejo":"Алентежу","Douro":"Дору","Minho":"Минью","Serra da Estrela":"Серра-да-Эштрела"};
 const TOWN_EN={"Lisboa":"Lisbon","Porto":"Oporto","Açores":"Azores","Évora":"Evora"};
+// spellings people actually type besides the Portuguese reading (search only): letter-by-letter Russian, English and old forms
+const TOWN_AL={"Lisboa":["Лиссабон","Лисбоа","Lisbon","Lisbonne"],"Porto":["Порту","Порто","Опорто","Oporto"],"Cascais":["Кашкайш","Каскайс","Кашкаис","Каскаис"],"Estoril":["Эсторил"],"Oeiras":["Оэйраш","Оейрас","Оэйрас"],
+  "Carcavelos":["Каркавелос"],"Sintra":["Синтра"],"Setúbal":["Сетубал"],"Sesimbra":["Сесимбра"],"Ericeira":["Эрисейра","Эрикейра"],"Faro":["Фаро"],"Lagos":["Лагос"],"Albufeira":["Альбуфейра"],"Portimão":["Портимао","Портимау"],
+  "Funchal":["Фунчал"],"Madeira":["Мадера"],"Açores":["Азорские","Azores"],"Évora":["Эвора"],"Óbidos":["Обидос"],"Guimarães":["Гимараеш","Гимараес"],"Aveiro":["Авейро"],"Peniche":["Пенише"],"Nazaré":["Назаре"],
+  "Alentejo":["Алентехо"],"Douro":["Доуро"],"Vila Nova de Gaia":["Гая","Гайя"],"Matosinhos":["Матозиньюш","Матосиньос"],"Tavira":["Тавира"],"Vilamoura":["Виламора"]};
+// synonyms of facilities and kinds in RU / EN / PT (normalized: no accents, ё = е); phrases are matched as two words
+const SYN_PHR={"турецкая баня":"hammam","турецкие бани":"hammam","турецкую баню":"hammam","banho turco":"hammam","banhos turcos":"hammam","steam room":"hammam","паровая баня":"hammam","bain turc":"hammam",
+  "русская баня":"banya","русскую баню":"banya","русские бани":"banya","sauna russa":"banya","russian sauna":"banya","russian banya":"banya","banya russa":"banya",
+  "cold plunge":"cold","ice bath":"cold","imersao fria":"cold","banho gelo":"cold","banhos gelo":"cold","agua gelada":"cold","ледяная ванна":"cold","холодная купель":"cold","agua fria":"cold","plunge pool":"cold",
+  "hot tub":"tub","health club":"fit","фитнес клуб":"fit","swimming pool":"pool","spa hotel":"hotel"};
+const SYN_W={"баня":"banya","бани":"banya","баню":"banya","банька":"banya","баньки":"banya","банья":"banya","banya":"banya",
+  "хаммам":"hammam","хамам":"hammam","хаммамы":"hammam","хамамы":"hammam","hammam":"hammam","hamam":"hammam","steam":"hammam","парная":"hammam","turco":"hammam",
+  "купель":"cold","купели":"cold","plunge":"cold","icebath":"cold",
+  "бассейн":"pool","бассейны":"pool","бассейном":"pool","pool":"pool","pools":"pool","piscina":"pool","piscinas":"pool",
+  "отель":"hotel","отели":"hotel","отеле":"hotel","отелей":"hotel","гостиница":"hotel","гостиницы":"hotel","hotel":"hotel","hotels":"hotel",
+  "фитнес":"fit","фитнесс":"fit","fitness":"fit","спортзал":"fit","gym":"fit","ginasio":"fit","ginasios":"fit","academia":"fit",
+  "джакузи":"tub","jacuzzi":"tub","чан":"tub","hidromassagem":"tub","whirlpool":"tub",
+  "массаж":"massage","massage":"massage","massagem":"massage","массажи":"massage",
+  "море":"sea","пляж":"sea","beach":"sea","praia":"sea","seaside":"sea",
+  "инфракрасная":"ir","инфракрасные":"ir","infrared":"ir","infravermelhos":"ir","infravermelha":"ir",
+  "сауна":"sauna","сауны":"sauna","сауну":"sauna","sauna":"sauna","saunas":"sauna","финская":"sauna","finnish":"sauna","finlandesa":"sauna"};
+const synWord=w=>SYN_W[w]||null;
+const FEAT={banya:p=>p._banya,hammam:p=>p._ham,cold:p=>p._cold,pool:p=>p._pool,hotel:p=>kg(p)==="hotel",fit:p=>kg(p)==="fit"||(p.extras||[]).includes("gym"),
+  tub:p=>(p.extras||[]).some(x=>x==="jacuzzi"||x==="hot_tub"),massage:p=>(p.extras||[]).includes("massage"),sea:p=>p._sea,ir:p=>p._ir,sauna:p=>p._sauna};
+const featIdx=f=>{ const fn=FEAT[f]; return fn?P.filter(fn).map(p=>p._i):[]; };
+// a query typed in the wrong keyboard layout (cfeyf = сауна, ыфгтф = sauna)
+const KB_EN="qwertyuiop[]asdfghjkl;'zxcvbnm,.`", KB_RU="йцукенгшщзхъфывапролджэячсмитьбюё";
+function swapLayout(s){ let lat=0,cyr=0; for(const c of s){ if(/[a-z]/.test(c)) lat++; else if(/[а-яё]/.test(c)) cyr++; } if(!lat&&!cyr) return s; const [a,b]=cyr>lat?[KB_RU,KB_EN]:[KB_EN,KB_RU]; return [...s].map(c=>{ const i=a.indexOf(c); return i<0?c:b[i]; }).join(""); }
 const townRu=n=>n?(MUNI_RU[n]||AREA_RU[n]||AREA_RU2[n]||""):"";
 const muniName=m=>m?(LANG==="ru"?(MUNI_RU[m]||m):m):"";
 // ===== search: all three languages, Cyrillic <-> Latin by sound, accent-insensitive, prefix, typo tolerance, field tiers (name > town > type > notes) =====
@@ -786,7 +925,7 @@ function makeSearch(fieldsOf){
   // Cyrillic letters -> key alphabet (S = sh, Z = zh, C = ch, T = ts; х is silent like the Portuguese h: Хорта = Horta)
   const C={ш:"S",щ:"S",ж:"Z",ч:"C",ц:"T",а:"a",б:"b",в:"v",г:"g",д:"d",е:"e",ё:"e",з:"z",и:"i",й:"i",к:"k",л:"l",м:"m",н:"n",о:"o",п:"p",р:"r",с:"s",т:"t",у:"u",ф:"f",х:"",ъ:"",ы:"i",ь:"",э:"e",ю:"iu",я:"ia"};
   const strip=s=>s.normalize("NFD").replace(/[̀-ͯ]/g,"");
-  const fin=w=>w.replace(/o(?=S$)/,"u").replace(/o$/,"u").replace(/(.)\1+/g,"$1").replace(/S/g,"sh").replace(/Z/g,"zh").replace(/C/g,"ch").replace(/T/g,"ts").replace(/G/g,"g").replace(/X/g,"s");
+  const fin=w=>w.replace(/o(?=S$)/,"u").replace(/o$/,"u").replace(/(.)\1+/g,"$1").replace(/S/g,"sh").replace(/Z/g,"zh").replace(/C/g,"ch").replace(/T/g,"ts").replace(/G/g,"g").replace(/X/g,"s").replace(/t+ts/g,"ts");
   const rkey=w=>fin(w.replace(/[а-яё]/g,c=>C[c]??c));
   // Latin word in Portuguese spelling -> the way Russians write it: Cascais -> kashkaish, Estoril -> eshtoril, Alentejo -> alentezhu, Funchal -> funshal, Lagos -> lagush, Guimarães -> gimarainsh
   // (G = hard g in gue/gui, X = the s of c before e/i and of ç, which never voices to z)
@@ -796,6 +935,13 @@ function makeSearch(fieldsOf){
     .replace(/c(?=[eiy])/g,"X").replace(/c/g,"k").replace(/g(?=[eiy])/g,"Z").replace(/j/g,"Z").replace(/h/g,"").replace(/y/g,"i").replace(/w/g,"v")
     .replace(/z$/,"S").replace(/s$/,"S").replace(/(?<=.)s(?=[ptkf])/g,"S").replace(/(?<=.)s(?=[bdgmnlrvzZ])/g,"Z").replace(/([aeiou])s(?=[aeiou])/g,"$1z"));
   const key=w=>/[а-яё]/.test(w)?rkey(w):pkey(w);
+  // second key: a Latin word read the English way, so Russian spellings of English names match (холмс = Holmes, сикс сенсес = Six Senses, плейс = Place, ритц = Ritz)
+  const EX={one:"uan",four:"for",world:"vorld",house:"haus",club:"klab",the:"ze"};
+  const ekey=w=>{ if(/[а-яё]/.test(w)) return rkey(w); w=strip(w); if(EX[w]) return EX[w];
+    w=w.replace(/c(?=[eiy])/g,"s").replace(/g(?=[eiy])/g,"D").replace(/([^sxzh])es$/,"$1s").replace(/([aeiou])([^aeiouwy])e$/,(m,v,c)=>({a:"ei",i:"ai",o:"ou",u:"iu",e:"i"}[v])+c).replace(/([^aeiou])e$/,"$1")
+      .replace(/tch|ch/g,"C").replace(/sh/g,"S").replace(/ph/g,"f").replace(/th/g,"t").replace(/ck/g,"k").replace(/tz/g,"T").replace(/x/g,"ks").replace(/qu/g,"kv").replace(/q/g,"k").replace(/c/g,"k").replace(/j/g,"D")
+      .replace(/ee|ea|ie/g,"i").replace(/oo/g,"u").replace(/ay|ai|ey/g,"ei").replace(/w/g,"v").replace(/h/g,"").replace(/y/g,"i").replace(/([aeiou])s(?=[aeiou])/g,"$1z");
+    return w.replace(/(.)\1+/g,"$1").replace(/D/g,"dzh").replace(/S/g,"sh").replace(/C/g,"ch").replace(/T/g,"ts"); };
   const toks=s=>String(s||"").toLowerCase().replace(/ё/g,"е").split(/[^\p{L}\p{N}]+/u).filter(w=>w.length>1);
   // optimal string alignment distance (one edit = insert, delete, replace or swap two neighbours) with a cutoff
   function lev(a,b,max){ if(Math.abs(a.length-b.length)>max) return max+1; let p2=null,p1=[],cur=[]; for(let j=0;j<=b.length;j++) p1[j]=j;
@@ -804,32 +950,56 @@ function makeSearch(fieldsOf){
   let VOC=null; // normalized token -> {n, k (sound key), d: Map(place index -> best tier)}
   function build(docs){ VOC=new Map();
     docs.forEach((p,i)=>fieldsOf(p).forEach((strs,tier)=>strs.forEach(s=>toks(s).forEach(w=>{ const n=strip(w); let e=VOC.get(n); if(!e){ e={n,k:key(w),d:new Map()}; VOC.set(n,e); } const t=e.d.get(i); if(t==null||tier<t) e.d.set(i,tier); }))));
+    VOC.forEach((e,n)=>{ e.e=/[а-яё]/.test(n)?e.k:ekey(n); });
     return VOC; }
   // one query word -> Map(place index -> score). Exact 3, prefix 2, same sound 2.5, sound prefix 1.8; typos and near sounds (1) count a hundred times less, so an exact amenity still beats a misspelt name
-  function term(q){ const qn=strip(q), qk=key(q), L=qn.length; if(L<2) return null; const out=new Map(); const md=L>=8?2:L>=5?1:0, mk=qk.length>=4?1:0;
+  function term(q){ const qn=strip(q), qk=key(q), qe=ekey(q), L=qn.length; if(L<2) return null; const out=new Map(); const md=L>=8?2:L>=5?1:0, mk=qk.length>=4?1:0, me=qe.length>=4?1:0;
     for(const e of VOC.values()){ let m=0;
-      if(e.n===qn) m=3; else if(e.n.startsWith(qn)) m=2; else if(qk.length>=3&&e.k===qk) m=2.5; else if(qk.length>=4&&e.k.startsWith(qk)) m=1.8;
-      else if(md&&lev(qn,e.n,md)<=md) m=1; else if(md&&e.n.length>L&&lev(qn,e.n.slice(0,L),1)<=1) m=0.9; else if(mk&&lev(qk,e.k,mk)<=mk) m=1;
-      if(!m) continue; e.d.forEach((tier,i)=>{ if(m<1.8&&tier>1) return; const s=TW[tier]*(m>=1.8?m:m*0.01); if((out.get(i)||0)<s) out.set(i,s); }); }
+      if(e.n===qn) m=3; else if(e.n.startsWith(qn)) m=2; else if((qk.length>=2&&e.k===qk)||(qe.length>=2&&e.e===qe)) m=2.5; else if((qk.length>=4&&e.k.startsWith(qk))||(qe.length>=4&&e.e.startsWith(qe))) m=1.8;
+      else if(md&&lev(qn,e.n,md)<=md) m=1; else if(md&&e.n.length>L&&lev(qn,e.n.slice(0,L),1)<=1) m=0.9; else if((mk&&lev(qk,e.k,mk)<=mk)||(me&&lev(qe,e.e,me)<=me)) m=1;
+      if(!m) continue; e.d.forEach((tier,i)=>{ if(m<1.8&&tier>2) return; const s=TW[tier]*(m>=1.8?m:m*0.01); if((out.get(i)||0)<s) out.set(i,s); }); }
     return out; }
+  const and=(a,b)=>{ if(!a) return b; if(!b) return a; const n=new Map(); a.forEach((s,i)=>{ const s2=b.get(i); if(s2!=null) n.set(i,s+s2); }); return n; };
+  // synonyms: a word or a two-word phrase that names a facility or a kind ("турецкая баня", "banho turco", "ice bath", "отели") also matches every place
+  // that has it, scored as an exact type-tier match; the words themselves still match names and texts, so a name with them ranks first
+  const units=ws=>{ const n=ws.map(strip), out=[]; for(let i=0;i<n.length;i++){ const f3=i+2<n.length&&SYN_PHR[n[i]+" "+n[i+1]+" "+n[i+2]]; if(f3){ out.push({ws:ws.slice(i,i+3),f:f3}); i+=2; continue; } const f2=i+1<n.length&&SYN_PHR[n[i]+" "+n[i+1]]; if(f2){ out.push({ws:[ws[i],ws[i+1]],f:f2}); i++; continue; } out.push({ws:[ws[i]],f:synWord(n[i])}); } return out; };
   // every word must match (AND); the score is the sum over words. Returns null when no word is long enough to search
-  function query(words,docs){ if(!VOC) build(docs); let acc=null;
-    for(const w of words){ const r=term(w); if(!r) continue; if(!acc){ acc=r; continue; } const n=new Map(); acc.forEach((s,i)=>{ const s2=r.get(i); if(s2!=null) n.set(i,s+s2); }); acc=n; }
+  // short connecting words (de, da, em, the, на, в) are dropped from a query of several words
+  const STOP=new Set(["de","da","do","das","dos","em","no","na","nos","the","of","and","at","in","на","в","во","и","с","у","по","для"]);
+  function query(words,docs,feat){ if(!VOC) build(docs); let acc=null;
+    if(words.length>1){ const w2=words.filter(w=>!STOP.has(strip(w))); if(w2.length) words=w2; }
+    for(const u of units(words)){ let r=null, any=false; for(const w of u.ws){ const x=term(w); if(!x) continue; any=true; r=and(r,x); }
+      if(u.f&&feat){ const sc=TW[2]*3*u.ws.length; r=new Map(r||[]); feat(u.f).forEach(i=>{ if((r.get(i)||0)<sc) r.set(i,sc); }); any=true; }
+      if(!any) continue; acc=acc?and(acc,r):r; }
     return acc; }
-  return {build,query,toks};
+  // "nothing found": the closest spelling of each word that matches nothing (edit distance on the word, then on the sound key)
+  function suggest(words){ if(!VOC) return null; let changed=false;
+    const out=words.map(w=>{ const r=term(w); if(r&&r.size) return w; const qn=strip(w), qk=key(w), L=qn.length, mx=L>=8?3:L>=5?2:1; let best=null, bd=9;
+      for(const e of VOC.values()){ if(e.n.length<3) continue; let d=lev(qn,e.n,mx); if(d>mx){ const ds=lev(qk,e.k,1); d=ds<=1?ds+0.5:99; } if(d<bd||(d===bd&&best&&e.d.size>best.d.size)){ bd=d; best=e; } }
+      if(best&&bd<=mx){ changed=true; return best.n; } return w; });
+    return changed?out.join(" "):null; }
+  return {build,query,toks,suggest,reset:()=>{ VOC=null; }};
 }
 const LANGS3=["ru","en","pt"];
 const TOWNS=Object.assign({},AREA_RU2,MUNI_RU,AREA_RU);
 function srchFields(p){ const k=kg(p);
   const name=[p.name,p.nm_lat,...(p.alias_names||[]),...(p.alt_names||[])];
   // a town inside the name gets its Russian and English spellings as name words too, so "лиссабон" ranks "Sheraton Lisboa" above the rest of Lisbon
-  Object.keys(TOWNS).forEach(tn=>{ if(p.name.includes(tn)){ name.push(TOWNS[tn]); if(TOWN_EN[tn]) name.push(TOWN_EN[tn]); } });
-  const town=[p.muni,townRu(p.muni),TOWN_EN[p.muni],p.area,townRu(p.area),TOWN_EN[p.area],...LANGS3.map(L=>(I18N[L]._area||{})[p.area])];
+  Object.keys(TOWNS).forEach(tn=>{ if(p.name.includes(tn)){ name.push(TOWNS[tn]); if(TOWN_EN[tn]) name.push(TOWN_EN[tn]); name.push(...(TOWN_AL[tn]||[])); } });
+  const town=[p.muni,townRu(p.muni),TOWN_EN[p.muni],...(TOWN_AL[p.muni]||[]),p.area,townRu(p.area),TOWN_EN[p.area],...(TOWN_AL[p.area]||[]),...LANGS3.map(L=>(I18N[L]._area||{})[p.area])];
   const type=[...LANGS3.map(L=>I18N[L]["rg_"+p.reg]),...LANGS3.flatMap(L=>[I18N[L]["k_"+k],I18N[L]["kf_"+k],...amen(p,L)]),...(p.sauna_types||[]),...(p.extras||[]).map(x=>x.replace(/_/g," "))];
   const text=[p.subtitle,p.address,p.hours_short,...(p.lists||[]),...LANGS3.flatMap(L=>{ const T=(p.tr||{})[L]||{}; return [T.subtitle,T.notes,T.day_note,T.mem_note,T.hours_text,T.rules]; }),p.notes,p.rules];
   return [name,town,type,text]; }
 const SRCH=makeSearch(srchFields);
-(window.requestIdleCallback||(f=>setTimeout(f,1200)))(()=>SRCH.query([],P)); // build the index while idle (or at the first keystroke)
+const idle=(f,ms)=>(window.requestIdleCallback?requestIdleCallback(f,{timeout:ms||2000}):setTimeout(f,ms||1200));
+idle(()=>SRCH.query([],P)); // build the index while idle (or at the first keystroke)
+// one query -> place index -> relevance (null: no usable word). The same text in the other keyboard layout is tried too and wins when it matches better
+let lastR=null, lastSug=null;
+function runSearch(){ lastSug=null; if(!st.qt.length) return null; const best=R=>{ let m=0; if(R) R.forEach(v=>{ if(v>m) m=v; }); return m; };
+  let R=SRCH.query(st.qt,P,featIdx); const sw=swapLayout(st.q);
+  if(sw!==st.q){ const w2=SRCH.toks(sw); const R2=w2.length?SRCH.query(w2,P,featIdx):null; if(R2&&R2.size&&best(R2)>best(R)) R=R2; }
+  if(R&&!R.size){ const sg=SRCH.suggest(st.qt); if(sg){ const R3=SRCH.query(SRCH.toks(sg),P,featIdx); if(R3&&R3.size) lastSug=sg; } }
+  return R; }
 function areaMap(){const m={}; REGS.forEach(r=>{ if(P.some(p=>p.reg===r)) m[r]=regName(r); }); return m;}
 function muniMap(){ const c={}; P.forEach(p=>{ if(st.area.has(p.reg)&&p.muni) c[p.muni]=(c[p.muni]||0)+1; }); const m={}; Object.keys(c).sort((a,b)=>c[b]-c[a]).forEach(k=>m[k]=muniName(k)); return m; }
 function drawMuni(){ const row=document.getElementById("muni-row"); const mm=muniMap(); [...st.muni].forEach(k=>{ if(!mm[k]) st.muni.delete(k); }); row.hidden=Object.keys(mm).length<2; chips(document.getElementById("f-muni"),mm,k=>st.muni.has(k),toggle(st.muni)); }
@@ -842,17 +1012,23 @@ function drawChips(){
   chips(document.getElementById("f-heat"),HEATF(),k=>st.ext.has(k),toggle(st.ext));
   chips(document.getElementById("f-ext"),EXTF(),k=>st.ext.has(k),toggle(st.ext));
   chips(document.getElementById("f-rmin"),RMIN(),k=>String(st.rmin)===k,k=>{ st.rmin=String(st.rmin)===k?null:+k; });
-  chips(document.getElementById("f-rok"),ROK(),k=>st.rate.has(k),toggle(st.rate));
   chips(document.getElementById("f-price"),PRICEF(),k=>String(st.price)===k,k=>{ st.price=String(st.price)===k?null:+k; });
   chips(document.getElementById("f-hours"),HRS(),k=>st.hrs.has(k),toggle(st.hrs));
   const lg=Object.values(kindMap()).map(v=>`<span>${kico(v[2])}${esc(v[0])}</span>`).join("");
   document.getElementById("legend").innerHTML=lg; document.getElementById("legend2").innerHTML=lg;
   drawRad();
 }
-// live counts in the rating chips: places passing every other filter plus the threshold (or the verified rule)
-function setCounts(el,fn){ el.querySelectorAll(".chip").forEach(b=>{ let c=b.querySelector(".cn"); if(!c){ c=document.createElement("span"); c.className="cn"; c.setAttribute("aria-hidden","true"); b.appendChild(c); } c.textContent=fn(b.dataset.k); }); }
-function rateCounts(){ if(!passFn) return; const A=[],B=[]; P.forEach(p=>{ if(passFn(p,"rmin")) A.push(p); if(passFn(p,"ok")) B.push(p); });
-  setCounts(document.getElementById("f-rmin"),k=>A.filter(p=>p._g>=+k).length); setCounts(document.getElementById("f-rok"),()=>B.filter(p=>!p._weak).length); }
+// live counts on every chip: how many places the list would show with that chip on (every other group as it is; within an AND group the chip is added)
+function setCounts(el,fn){ if(!el) return; el.querySelectorAll(".chip").forEach(b=>{ let c=b.querySelector(".cn"); if(!c){ c=document.createElement("span"); c.className="cn"; c.setAttribute("aria-hidden","true"); b.appendChild(c); } const n=fn(b.dataset.k); c.textContent=n; b.classList.toggle("zero",!n&&b.getAttribute("aria-pressed")!=="true"); }); }
+function facetCounts(){ if(!passFn) return; const base=g=>P.filter(p=>passFn(p,g)); const plus=(s,k)=>new Set([...s,k]); const $=id=>document.getElementById(id); let B;
+  B=base("kind"); setCounts($("f-kind"),k=>B.filter(p=>kg(p)===k).length);
+  B=base("ext"); const ec=k=>B.filter(p=>extOk(p,plus(st.ext,k))).length; setCounts($("f-heat"),ec); setCounts($("f-ext"),ec);
+  B=base("price"); setCounts($("f-price"),k=>B.filter(p=>p._vp!=null&&p._vp<=+k).length);
+  B=base("hrs"); setCounts($("f-hours"),k=>B.filter(p=>hrsOk(p,plus(st.hrs,k))).length);
+  B=base("access"); setCounts($("f-access"),k=>B.filter(p=>accOk(p,plus(st.access,k))).length);
+  B=base("rmin"); setCounts($("f-rmin"),k=>B.filter(p=>p._g>=+k).length);
+  B=base("area"); setCounts($("f-area"),k=>B.filter(p=>p.reg===k).length);
+  B=base("muni"); setCounts($("f-muni"),k=>B.filter(p=>p.muni===k).length); }
 function drawRad(){ const el=document.getElementById("f-rad"); el.hidden=!ME; if(!ME){ el.innerHTML=""; return; }
   chips(el,{"15":t("rad",15),"55":t("rad",55)},k=>String(st.rad)===k,k=>{ st.rad=String(st.rad)===k?null:+k; }); }
 function applyStatic(){ document.documentElement.lang=LANG; document.title=t("title");
@@ -880,7 +1056,7 @@ const sortEl=document.getElementById("sort");
 function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; lsSet("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir})); renderHead(); render(); }
 sortEl.onchange=()=>setSort(sortEl.value);
 sortEl.value=st.sort;
-function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs,st.rate].forEach(s=>s.clear()); st.price=null; st.rmin=null; st.rad=null;
+function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear()); st.price=null; st.rmin=null; st.rad=null;
   document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed","false"); });
   drawAreas(); drawRad(); lastAreaKey="*";
   st.sort=ME?"dist":"score"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
@@ -892,10 +1068,10 @@ const ft=document.getElementById("ftoggle"), fbox=document.querySelector(".filte
 ft.onclick=()=>{ if(isPhone()){ openSheet(); return; } const o=fbox.classList.toggle("open"); ft.setAttribute("aria-expanded",String(o)); };
 // active-filter state: filled toggle + count badge (list toggle, full-screen map button, region summary), live counts in the sheet header and "Show" button
 function updateFtoggle(){ const nArea=st.area.size+st.muni.size; const nMore=st.hrs.size+(st.price!=null?1:0);
-  const nAll=nArea+st.kind.size+st.access.size+st.ext.size+st.rate.size+(st.rmin!=null?1:0)+nMore+(st.rad?1:0);
+  const nAll=nArea+st.kind.size+st.access.size+st.ext.size+(st.rmin!=null?1:0)+nMore+(st.rad?1:0);
   const badge=n=>n?`<b class="fcnt">${n}</b>`:"";
-  const n=isPhone()?nAll:nMore; const lab=isPhone()?t("filters"):t("morefilt");
-  ft.innerHTML=(isPhone()?ico("sliders","ic-s"):"")+esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
+  const n=nAll; const lab=t("filters");
+  ft.innerHTML=ico("sliders","ic-s")+esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
   const mf=document.getElementById("mapfilt"); mf.innerHTML=ico("sliders","ic-s")+esc(t("filters"))+badge(nAll); mf.classList.toggle("on",nAll>0); mf.setAttribute("aria-label",nAll?t("filt_n",nAll):t("filters"));
   const an=document.getElementById("area-n"); an.hidden=!nArea; an.textContent=nArea; document.getElementById("area-sum").classList.toggle("on",nArea>0); if(nArea) document.getElementById("area-d").open=true;
   document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,P.length);
@@ -946,25 +1122,21 @@ map.addLayer(cluster);
 const markers={};
 P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=KINDS[kg(p)][1];
-  const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}" data-i="${p._i}" style="background:${col}">${pinIco(kg(p))}</div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
+  const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}${p.geo_approx?" approx":""}" data-i="${p._i}" style="background:${col}">${pinIco(kg(p))}</div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name,keyboard:false});
   m.on("click",()=>openPin(p._i));
   markers[p._i]=m;
 });
-// a pin opens the place preview: a Leaflet popup on desktop, a bottom sheet over the map on phones (map stays interactive, a tap on it closes the sheet)
-const PV={maxWidth:320,minWidth:280,autoPanPaddingTopLeft:[20,20],autoPanPaddingBottomRight:[20,72],closeButton:false};
-function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; if(isPhone()){ openPreview(i); return; } closePreview();
-  L.popup(Object.assign({offset:[0,off==null?-24:off]},PV)).setLatLng(m.getLatLng()).setContent(previewHTML(p)).openOn(map); }
-const ps=document.getElementById("ps");
+// a pin opens the place preview: an anchored Leaflet popup on desktop and on phones (the map stays visible and draggable, a tap on it closes the popup)
+function pvOpts(off){ const ph=isPhone(); const w=ph?Math.min(Math.round(innerWidth*0.92),360):312;
+  return {offset:[0,off==null?-24:off],closeButton:false,maxWidth:w,minWidth:w,autoPan:true,autoPanPaddingTopLeft:[ph?10:20,ph?28:20],autoPanPaddingBottomRight:[ph?10:20,ph?78:72],className:ph?"pv-m":"pv-d"}; }
+let pvI=null, curPop=null;
+function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; loadMore();
+  const pop=curPop=L.popup(pvOpts(off)); pop.pvI=i; pop.setLatLng(m.getLatLng()).setContent(previewHTML(p)).openOn(map); }
 function setSel(i){ document.querySelectorAll(".mk.sel").forEach(e=>e.classList.remove("sel")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("sel"); } }
-function openPreview(i){ const p=P[i]; ps.innerHTML=`<div class="ps-grab" aria-hidden="true"></div>`+previewHTML(p); ps.setAttribute("aria-label",pname(p)); ps.hidden=false; ps.scrollTop=0; document.documentElement.classList.add("psopen"); wirePreview(ps); setSel(i);
-  const m=markers[i]; if(m) requestAnimationFrame(()=>{ try{ map.panInside(m.getLatLng(),{paddingTopLeft:[24,24],paddingBottomRight:[24,ps.offsetHeight+48]}); }catch(_){} }); }
-function closePreview(){ if(ps.hidden) return; ps.hidden=true; ps.innerHTML=""; document.documentElement.classList.remove("psopen"); setSel(null); }
-map.on("click",()=>closePreview());
-(function(){ let y0=null,x0=null; ps.addEventListener("touchstart",e=>{ y0=e.touches[0].clientY; x0=e.touches[0].clientX; },{passive:true});
-  ps.addEventListener("touchend",e=>{ if(y0==null) return; const dy=e.changedTouches[0].clientY-y0, dx=Math.abs(e.changedTouches[0].clientX-x0); y0=null; if(dy>60&&dx<40&&ps.scrollTop<=0&&!e.target.closest(".pp-sl")) closePreview(); },{passive:true}); })();
+function closePreview(){ map.closePopup(); }
 function wirePreview(el){
-  const sl=el.querySelector(".pp-sl"); if(sl){ if(el!==ps){ L.DomEvent.disableClickPropagation(sl.parentElement); L.DomEvent.disableScrollPropagation(sl.parentElement); }
+  const sl=el.querySelector(".pp-sl"); if(sl){ L.DomEvent.disableClickPropagation(sl.parentElement); L.DomEvent.disableScrollPropagation(sl.parentElement);
     ["touchstart","pointerdown","mousedown"].forEach(t=>sl.addEventListener(t,ev=>ev.stopPropagation()));
     // a swipe inside the photo strip must not drag the map underneath
     sl.addEventListener("touchstart",()=>{ if(map.dragging) map.dragging.disable(); },{passive:true});
@@ -975,9 +1147,10 @@ function wirePreview(el){
     const l=el.querySelector(".pp-nav.l"), r=el.querySelector(".pp-nav.r"); if(l) l.onclick=ev=>{ev.stopPropagation();go(-1);}; if(r) r.onclick=ev=>{ev.stopPropagation();go(1);}; }
   el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
   const mb=el.querySelector("[data-more]"); if(mb) mb.onclick=()=>openFromMap(+mb.dataset.more);
-  const xb=el.querySelector("[data-pvx]"); if(xb) xb.onclick=ev=>{ ev.stopPropagation(); if(el===ps) closePreview(); else map.closePopup(); };
+  const xb=el.querySelector("[data-pvx]"); if(xb) xb.onclick=ev=>{ ev.stopPropagation(); map.closePopup(); };
 }
-map.on("popupopen",e=>{ const el=e.popup.getElement(); if(el) wirePreview(el); });
+map.on("popupopen",e=>{ const el=e.popup.getElement(); if(el) wirePreview(el); pvI=e.popup.pvI!=null?e.popup.pvI:null; setSel(pvI); if(isPhone()) document.documentElement.classList.add("psopen"); });
+map.on("popupclose",()=>{ pvI=null; setSel(null); document.documentElement.classList.remove("psopen"); });
 
 function dayTxt(p){const a=p.access||{};
   if(a.day_pass_price_eur!=null) return `${eur(a.day_pass_price_eur)}${a.session_minutes?" "+t("for_min",a.session_minutes):""}`;
@@ -1000,12 +1173,19 @@ function priceLine(p){ const h=p.hl||{}; const vis=(p.of||[]).filter(o=>offGroup
   if(h.treatment_from_eur!=null) return `${eur(h.treatment_from_eur)} · ${t("w_trt")}`;
   if(h.group_from_eur!=null) return `${eur(h.group_from_eur)} · ${t("w_group")}`;
   return dayTxt(p); }
-// place preview (desktop popup and phone sheet): photos, name + share, meta, rating, price, hours, amenities, Details / Directions. No labels: the values read on their own.
-function previewHTML(p){
-  const ph=p._ph.slice(0,8).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("openphoto"))}"><img src="${esc(midSrc(x))}" data-full="${esc(x.u)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("");
+// placeholder thumbnail: the type glyph on a soft tint of the type colour, same size and radius as a photo (rows, popup, failed images)
+function phdHTML(p,big){ const k=kg(p); return `<span class="phd${big?" big":""}" style="--kc:${KCOL[k]}" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="${big?1.5:1.8}" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg></span>`; }
+// booking ahead: "booking required" / "booking advised" / "walk-in", nothing when unknown (row under the price, popup next to the price)
+const bkTag=p=>{ const b=(p.access||{}).booking; return BCL[b]?`<span class="bkt bk-${b}">${esc(t("bk_"+b))}</span>`:""; };
+// place preview (popup on desktop and phones): photos (all, lazy), name + share, meta, ratings, price + booking, hours, amenities, Details / Directions. No labels: the values read on their own.
+function previewHTML(p){ const n=p._ph.length;
+  const ph=p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(midSrc(x))}" data-full="${esc(x.u)}" alt=""${j>1?' loading="lazy"':""} decoding="async" referrerpolicy="no-referrer"></button>`).join("");
   const x=`<button type="button" class="pv-x" data-pvx aria-label="${esc(t("close"))}">${ico("x")}</button>`;
-  const am=amen(p), pl=priceLine(p), rbm=rb(p.ratings), hc=hoursCell(p);
-  return `${ph?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${p._ph.length>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">${ico("cl")}</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">${ico("cr")}</button><span class="pp-cnt">${t("n_of",1,p._ph.length)}</span>`:""}${x}</div>`:x}<div class="pp-b${ph?"":" nop"}"><div class="pv-h"><b class="t">${esc(pname(p))}</b><button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("share"))}" aria-label="${esc(t("share"))}">${ico("share")}</button></div>${p._weak?`<div class="wnote">${esc(p._weak==="status"?cap(t(p.status)):t("wt_"+p._weak+"_h"))}</div>`:""}${metaLine(p)}${rbm?`<div class="pv-l rbm">${rbm}</div>`:""}${pl?`<div class="pv-l num${/^(€|\D+ €)/.test(pl)?" pv-p":""}">${esc(pl)}${warn(p)}</div>`:""}${memLine(p)}${hc?`<div class="pv-l">${hc}</div>`:""}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}<div class="acts pv-acts"><button type="button" class="act prim" data-more="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}${esc(t("route"))}</button>`:""}</div></div>`;
+  const pl=priceLine(p), rbm=rb(p.ratings), hc=hoursCell(p), bk=bkTag(p);
+  const top=n?`<div class="pp-sw"><div class="pp-sl">${ph}</div>${n>1?`<button type="button" class="pp-nav l" aria-label="${esc(t("back"))}">${ico("cl")}</button><button type="button" class="pp-nav r" aria-label="${esc(t("fwd"))}">${ico("cr")}</button><span class="pp-cnt">${t("n_of",1,n)}</span>`:""}${x}</div>`
+    :`<div class="pp-sw pp-ph">${phdHTML(p,true)}${x}</div>`;
+  const price=pl||bk?`<div class="pv-l pv-pr">${pl?`<span class="num${/^(€|\D+ €)/.test(pl)?" pv-p":""}">${esc(pl)}${warn(p)}</span>`:""}${bk}</div>`:"";
+  return `${top}<div class="pp-b"><div class="pv-h"><b class="t">${esc(pname(p))}</b><button type="button" class="cpl" data-cp="${p._i}" title="${esc(t("share"))}" aria-label="${esc(t("share"))}">${ico("share")}</button></div>${p._weak?`<div class="wnote">${esc(p._weak==="status"?cap(t(p.status)):t("wt_"+p._weak+"_h"))}</div>`:""}${metaLine(p)}${p.geo_approx?`<div class="gapx">${esc(t("geo_ap"))}</div>`:""}${rbm?`<div class="pv-l rbm">${rbm}</div>`:""}${price}${memLine(p)}${hc?`<div class="pv-l">${hc}</div>`:""}${amenHTML(p)}<div class="acts pv-acts"><button type="button" class="act prim" data-more="${p._i}">${esc(t("more"))}</button>${p.lat!=null?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}${esc(t("route"))}</button>`:""}</div></div>`;
 }
 
 // cells
@@ -1020,31 +1200,39 @@ function openState(wk){ if(!wk) return null; const {d,m}=NOW; const tt=wk[d];
   if(tt===null) return null;
   for(let k=1;k<=7;k++){ const dd=(d+k)%7, x=wk[dd]; if(Array.isArray(x)) return {st:"closed",lab:t("hs_closed"),tm:t("hs_opens_day",k===1?t("tomorrow"):DN()[dd],fmtT(x[0]))}; if(x===null) return {st:"closed",lab:t("hs_closed"),tm:""}; }
   return null; }
-function todayBar(wk){ const x=wk[NOW.d]; const pct=v=>Math.max(0,Math.min(100,v/14.4));
-  const seg=Array.isArray(x)?`<i class="tb-on" style="left:${pct(x[0])}%;width:${pct(Math.min(x[1],1440))-pct(x[0])}%"></i>`:"";
-  return `<span class="tb" aria-hidden="true">${seg}<i class="tb-now" style="left:${pct(NOW.m)}%"></i></span>`; }
 const live=p=>!(p.status==="soon"||p.status==="closed");
-function statusLine(p){ if(!live(p)) return ""; useNow(p); const s=openState(p.wk); if(!s) return ""; return `<div class="hs ${s.st}"><i class="hdot"></i><b>${esc(s.lab)}</b>${s.tm?` <span>${esc(s.tm)}</span>`:""}</div>`; }
-function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ const sm=p.sch['summary_'+LANG]||p.sch.summary_en||''; return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))}${ico("cd","ic-s")}</span></div></button>`; }
-  if(p.wk){ const x=p.wk[NOW.d]; const today=Array.isArray(x)?`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`:(x==="x"?t("dayoff"):""); const wkm=`<span class="wkmore">${esc(t("weekshort"))}${ico("cd","ic-s")}</span>`; return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${live(p)?statusLine(p)+todayBar(p.wk):""}${today?`<div class="tdy">${esc(today)} · ${wkm}</div>`:`<div class="tdy">${wkm}</div>`}</button>`; } const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
+const allSame=wk=>wk.every(x=>Array.isArray(x)&&x[0]===wk[0][0]&&x[1]===wk[0][1]);
+const rngT=x=>`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`;
+// one hours line for row, card and popup. Same hours every day: "● Открыто · ежедневно 9:00 до 22:00" (closed: "● Закрыто · откроется в 9:00 · ежедневно ...").
+// Hours differ by day: "● Открыто · сегодня 9:00 до 22:00" and a "week" button where there is room; places not open yet / closed get no status, only the hours
+function hoursLine(p){ const w=p.wk; if(!w) return ""; useNow(p); const same=allSame(w), x=w[NOW.d];
+  const s=live(p)?openState(w):null; const parts=[];
+  if(s&&s.st==="closed"&&s.tm) parts.push(same?t("hs_opens",fmtT(w[0][0])):s.tm);
+  const past=s&&s.st==="closed"&&Array.isArray(x)&&NOW.m>=x[1];
+  if(same) parts.push(`${t("daily")} ${rngT(w[0])}`); else if(Array.isArray(x)&&!past) parts.push(`${t("today")} ${rngT(x)}`); else if(x==="x"&&!s) parts.push(`${t("today")} ${t("dayoff")}`);
+  if(!s&&!parts.length) return "";
+  return `<div class="hs ${s?s.st:"na"}">${s?`<i class="hdot"></i><b>${esc(s.lab)}</b> `:""}${parts.length?`<span>${s?"· ":""}${esc(parts.join(" · "))}</span>`:""}</div>`; }
+function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))}${ico("cd","ic-s")}</span></div></button>`; }
+  if(p.wk){ const hl=hoursLine(p); if(allSame(p.wk)) return hl; return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${hl}<div class="tdy"><span class="wkmore">${esc(t("weekshort"))}${ico("cd","ic-s")}</span></div></button>`; }
+  const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
 function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b); const g=[];
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
   const rng={ru:" по ",en:" to ",pt:" a "}[LANG];
   if(g.length===1&&Array.isArray(g[0].x)) return `<div>${esc({ru:"Ежедневно",en:"Daily",pt:"Todos os dias"}[LANG])} ${fmtT(g[0].x[0])} ${t("to")} ${fmtT(g[0].x[1])}</div>`;
   return `<table class="wkt">${g.map(r=>{ const lab=r.a===r.b?DN()[r.a]:DN()[r.a]+rng+DN()[r.b]; const td=NOW.d>=r.a&&NOW.d<=r.b; return `<tr class="${td?"td":""}"><td>${lab}</td><td>${Array.isArray(r.x)?`${fmtT(r.x[0])} ${t("to")} ${fmtT(r.x[1])}`:r.x==="x"?t("dayoff"):""}</td></tr>`; }).join("")}</table>`; }
 const n1=v=>Number(v).toFixed(1).replace(".",LANG==="en"?".":",");
-const nfmt=n=>String(n).replace(/\B(?=(\d{3})+(?!\d))/g,LANG==="en"?",":" ");
-// rating: "★ 4,9  1 877 · Google" (Booking is on a 10-point scale and gets no star); fewer than 50 ratings is flagged in the caption
-// rating badges (Booking style): green "4,9" + star + count + "Google", blue "9,5" + count + "Booking"; grey + "мало оценок" under 50 ratings.
-// compact (phone row with both platforms): badge + count only, so both sit on one line; the colour names the platform (explained in the footer)
-function rb(r,compact){ if(!r) return ""; const o=[];
-  if(r.google){ const n=r.google_reviews; const few=n!=null&&n<50; const c=few||n==null?"g3":r.google>=4.6?"g1":r.google>=4.2?"g2":"g3";
-    o.push(`<span class="rbw"><span class="rb ${c}"><b>${n1(r.google)}</b>${ico("star","st")}${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${compact?"":`<span class="rcap">Google${few?" · "+esc(t("few")):""}</span>`}</span>`); }
-  if(r.booking){ const n=r.booking_reviews; o.push(`<span class="rbw"><span class="rb bk"><b>${n1(r.booking)}</b>${n?`<span class="rc">${nfmt(n)}</span>`:""}</span>${compact?"":`<span class="rcap">Booking</span>`}</span>`); }
-  return o.join(""); }
+// thousands with a narrow no-break space (RU 5 323, PT 5323 / 12 345), EN 5,323
+const nfmt=n=>{ const s=String(n); if(LANG==="en") return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); if(LANG==="pt"&&s.length<5) return s; return s.replace(/\B(?=(\d{3})+(?!\d))/g,"\u202f"); };
+// the count and the word on two lines beside the badge: "1 877" / "отзывов" (the word is the plural for the number)
+const revHTML=n=>{ const s=revTxt(n), k=nfmt(n), i=s.indexOf(k); return i<0?`<span class="rq">${esc(s)}</span>`:`<span class="rq">${esc(s.slice(0,i))}<span class="rn">${esc(k)}</span> <span class="rw">${esc(s.slice(i+k.length).trim())}</span></span>`; };
+function revTxt(n){ const f=I18N[LANG].reviews||I18N.ru.reviews; let i=n===1?0:1; if(LANG==="ru"){ const a=n%10,b=n%100; i=a===1&&b!==11?0:a>=2&&a<=4&&(b<12||b>14)?1:2; } return f[i].replace("{0}",nfmt(n)); }
+// rating badge: the score with a thin strip of the same colour under it naming the platform (green Google, blue Booking, grey under 50 ratings),
+// the number of reviews beside it with the right plural, "few ratings" under the count when it is under 50. The same badge in rows, popups and cards
+function rbadge(v,plat,cls,n){ const few=n!=null&&n<50; return `<span class="rbw"><span class="rb ${few?"g3":cls}"><b>${v}</b><i>${plat}</i></span>${n||few?`<span class="rc${few?" few":""}">${n?revHTML(n):""}${few?`<span class="rfew">${esc(t("few"))}</span>`:""}</span>`:""}</span>`; }
+function rb(r){ if(!r) return ""; const o=[]; if(r.google) o.push(rbadge(n1(r.google),"Google","g1",r.google_reviews)); if(r.booking) o.push(rbadge(n1(r.booking),"Booking","bk",r.booking_reviews)); return o.join(""); }
 const bookUrl=p=>{ const u=(p.access||{}).booking_url||p.booking_url; return safeUrl(u); };
 const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
-function photoCell(p){ if(!p._ph.length) return "";
+function photoCell(p){ if(!p._ph.length) return `<div class="thumbs">${phdHTML(p)}</div>`;
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${t("min",a.session_minutes)}</div>`:""}`;
@@ -1091,18 +1279,18 @@ function pricesBlock(p){ const of=p.of||[]; if(!of.length) return ""; const G={v
   return `<div class="prices">${h}</div>`; }
 function detail(p){const a=p.access||{};
   const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
-  const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
+  const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||"")+(p.muni&&!(p.address||"").includes(p.muni)?" "+p.muni:""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
   const it=[]; const add=(k,v)=>{ if(v) it.push(`<div><dt>${k}</dt><dd>${v}</dd></div>`); };
   // the row above stays visible, so the card adds only what the row does not show: address, prices block or notes, booking terms, week hours, contacts, rules, second rating, sources
   const seaT=p.sea_distance_m!=null?`${t("d_sea").toLowerCase()} ≈ ${p.sea_distance_m>=1000?dec(Math.round(p.sea_distance_m/100)/10)+" "+t("km"):p.sea_distance_m+" "+t("m")}`:"";
-  const whereT=[seaT, p.reg?regName(p.reg):"", ME&&p._d<900?`${t("d_fromme").toLowerCase()} ≈ ${kmTxt(p._d)} ${t("km")}`:""].filter(Boolean).join(" · ");
+  const whereT=[p.geo_approx?t("geo_ap"):"", seaT, p.reg?regName(p.reg):"", ME&&p._d<900?`${t("d_fromme").toLowerCase()} ≈ ${kmTxt(p._d)} ${t("km")}`:""].filter(Boolean).join(" · ");
   add(t("d_addr"), `${esc(p.address||"")} ${link(maps,t("d_gmaps"))}${whereT?`<div class="sub">${esc(whereT)}</div>`:""}`);
   // the status pill by the name already says "not open yet" / "temporarily closed": a note that starts with that sentence loses it here
   const dn=noStatus(p,tr(p,"day_note")), mn=noStatus(p,tr(p,"mem_note")), notes=noStatus(p,tr(p,"notes"));
   if(!p.of){ if(dn) add(t("d_day"), esc([cap(dayTxt(p)), cap(dn)].filter(Boolean).join(". ")));
   if(mn||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(mn)].filter(Boolean).join(". "))); }
   add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):""].filter(Boolean).join(", "));
-  add(t("d_hours"), p.wk?(statusLine(p)+weekTable(p.wk)):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
+  add(t("d_hours"), p.wk?(hoursLine(p)+(allSame(p.wk)?"":weekTable(p.wk))):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
   const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
   const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
   add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
@@ -1124,46 +1312,44 @@ function detail(p){const a=p.access||{};
   // a card opened from a pin starts with "To the map": back to the same map view and preview (the browser's back does the same)
   const hs=HS(); const tomap=(hs.v==="card"&&hs.back==="map"&&(hs.id===p.id||(p.alias_ids||[]).includes(hs.id)))?`<button type="button" class="tomap" data-tomap>${ico("cl","ic-s")}${esc(t("tomap"))}</button>`:"";
   const ov=p.owner&&p.owner.verified_on;
-  const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:`${esc(t("checked",fmtDate(p.verified_on)))}${conf?`, ${esc(t("reliab",conf))}`:""}${src?`. ${esc(t("sources"))}: ${src}`:""}`;
-  return `${tomap}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
+  const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:[p.verified_on?esc(t("checked",fmtDate(p.verified_on))):"",conf?esc(t("reliab",conf)):""].filter(Boolean).join(", ")+(src?`${p.verified_on||conf?". ":""}${esc(t("sources"))}: ${src}`:"");
+  const wait=MORE?"":MORE_ERR?`<p class="dload err" role="status">${esc(t("more_err"))} <button type="button" class="act" data-retry>${esc(t("retry"))}</button></p>`:`<p class="dload" role="status">${esc(t("loading"))}</p>`;
+  return `${tomap}${wait}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
 }
 // leading "Ещё не открыто." / "Not open yet." / "Temporarily closed." (any of the three languages) is dropped from a text when the status pill is shown
 const STATUS_RX=new RegExp("^\\s*(?:"+["ru","en","pt"].flatMap(L=>[I18N[L].soon,I18N[L].closed]).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\s*[.;:,]?\\s*","i");
 function noStatus(p,s){ s=s||""; return p._weak==="status"?s.replace(STATUS_RX,""):s; }
 
-let passFn=null; // the predicate of the last render, reused for the live counts in the rating chips
+let passFn=null; // the predicate of the last render, reused for the live counts on the chips
+const ACCK={day:"_day",membership:"_mem",treatment:"_trt",private:"_grp"}, EXTK={sauna:"_sauna",cold:"_cold",pool:"_pool",hammam:"_ham",sea:"_sea",banya:"_banya",ir:"_ir"};
+const accOk=(p,set)=>{ for(const k of set) if(!p[ACCK[k]]) return false; return true; };
+const extOk=(p,set)=>{ for(const k of set) if(!p[EXTK[k]]) return false; return true; };
+// hours chips (AND): open now, open after 19:00, after 21:00, from the morning before 8:00 (any day of the week; scheduled sessions by their start)
+function hrsOk(p,set){ if(!set.size) return true; const w=p.wk;
+  if(!w){ const wkd=(p.sch||{}).week||{}; const hs=Object.values(wkd).flatMap(a=>(a||[]).map(x=>parseInt(String(x)))).filter(n=>!isNaN(n));
+    for(const k of set){ if(k==="now") return false; if(k==="h19"&&!hs.some(h=>h>=19)) return false; if(k==="eve"&&!hs.some(h=>h>=20)) return false; if(k==="early"&&!hs.some(h=>h<8)) return false; } return true; }
+  const days=w.filter(Array.isArray);
+  for(const k of set){
+    if(k==="now"){ if(!live(p)) return false; useNow(p); const S=openState(w); if(!(S&&(S.st==="open"||S.st==="soon"))) return false; }
+    if(k==="h19"&&!days.some(x=>x[1]>19*60)) return false;
+    if(k==="eve"&&!days.some(x=>x[1]>=21*60+1)) return false;
+    if(k==="early"&&!days.some(x=>x[0]<8*60)) return false; }
+  return true; }
 function filtered(){
   const coll=st.sort==="name"?new Intl.Collator(LANG,{ignorePunctuation:true,sensitivity:"base"}):null;
-  const R=st.qt.length?SRCH.query(st.qt,P):null; // place index -> relevance; null when there is no usable query word
+  const R=runSearch(); lastR=R; // place index -> relevance; null when there is no usable query word
   const pass=(p,skip)=>{
     if(R&&!R.has(p._i)) return false;
-    if(st.hrs.size){ const w=p.wk;
-      if(!w){ const sc=p.sch||{}; const wkd=sc.week||{};
-        const lateStart=Object.values(wkd).some(a=>(a||[]).some(x=>parseInt(String(x))>=20));
-        if(st.hrs.has("now")) return false;
-        if(st.hrs.has("eve")&&!lateStart) return false;
-      } else { useNow(p); const S=openState(w);
-      if(st.hrs.has("now") && (p.status==="soon"||p.status==="closed"||!(S&&(S.st==="open"||S.st==="soon")))) return false;
-      if(st.hrs.has("eve") && !w.some(x=>Array.isArray(x)&&x[1]>=21*60+1)) return false; } }
+    if(skip!=="hrs"&&!hrsOk(p,st.hrs)) return false;
     if(st.scope==="near" && !p._near) return false;
     if(st.rad && ME && !(p.lat!=null && p._d<=st.rad)) return false;
-    if(st.area.size && !st.area.has(p.reg)) return false;
-    if(st.muni.size && !st.muni.has(p.muni)) return false;
-    if(st.kind.size && !st.kind.has(kg(p))) return false;
-    if(st.access.has("day") && !p._day) return false;
-    if(st.access.has("membership") && !p._mem) return false;
-    if(st.access.has("treatment") && !p._trt) return false;
-    if(st.access.has("private") && !p._grp) return false;
-    if(st.ext.has("sauna") && !p._sauna) return false;
-    if(st.ext.has("cold") && !p._cold) return false;
-    if(st.ext.has("pool") && !p._pool) return false;
-    if(st.ext.has("hammam") && !p._ham) return false;
-    if(st.ext.has("sea") && !p._sea) return false;
-    if(st.ext.has("banya") && !p._banya) return false;
-    if(st.ext.has("ir") && !p._ir) return false;
-    if(skip!=="ok" && st.rate.has("ok") && p._weak) return false;
+    if(skip!=="area"&&st.area.size && !st.area.has(p.reg)) return false;
+    if(skip!=="area"&&skip!=="muni"&&st.muni.size && !st.muni.has(p.muni)) return false;
+    if(skip!=="kind"&&st.kind.size && !st.kind.has(kg(p))) return false;
+    if(skip!=="access"&&!accOk(p,st.access)) return false;
+    if(skip!=="ext"&&!extOk(p,st.ext)) return false;
     if(skip!=="rmin" && st.rmin!=null && !(p._g>=st.rmin)) return false;
-    if(st.price!=null && (p._vp==null || p._vp>st.price)) return false;
+    if(skip!=="price" && st.price!=null && (p._vp==null || p._vp>st.price)) return false;
     return true;
   };
   passFn=pass;
@@ -1186,16 +1372,19 @@ const PAGE=40; let LIST=[], shown=0, lastAreaKey="", lastMk="";
 function memLine(p){ const h=p.hl||{}, a=p.access||{}; let v=null;
   if(h.month_from_eur!=null) v=`${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}`; else if(!p.hl&&a.membership_month_eur!=null) v=`${eur(a.membership_month_eur)}${t("per_mo")}`;
   return v?`<div class="sub mline">${esc(t("mx_mem"))} <span class="num">${esc(v)}</span></div>`:""; }
-function rowHTML(p){ const am=amen(p); const open=st.open===p._i; const ph=p._ph.length>0;
+function rowHTML(p){ const open=st.open===p._i;
   // status (not open yet / temporarily closed) is shown once, as the pill by the name
   const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(p._weak==="status"?t(p.status):t("wt_"+p._weak))}</span>`:"";
-  const rbm=rb(p.ratings,!!(p.ratings&&p.ratings.google&&p.ratings.booking));
+  const rbm=rb(p.ratings);
   // a subtitle that only repeats the town (or just the hotel stars, which the meta line shows) is dropped
   const sub0=tr(p,"subtitle")||""; const town=muniName(p.muni)||areaName(p.area)||"";
   let rest=sub0.replace(/\d★\s*(·\s*)?/,"").replace(/\s*·\s*$/,"").trim(); if(rest&&(rest===town||rest===p.muni)) rest="";
-  // phone-only line (desktop has rating and hours columns): rating with platform caption + open/closed status; no buttons in the collapsed row
-  const rline=(rbm||statusLine(p))?`<div class="rbm">${rbm}${statusLine(p)}</div>`:"";
-  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}">${ph?`<td>${photoCell(p)}</td>`:""}<td class="nm"${ph?"":` colspan="2"`}><div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${metaLine(p)}${am.length?`<div class="am">${am.map(esc).join(" · ")}</div>`:""}${rline}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${priceCell(p)}${memLine(p)}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
+  // phone only (desktop has rating and hours columns): the hours line under the amenities and the rating badges on one line at the bottom of the row;
+  // price, duration and booking tag float at the right of the main cell (the price column is hidden on phone), so text below them uses the full width; no buttons in the collapsed row
+  const hl=hoursLine(p); const rline=hl?`<div class="hrm">${hl}</div>`:"";
+  const bk=bkTag(p); const pc=priceCell(p)+memLine(p)+(bk?`<div class="bkr">${bk}</div>`:"");
+  // the thumbnail cell is always there (a placeholder when there is no photo), so names line up
+  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}"><td>${photoCell(p)}</td><td class="nm">${pc?`<div class="pcm">${pc}</div>`:""}<div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${metaLine(p)}${amenHTML(p)}${rline}${rbm?`<div class="rbm">${rbm}</div>`:""}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${pc}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
 const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
@@ -1218,7 +1407,7 @@ function render(keep){
   shown=0; tbody.textContent=""; appendRows(need);
   const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
   document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",KNOWN_HRS))}</span>`:""}`;
-  updateFtoggle(); rateCounts();
+  updateFtoggle(); facetCounts(); drawNores();
   requestAnimationFrame(fill);
 }
 function setActiveMk(i){ document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active"); } }
@@ -1234,7 +1423,7 @@ function hPush(s,url){ try{ history.pushState(s,"",url); }catch(e){} }
 function hReplace(s,url){ try{ history.replaceState(s,"",url); }catch(e){} }
 const byId=id=>P.find(x=>x.id===id||(x.alias_ids||[]).includes(id));
 // expand a card (DOM only). If the current filters hide the place, they are reset with a toast so the card can always be shown
-function openCard(i,noMap){ if(st.open===i) return; const was=st.open;
+function openCard(i,noMap){ if(st.open===i) return; const was=st.open; loadMore();
   if(!ensureShown(i)){ resetAll(true); render(); ensureShown(i); toast(t("f_reset")); }
   if(was!=null) closeCard(was,true);
   st.open=i; const r=rowEl(i);
@@ -1297,6 +1486,7 @@ tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(p
   const sm=e.target.closest("[data-showmap]"); if(sm){ if(HS().v==="card"&&HS().back==="map") history.back(); else showOnMap(+sm.dataset.showmap); return; }
   const sh=e.target.closest("[data-share]"); if(sh){ shareLink(+sh.dataset.share,sh); return; }
   const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
+  if(e.target.closest("[data-retry]")){ loadMore(); return; }
   if(e.target.closest("tr.detail")) return;
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) toggleRow(+r.dataset.i);});
 
@@ -1310,7 +1500,11 @@ document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closes
 // route menu (Google Maps / Apple Maps / Waze): anchored popover on desktop, bottom sheet on phones
 function showRoute(btn){ const p=P[+btn.dataset.route]; if(!p||p.lat==null) return; const dest=`${p.lat},${p.lon}`;
   const mi=(h,l)=>`<a class="mi" target="_blank" rel="noopener" href="${h}">${l}${ico("ext","ic-s mi-c")}</a>`;
-  popShow(btn,`<div class="hpt">${esc(t("route"))} · ${esc(pname(p))}</div><div class="menu">${mi(`https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}`,"Google Maps")}${mi(`https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}`,esc(t("r_apple")))}${mi(`https://waze.com/ul?ll=${dest}&navigate=yes`,"Waze")}</div>`,{label:t("route")+" · "+pname(p)}); }
+  const byName=p.geo_approx&&!p.pid; const q=encodeURIComponent([p.name,p.address,p.muni].filter(Boolean).join(", "));
+  const g=byName?`https://www.google.com/maps/dir/?api=1&destination=${q}`:`https://www.google.com/maps/dir/?api=1&destination=${dest}${p.pid?"&destination_place_id="+encodeURIComponent(p.pid):""}`;
+  const a=byName?`https://maps.apple.com/?daddr=${q}`:`https://maps.apple.com/?daddr=${dest}&q=${encodeURIComponent(p.name)}`;
+  const w=byName?`https://waze.com/ul?q=${q}&navigate=yes`:`https://waze.com/ul?ll=${dest}&navigate=yes`;
+  popShow(btn,`<div class="hpt">${esc(t("route"))} · ${esc(pname(p))}</div><div class="menu">${mi(g,"Google Maps")}${mi(a,esc(t("r_apple")))}${mi(w,"Waze")}</div>`,{label:t("route")+" · "+pname(p)}); }
 // filters over full-screen map
 // bottom sheet: filters apply live; closes via "Show", the backdrop, the ✕, a swipe down on the handle or Esc
 const isSheet=()=>document.documentElement.classList.contains("fpanel");
@@ -1336,14 +1530,14 @@ function showSched(btn){ const p=P[+btn.dataset.sch]; const c=p&&p.sch; if(!c) r
   const fm=(c.formats||[]).map(f=>`<div><span>${esc(f["name_"+LANG]||f.name_en||f.name_ru||"")}${f.minutes?" · "+fmtMinU(f.minutes):""}</span><b class="num">${f.price_eur!=null?eur(f.price_eur):""}</b></div>`).join("");
   const up=(c.upcoming||[]).slice(0,5).map(u=>{ const d=new Date(u.date+"T12:00:00"); const ds=d.toLocaleDateString(LANG==="pt"?"pt-PT":LANG==="en"?"en-GB":"ru-RU",{day:"numeric",month:"short",weekday:"short"}); return `<div><b>${esc(ds)}${u.time?" "+esc(u.time):""}</b> ${esc(u.title||"")}</div>`; }).join("");
   popShow(btn,`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div class="sub">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}`,{wide:true,label:t("sch_t")+" · "+p.name}); }
-function showHours(btn){ const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); popShow(btn,`<div class="hpt">${esc(t("weekhrs"))}</div>${statusLine(p)}${weekTable(p.wk)}`,{label:t("weekhrs")+" · "+p.name}); }
+function showHours(btn){ const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); popShow(btn,`<div class="hpt">${esc(t("weekhrs"))}</div>${weekTable(p.wk)}`,{label:t("weekhrs")+" · "+p.name}); }
 // popover openers (hours, schedule, route, language) toggle; any other click outside the popover closes it
 document.addEventListener("click",e=>{ if(!e.target.closest) return; const b=e.target.closest(".hbtn,[data-route],#langsw");
   if(b){ e.stopPropagation(); e.preventDefault(); const key=b.dataset.hrs!=null?"h"+b.dataset.hrs:b.dataset.sch!=null?"s"+b.dataset.sch:b.dataset.route!=null?"r"+b.dataset.route:"lang";
     if(!hpop.hidden&&hpop.dataset.for===key){ closePop(); return; }
     if(b.dataset.sch!=null) showSched(b); else if(b.dataset.hrs!=null) showHours(b); else if(b.dataset.route!=null) showRoute(b); else showLang(b); hpop.dataset.for=key; return; }
   if(!e.target.closest("#hpop")&&!e.target.closest("[data-fb]")) closePop(); },true);
-document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; if(!hpop.hidden) closePop(true); else if(!ps.hidden&&lb.hidden) closePreview(); });
+document.addEventListener("keydown",e=>{ if(e.key!=="Escape") return; if(!hpop.hidden) closePop(true); else if(pvI!=null&&lb.hidden) closePreview(); });
 window.addEventListener("scroll",()=>{ if(hpop.dataset.keep!=="1") closePop(); },{passive:true});
 map.on("movestart",()=>{ if(hpop.dataset.keep!=="1") closePop(); });
 // owner / visitor feedback (shown only when FB is configured)
@@ -1391,7 +1585,7 @@ function lbShow(){ const x=lbP._ph[lbJ]; if(!x) return;
   const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
   const many=lbP._ph.length>1; ["lb-prev","lb-next"].forEach(id=>document.getElementById(id).hidden=!many);
   [lbJ,lbJ+1,lbJ-1].forEach(j=>{ const sl=lbTrack.children[(j+lbP._ph.length)%lbP._ph.length]; const im=sl&&sl.firstElementChild; if(im&&im.loading==="lazy") im.loading="eager"; }); }
-function openLB(i,j){ lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbBuild(); lbAlign(false); lbShow(); document.getElementById("lb-x").focus(); }
+function openLB(i,j){ loadMore(); lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbBuild(); lbAlign(false); lbShow(); document.getElementById("lb-x").focus(); }
 function closeLB(){ lb.hidden=true; document.body.style.overflow=""; lbTrack.innerHTML=""; lbP=null; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
 const step=d=>{ if(!lbP) return; lbJ=(lbJ+d+lbP._ph.length)%lbP._ph.length; lbAlign(true); lbShow(); };
 lbTrack.addEventListener("scroll",()=>{ if(lbRaf||!lbP) return; lbRaf=requestAnimationFrame(()=>{ lbRaf=0; if(!lbP||!lbTrack.clientWidth) return; const j=Math.round(lbTrack.scrollLeft/lbTrack.clientWidth); if(j!==lbJ&&j>=0&&j<lbP._ph.length){ lbJ=j; lbShow(); } }); },{passive:true});
@@ -1408,13 +1602,48 @@ let tx=null, ty=null;
 lb.addEventListener("touchstart",e=>{ tx=e.touches[0].clientX; ty=e.touches[0].clientY; },{passive:true});
 lb.addEventListener("touchend",e=>{ if(tx==null) return; const dx=e.changedTouches[0].clientX-tx, dy=e.changedTouches[0].clientY-ty; if(dy>90&&Math.abs(dx)<40) closeLB(); tx=null; },{passive:true});
 lbTrack.addEventListener("error",e=>{ const im=e.target; if(!lbP||!im||im.tagName!=="IMG") return; if(lbP._ph.length>1){ const j=+im.dataset.j; lbP._ph.splice(j,1); if(j<lbJ) lbJ--; if(lbJ>=lbP._ph.length) lbJ=0; lbBuild(); lbAlign(false); lbShow(); } },true);
-document.addEventListener("error",e=>{ const t=e.target; if(t && t.tagName==="IMG" && t.dataset.full && t.getAttribute("src")!==t.dataset.full){ t.src=t.dataset.full; return; } if(t && t.tagName==="IMG" && t.closest("[data-ph]")){ const b=t.closest("[data-ph]"); b.style.display="none"; const nx=b.nextElementSibling; if(nx&&b.parentElement.classList.contains("thumbs")) nx.style.display="block"; } },true);
+document.addEventListener("error",e=>{ const im=e.target; if(!im||im.tagName!=="IMG") return; if(im.dataset.full&&im.getAttribute("src")!==im.dataset.full){ im.src=im.dataset.full; return; }
+  const b=im.closest("[data-ph]"); if(!b) return; const box=b.parentElement, p=P[+b.dataset.i];
+  if(box.classList.contains("thumbs")){ b.remove(); if(!box.querySelector("[data-ph]")&&p) box.innerHTML=phdHTML(p); return; }
+  if(box.classList.contains("pp-sl")){ const sw=box.parentElement; b.remove();
+    if(!box.children.length&&p){ sw.classList.add("pp-ph"); sw.querySelectorAll(".pp-sl,.pp-nav,.pp-cnt").forEach(x=>x.remove()); sw.insertAdjacentHTML("afterbegin",phdHTML(p,true)); }
+    else { const c=sw.querySelector(".pp-cnt"); if(c) c.textContent=t("n_of",Math.round(box.scrollLeft/(box.clientWidth||1))+1,box.children.length); } return; }
+  b.style.display="none"; },true);
 
 setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
 // own API: enable owner/feedback UI only when the service answers
 (function(){ const ctl=new AbortController(); setTimeout(()=>ctl.abort(),6000);
   fetch(FB_API+"/api/health",{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(j=>{ if(!j||!j.ok) return; FB.B="api"; FB.A="owner.html";
     return fetch(FB_API+"/api/stats").then(r=>r.ok?r.json():{}).then(sx=>{ P.forEach(p=>{ if(sx[p.id]) p.fb=sx[p.id]; }); }).catch(()=>{}).then(()=>{ if(hpop.hidden&&lb.hidden) render(true); }); }).catch(()=>{}); })();
+// a failed or stalled load (20 s) shows "details did not load" + Retry in the open card; the next card, photo or pin tries again; core data keeps working
+function loadMore(){ if(MORE) return Promise.resolve(); if(morePr) return morePr;
+  if(MORE_ERR){ MORE_ERR=false; if(st.open!=null) refreshCard(st.open); }
+  morePr=new Promise(res=>{ const sc=document.createElement("script"); sc.src="data_more.js"+(moreTry?"?r="+moreTry:""); moreTry++; sc.async=true; let done=false;
+    const fail=()=>{ if(done) return; done=true; morePr=null; MORE_ERR=true; if(st.open!=null) refreshCard(st.open); res(); };
+    const tm=setTimeout(fail,20000);
+    // the first successful response wins; a late response of a superseded attempt is ignored (mergeMore is also idempotent)
+    sc.onload=()=>{ clearTimeout(tm); if(MORE){ try{ delete window.SAUNA_MORE; }catch(e){} res(); return; } if(!window.SAUNA_MORE){ sc.remove(); fail(); return; } done=true; try{ mergeMore(window.SAUNA_MORE); }catch(e){ console.error(e); } res(); };
+    sc.onerror=()=>{ clearTimeout(tm); sc.remove(); fail(); }; document.head.appendChild(sc); });
+  return morePr; }
+// merge by id: photos appended after the first three, texts per language, contacts and sources; then the search index takes the notes in
+function mergeMore(list){ if(MORE) return; const by=new Map(P.map(p=>[p.id,p]));
+  list.forEach(m=>{ const p=by.get(m.id); if(!p) return; for(const k in m){ if(k==="id") continue; const v=m[k];
+    if(k==="photos"){ const seen=new Set((p.photos||[]).map(x=>x.u)); p.photos=(p.photos||[]).concat(v.filter(x=>!seen.has(x.u)&&seen.add(x.u))); } else if(k==="tr"){ p.tr=p.tr||{}; for(const L in v) p.tr[L]=Object.assign(p.tr[L]||{},v[L]); } else p[k]=v; } p._ph=phOf(p); });
+  MORE=true; MORE_ERR=false; morePr=null; try{ delete window.SAUNA_MORE; }catch(e){}
+  SRCH.reset(); if(st.qt.length) render(true); else { idle(()=>SRCH.query([],P)); if(st.open!=null) refreshCard(st.open); }
+  if(lbP&&!lb.hidden){ lbBuild(); lbAlign(false); lbShow(); }
+  if(curPop&&pvI!=null&&map.hasLayer(curPop)) refreshPopup(); }
+// an open popup gets the full photo strip, staying on the photo that is on screen
+function refreshPopup(){ const el=curPop.getElement(); const sl0=el&&el.querySelector(".pp-sl"); const cur=sl0?Math.round(sl0.scrollLeft/(sl0.clientWidth||1)):0;
+  curPop.setContent(previewHTML(P[pvI])); const el2=curPop.getElement(); if(!el2) return; wirePreview(el2);
+  const sl=el2.querySelector(".pp-sl"); if(sl&&cur){ sl.scrollLeft=cur*sl.clientWidth; const c=el2.querySelector(".pp-cnt"); if(c) c.textContent=t("n_of",cur+1,sl.children.length); } }
+function refreshCard(i){ const d=document.getElementById("det-"+i); if(d) d.outerHTML=detailHTML(P[i]); }
+tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
+// a query that matches nothing at all: "Nothing found for ..." and one tap on the closest spelling
+function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElementById("nores"), b=document.getElementById("tryq");
+  document.getElementById("empty-t").hidden=nr; np.hidden=!nr; if(nr) np.textContent=t("nores",qEl.value.trim());
+  b.hidden=!(nr&&lastSug); if(nr&&lastSug){ b.textContent=t("try_q",lastSug); b.dataset.q=lastSug; } }
+document.getElementById("tryq").onclick=e=>{ qEl.value=e.currentTarget.dataset.q||""; applyQ(); };
 renderHead(); render();
 // first view: a saved state (reload) is restored; a deep link #p-id (alias ids too) opens as a card entry, so the browser's back collapses it
 function initNav(){ const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); const p=mm?byId(mm[1]):null;
@@ -1422,6 +1651,8 @@ function initNav(){ const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(l
   if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
   else hReplace({v:"list"},location.href); }
 initNav();
+// details after the window load event (tiles, first photos and fonts go first), while the browser is idle
+if(document.readyState==="complete") idle(()=>loadMore(),2500); else addEventListener("load",()=>idle(()=>loadMore(),2500),{once:true});
 const drawFoot=()=>{ document.getElementById("foot").textContent = t("foot",t("updated")); }; drawFoot();
 })();
 </script>
