@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=9916c51d36" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=c06ae4a365" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -218,6 +218,7 @@ html.mapfull .cptoast{bottom:calc(72px + env(safe-area-inset-bottom,0px))}
 html.mapfull .mapbar{display:flex;gap:8px;position:absolute;z-index:1600;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px))}
 /* one filter sheet for list and map modes (phone): fixed bottom sheet, live filtering, sticky "Show N" footer, reset + close in the header */
 html.fpanel .filters{display:grid;gap:6px;position:fixed;z-index:1700;left:0;right:0;bottom:0;max-height:78vh;max-height:78svh;overflow:auto;overscroll-behavior:contain;margin:0;border-radius:20px 20px 0 0;box-shadow:0 -10px 40px rgba(0,0,0,.22);padding:8px 16px 0;background:var(--panel)}
+html.fpanel .filters{scroll-padding:12px 0 calc(86px + env(safe-area-inset-bottom,0px))}
 html.fpanel .filters > .fhead{padding-bottom:8px;border-bottom:1px solid var(--line)}
 html.fpanel .filters > .sortrow{padding-bottom:2px}
 html.fpanel .filters > .frow:not([hidden]):not(.fdrow){display:flex!important}
@@ -344,7 +345,8 @@ a.act{color:var(--ink)}
 .mk{width:26px;height:26px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);display:grid;place-items:center}
 .mk svg{transform:rotate(45deg);width:15px;height:15px;display:block}
 .mk.active{outline:3px solid var(--heat)}
-.mk.hover,.mk.sel{transform:rotate(-45deg) scale(1.3);box-shadow:0 0 0 3px var(--heat),0 2px 8px rgba(0,0,0,.35)}
+.mk.hover{transform:rotate(-45deg) scale(1.3);box-shadow:0 0 0 3px var(--heat),0 2px 8px rgba(0,0,0,.35)}
+.mk.sel{opacity:1;filter:none;background:#153f43!important;color:#fff;transform:rotate(-45deg) scale(1.35);box-shadow:0 0 0 3px #fff,0 0 0 6px #153f43,0 4px 12px rgba(0,0,0,.4)}
 .leaflet-marker-icon:has(.mk.hover),.leaflet-marker-icon:has(.mk.sel){z-index:100000!important}
 .mcl{width:34px;height:34px;border-radius:50%;background:var(--sea);color:var(--on-sea);font-weight:600;font-size:13px;display:grid;place-items:center;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .leaflet-control-attribution{font-size:11px}
@@ -683,7 +685,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=9916c51d36"></script>
+<script src="data.js?v=c06ae4a365"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1153,15 +1155,36 @@ P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=KINDS[kg(p)][1];
   const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}${p.geo_approx?" approx":""}" data-i="${p._i}" style="background:${col}">${pinIco(kg(p))}</div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name,keyboard:false});
-  m.on("click",()=>openPin(p._i));
+  m.on("click",()=>focusPin(p._i));
   markers[p._i]=m;
 });
 // a pin opens the place preview: an anchored Leaflet popup on desktop and on phones (the map stays visible and draggable, a tap on it closes the popup)
 function pvOpts(off){ const ph=isPhone(); const w=ph?Math.min(Math.round(innerWidth*0.92),360):312;
-  return {offset:[0,off==null?-24:off],closeButton:false,maxWidth:w,minWidth:w,autoPan:true,autoPanPaddingTopLeft:[ph?10:20,ph?28:20],autoPanPaddingBottomRight:[ph?10:20,ph?78:72],className:ph?"pv-m":"pv-d"}; }
+  return {offset:[0,off==null?-42:off],closeButton:false,maxWidth:w,minWidth:w,autoPan:true,autoPanPaddingTopLeft:[ph?10:20,ph?28:20],autoPanPaddingBottomRight:[ph?10:20,ph?78:72],className:ph?"pv-m":"pv-d"}; }
 let pvI=null, curPop=null;
 function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; loadMore();
   const pop=curPop=L.popup(pvOpts(off)); pop.pvI=i; pop.setLatLng(m.getLatLng()).setContent(previewHTML(p)).openOn(map); }
+// User selection gets a neighbourhood view; history restoration keeps its saved zoom.
+// Reveal overlapping pins at this zoom instead of zoomToShowLayer's max-zoom fallback.
+let focusSeq=0, focusWait=null;
+function cancelPinFocus(){ ++focusSeq; if(focusWait){ cluster.off(focusWait.type,focusWait.fn); focusWait=null; } }
+function focusPin(i){ const m=markers[i]; if(!m||!cluster.hasLayer(m)) return;
+  cancelPinFocus(); const seq=focusSeq;
+  closePreview(); map.stop();
+  const wait=(type,fn)=>{ const once=e=>{ cluster.off(type,once); focusWait=null; if(seq===focusSeq&&cluster.hasLayer(m)) fn(e); }; focusWait={type,fn:once}; cluster.on(type,once); };
+  const reveal=()=>{ if(seq!==focusSeq||!cluster.hasLayer(m)) return;
+    // MarkerCluster can still animate its icons after Leaflet's nonanimated setView.
+    if(cluster._inZoomAnimation){ wait("animationend",reveal); return; }
+    const visible=cluster.getVisibleParent(m);
+    if(visible&&visible!==m&&visible.spiderfy){
+      wait("spiderfied",e=>{ if(e.cluster===visible) openPin(i); }); visible.spiderfy();
+    }else openPin(i);
+  };
+  // Use the venue's coordinates, not a temporarily displaced spiderfied pin.
+  map.setView([P[i].lat,P[i].lon],Math.max(map.getZoom(),15),{animate:false});
+  reveal();
+}
+cluster.on("animationend",()=>setSel(pvI));
 function setSel(i){ document.querySelectorAll(".mk.sel").forEach(e=>e.classList.remove("sel")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("sel"); } }
 function closePreview(){ map.closePopup(); }
 function wirePreview(el){
@@ -1464,10 +1487,7 @@ function openCard(i,noMap){ if(st.open===i) return; const was=st.open; loadMore(
   if(r&&!document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
   setActiveMk(i);
   if(noMap||isPhone()||!markers[i]) return;
-  // desktop: keep the zoom, pan if needed and open the popup in place (also when the pin sits inside a cluster)
-  const m=markers[i]; const vis=cluster.getVisibleParent(m);
-  if(vis===m){ map.panInside(m.getLatLng(),{padding:[80,80]}); openPin(i); }
-  else { map.panInside(m.getLatLng(),{padding:[120,120]}); openPin(i,-2); } }
+  focusPin(i); }
 function closeCard(i,keepMk){ const r=rowEl(i); if(r){ r.classList.remove("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","false"); } const d=document.getElementById("det-"+i); if(d) d.remove(); if(st.open===i) st.open=null; if(!keepMk) setActiveMk(null); }
 // a tap on a row: open (one history entry per open card, replaced when switching cards) or close
 function toggleRow(i){ const r0=rowEl(i); const y0=r0?r0.getBoundingClientRect().top:null; const hs=HS();
@@ -1479,11 +1499,11 @@ function openFromMap(i){ const p=P[i];
   if(isFull()&&HS().v==="map"){ const c=map.getCenter(); hReplace({v:"map",view:{c:[c.lat,c.lng],z:map.getZoom(),pv:i}},location.href); hPush({v:"card",id:p.id,back:"map"},cardUrl(p.id)); closePreview(); hideFull(); openCard(i,true); scrollToRow(i); return; }
   map.closePopup(); closePreview(); const s={v:"card",id:p.id}; if(HS().v==="card") hReplace(s,cardUrl(s.id)); else hPush(s,cardUrl(s.id)); openCard(i,true); scrollToRow(i); }
 function showFull(noFit,after){ if(isFull()) return; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); if(after) after(); },60); }
-function hideFull(){ if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); }
+function hideFull(){ cancelPinFocus(); if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); }
 function openFull(noFit){ if(isFull()) return; hPush({v:"map"},location.href); showFull(noFit); }
-function closeFull(){ if(HS().v==="map") history.back(); else hideFull(); }
-function showOnMap(i){ if(isPhone()) openFull(true); setTimeout(()=>{ map.invalidateSize(); if(markers[i]) cluster.zoomToShowLayer(markers[i],()=>openPin(i)); },80); }
-function applyState(s){ s=s||{v:"list"};
+function closeFull(){ cancelPinFocus(); if(HS().v==="map") history.back(); else hideFull(); }
+function showOnMap(i){ cancelPinFocus(); const seq=focusSeq; if(isPhone()) openFull(true); setTimeout(()=>{ if(seq!==focusSeq) return; map.invalidateSize(); if(markers[i]) focusPin(i); },80); }
+function applyState(s){ cancelPinFocus(); s=s||{v:"list"};
   if(s.v==="map"){ const v=s.view; const restore=()=>{ if(!v) return; map.setView(v.c,v.z,{animate:false}); if(v.pv!=null&&markers[v.pv]) openPin(v.pv); };
     if(isFull()) restore(); else showFull(true,restore); return; }
   hideFull();
@@ -1544,6 +1564,14 @@ function showRoute(btn){ const p=P[+btn.dataset.route]; if(!p||p.lat==null) retu
 const isSheet=()=>document.documentElement.classList.contains("fpanel");
 function openSheet(){ document.documentElement.classList.add("fpanel"); fbox.classList.add("open"); ft.setAttribute("aria-expanded","true"); fbox.scrollTop=0; }
 function closeSheet(){ if(!isSheet()) return; document.documentElement.classList.remove("fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); }
+// Expanding the bottom disclosure must reveal its contents above the sticky Show button.
+function revealSheetSection(el){ requestAnimationFrame(()=>{
+  if(!isSheet()||!el||el.hidden) return;
+  const top=fbox.scrollTop+el.getBoundingClientRect().top-fbox.getBoundingClientRect().top-12;
+  fbox.scrollTo({top,behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+}); }
+document.getElementById("area-d").addEventListener("toggle",e=>{ if(e.target.open) revealSheetSection(e.target); });
+document.getElementById("f-area").addEventListener("click",e=>{ if(e.target.closest("button")) revealSheetSection(document.getElementById("muni-row")); });
 document.getElementById("mapfilt").onclick=openSheet;
 document.getElementById("fdone").onclick=closeSheet;
 document.getElementById("fclose").onclick=closeSheet;
