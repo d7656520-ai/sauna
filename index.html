@@ -1294,7 +1294,7 @@ function detail(p){const a=p.access||{};
   const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
   const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
   add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
-  if(p.ratings&&p.ratings.booking&&p.ratings.google) add(t("d_rate"), rb({booking:p.ratings.booking,booking_reviews:p.ratings.booking_reviews}));
+  // ratings are shown in the row (both platforms); the card does not repeat them
   if(LANG==="ru") add(t("d_lists"), esc((p.lists||[]).join(", ")));
   add(t("d_rules"), esc([p.min_age?t("from_age",p.min_age):"", cap(tr(p,"rules")||"")].filter(Boolean).join(". ")));
   const fb=p.fb||{}; const vis=[]; if(fb.ok>0) vis.push(t("v_ok",fb.ok)); if(fb.n>=3&&fb.rating!=null) vis.push(t("v_rate",n1(fb.rating),fb.n));
