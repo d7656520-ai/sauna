@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=9916c51d36" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -281,14 +281,15 @@ html.fpanel .fdone:active{transform:translateY(1px)}
 .os.o{color:var(--ok)} .os.c{color:var(--muted)}
 .wkt{border-collapse:collapse;font-size:13px;width:auto;table-layout:auto;margin-top:2px} tr.detail .wkt td,.wkt td{padding:1px 14px 1px 0;border:0;background:none!important;line-height:1.45;max-width:none;overflow-wrap:normal;white-space:nowrap} .wkt tr.td td{font-weight:600}
 /* rating badge: score over a thin strip of the same colour naming the platform (green Google, blue Booking, grey under 50 ratings); reviews beside it */
-.rbs{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
-.rbw{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;vertical-align:middle}
-.rb{--rbc:var(--g1);display:inline-flex;flex-direction:column;align-items:stretch;min-width:46px;border-radius:7px 7px 7px 2px;overflow:hidden;color:#fff;background:var(--rbc);font-variant-numeric:tabular-nums;box-shadow:0 1px 2px rgba(0,0,0,.14)}
+.rbs{display:flex;flex-direction:column;gap:5px;align-items:flex-start}
+.rbw{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;vertical-align:middle}
+/* compact (round 6, about 30% smaller than round 4): 13 px score over a 10 px strip, 24 to 25 px tall */
+.rb{--rbc:var(--g1);display:inline-flex;flex-direction:column;align-items:stretch;min-width:34px;border-radius:5px 5px 5px 2px;overflow:hidden;color:#fff;background:var(--rbc);font-variant-numeric:tabular-nums;box-shadow:0 1px 1.5px rgba(0,0,0,.14)}
 .rb.g3{--rbc:var(--g3)}.rb.bk{--rbc:var(--bk)}
-.rb b{display:block;text-align:center;font-size:14px;font-weight:600;line-height:18px;padding:1px 6px 0}
-.rb i{display:block;font-style:normal;text-align:center;font-size:11px;font-weight:600;line-height:13px;padding:0 5px 1px;background:rgba(0,0,0,.2);letter-spacing:.01em}
-.rc{display:inline-flex;flex-direction:column;font-size:11.5px;line-height:1.2;color:var(--muted);font-variant-numeric:tabular-nums}
-.rc .rn{display:block;color:var(--ink);font-weight:600;font-size:12px}
+.rb b{display:block;text-align:center;font-size:13px;font-weight:600;line-height:13px;padding:1px 4px 0}
+.rb i{display:block;font-style:normal;text-align:center;font-size:10px;font-weight:600;line-height:10px;padding:0 4px 1px;background:rgba(0,0,0,.2)}
+.rc{display:inline-flex;flex-direction:column;font-size:11px;line-height:1.2;color:var(--muted);font-variant-numeric:tabular-nums}
+.rc .rn{display:block;color:var(--ink);font-weight:600;font-size:11.5px}
 .rc.few .rn{display:inline;color:inherit;font-weight:400;font-size:inherit}
 .rc .rfew{font-size:11px}
 /* amenities: pictogram + label, one hue per family (heat, hammam, cold, water, massage, gym, sea); one line in rows and popups, wrapped in an open card */
@@ -298,6 +299,20 @@ html.fpanel .fdone:active{transform:translateY(1px)}
 .aic{width:15px;height:15px;flex:0 0 auto}
 .a-heat{--af:var(--a-heat)}.a-steam{--af:var(--a-steam)}.a-cold{--af:var(--a-cold)}.a-water{--af:var(--a-water)}.a-rose{--af:var(--a-rose)}.a-gym{--af:var(--a-gym)}.a-sea{--af:var(--a-sea)}
 tr.row.active .am{max-height:none}
+/* more amenities than fit on the line: the ones that do not fit are hidden whole and a "+N" chip closes the line (fitAm() measures it);
+   tapping the row opens the card, tapping the chip in a popup unfolds the line; the open card and an unfolded popup show every item */
+/* the line takes the width it is given and does not size the table column (otherwise hiding items would move the columns it was measured in) */
+.am{contain:inline-size}
+.am .ai.amh{display:none}
+.amore{flex:0 0 auto;align-self:center;display:inline-flex;align-items:center;height:17px;margin-left:-3px;padding:0 6px;border-radius:999px;background:var(--chip);border:1px solid var(--chip-bd);color:var(--muted);font-size:max(11.5px,.88em);font-weight:600;line-height:1;font-variant-numeric:tabular-nums;white-space:nowrap}
+.am.am1{flex-wrap:nowrap} .am.am1 .ai{flex:0 1 auto}
+.am.amm .ai.amh{display:none!important} .am.amm .amore{display:inline-flex!important}
+tr.row.active .am .ai.amh,.am.amall .ai.amh{display:inline-flex}
+tr.row.active .am .amore,.am.amall .amore{display:none}
+tr.row.active .am.am1,.am.amall.am1{flex-wrap:wrap}
+.am.amall{max-height:none!important}
+.pp-b .amore{cursor:pointer}
+.pp-b .amore:hover{border-color:var(--sea);color:var(--sea)}
 /* booking ahead */
 .bkt{display:inline-block;font-size:11.5px;font-weight:600;line-height:1.3}
 .bk-required{color:var(--heat-text)}.bk-recommended{color:var(--muted)}.bk-walk_in{color:var(--ok)}
@@ -500,9 +515,6 @@ tr.skel td{padding:10px 8px}
   td .rbm{margin-top:4px;align-items:center}
   .hrm{display:block;margin-top:4px}
   .hrm .hs{font-size:12px;line-height:1.35}
-  td .rbm .rb b{font-size:13px;line-height:16px}
-  td .rbm .rb{min-width:44px}
-  td .rbm .rb i{padding:0 4px 1px}
   td .rbm .rbw{gap:4px}
   td .rbm .rc .rw{font-size:11px}
   .near{padding:6px 4px;display:inline-block;min-height:32px;box-sizing:border-box}
@@ -554,8 +566,8 @@ tr.skel td{padding:10px 8px}
   .pcm .bkr{margin-top:2px}
   tr.row td{padding-top:7px;padding-bottom:7px}
   /* one line: if the two badges do not fit with their counts, a count folds over its word ("1 877" / "отзывов") rather than the line breaking */
-  td .rbm{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:4px 12px;margin-top:4px;clear:both}
-  td .rbm .rbw{flex:0 1 auto;min-width:0;flex-direction:row;align-items:center;gap:5px;white-space:normal}
+  td .rbm{display:flex;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:4px 10px;margin-top:4px;clear:both}
+  td .rbm .rbw{flex:0 1 auto;min-width:0;flex-direction:row;align-items:center;gap:4px;white-space:normal}
   td .rbm .rb{flex:0 0 auto}
   td .rbm .rb b{padding-top:0}
   td .rbm .rc{display:flex;flex-direction:column;min-width:0;font-size:11px;line-height:1.25}
@@ -671,7 +683,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js"></script>
+<script src="data.js?v=9916c51d36"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -803,6 +815,23 @@ function amenItems(p,LG){ const A=I18N[LG||LANG]._am, R=I18N.ru._am; const ex=ne
 const amen=(p,LG)=>amenItems(p,LG).map(x=>x.l);
 // pictogram + label in the family colour; the row clamps to one line, the open card wraps
 const amenHTML=p=>{ const a=amenItems(p); return a.length?`<div class="am">${a.map(x=>`<span class="ai a-${x.f}">${aico(AIK[x.k]||"heat")}<span class="al">${esc(x.l)}</span></span>`).join("")}</div>`:""; };
+// "+N": in a row or popup the amenities keep one line; whatever does not fit is hidden whole (in order, so heat comes first) and a chip "+N" ends
+// the line (its title lists the hidden ones). Batched reads and writes; an element with no width yet (not laid out) is left for the next pass.
+function fitAm(els){ els=[...els].filter(e=>e&&e.isConnected); const L1=[];
+  els.forEach(el=>{ el.classList.add("amm"); el.classList.remove("am1"); const m=el.querySelector(".amore"); if(m) m.remove(); el.querySelectorAll(".ai.amh").forEach(x=>x.classList.remove("amh")); });
+  els.forEach(el=>{ if(!el.offsetWidth){ el.removeAttribute("data-f"); return; } el.dataset.f="1"; el.dataset.w=el.offsetWidth; const it=[...el.querySelectorAll(".ai")]; if(it.length<2) return;
+    const t0=it[0].offsetTop, h=it[0].offsetHeight/2; let k=1; while(k<it.length&&it[k].offsetTop<t0+h) k++; if(k<it.length) L1.push({el,it,k,t0,h}); });
+  const set=o=>{ o.it.forEach((x,j)=>x.classList.toggle("amh",j>=o.k)); const rest=o.it.slice(o.k).map(x=>x.textContent); o.m.textContent="+"+rest.length; o.m.title=rest.join(", "); o.m.setAttribute("aria-label",rest.join(", ")); };
+  L1.forEach(o=>{ o.m=document.createElement("span"); o.m.className="amore"; if(o.el.closest(".pp-b")){ o.m.setAttribute("role","button"); o.m.tabIndex=0; } o.el.appendChild(o.m); set(o); });
+  let bad=L1;
+  for(let n=0;n<8&&bad.length;n++){ bad=bad.filter(o=>o.m.offsetTop>=o.t0+o.h); bad.forEach(o=>{ if(o.k>1){ o.k--; set(o); } else o.el.classList.add("am1"); }); bad=bad.filter(o=>!o.el.classList.contains("am1")); }
+  els.forEach(el=>el.classList.remove("amm")); }
+// rows are refitted when their width changes (window resize, table columns settling as more rows arrive), and everything once the web font lands
+const amRO=window.ResizeObserver?new ResizeObserver(es=>{ const els=es.map(e=>e.target).filter(el=>el.offsetWidth&&+el.dataset.w!==el.offsetWidth); if(els.length) fitAm(els); }):null;
+const refitAm=()=>{ fitAm(document.querySelectorAll("#tbody .am, .leaflet-popup .am")); };
+let amW=innerWidth;
+window.addEventListener("resize",()=>{ if(amRO||innerWidth===amW) return; amW=innerWidth; clearTimeout(refitAm.t); refitAm.t=setTimeout(refitAm,120); });
+if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",()=>{ clearTimeout(refitAm.f); refitAm.f=setTimeout(refitAm,50); });
 const ACCESS = ()=>({day:t("acc_day"),treatment:t("acc_treatment"),membership:t("acc_membership"),private:t("acc_private")});
 const HEATF = ()=>({sauna:{l:t("x_sauna"),i:aico("heat"),f:"heat"},hammam:{l:t("x_hammam"),i:aico("steam"),f:"steam"},banya:{l:t("x_banya"),i:aico("banya"),f:"heat"},ir:{l:t("x_ir"),i:aico("ir"),f:"heat"}});
 const EXTF = ()=>({cold:{l:t("x_cold"),i:aico("cold"),f:"cold"},pool:{l:t("x_pool"),i:aico("pool"),f:"water"},sea:{l:t("x_sea"),i:aico("sea"),f:"sea"}});
@@ -1148,7 +1177,12 @@ function wirePreview(el){
   el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
   const mb=el.querySelector("[data-more]"); if(mb) mb.onclick=()=>openFromMap(+mb.dataset.more);
   const xb=el.querySelector("[data-pvx]"); if(xb) xb.onclick=ev=>{ ev.stopPropagation(); map.closePopup(); };
+  // amenities: one line with "+N"; the chip unfolds the full list in place
+  const am=el.querySelector(".pp-b .am"); if(am){ fitAm([am]); const unfold=ev=>{ const mo=ev.target.closest(".amore"); if(!mo) return; if(ev.type==="keydown"&&ev.key!=="Enter"&&ev.key!==" ") return; ev.preventDefault(); ev.stopPropagation(); am.classList.add("amall"); panPop(el); };
+    am.addEventListener("click",unfold); am.addEventListener("keydown",unfold); }
 }
+// the popup grew upwards (it is anchored at its bottom): pan so it stays inside the padding; popup.update() would re-render the HTML string and drop the state
+function panPop(el){ if(curPop&&curPop.getElement()===el&&curPop._adjustPan) try{ curPop._adjustPan(); }catch(e){} }
 map.on("popupopen",e=>{ const el=e.popup.getElement(); if(el) wirePreview(el); pvI=e.popup.pvI!=null?e.popup.pvI:null; setSel(pvI); if(isPhone()) document.documentElement.classList.add("psopen"); });
 map.on("popupclose",()=>{ pvI=null; setSel(null); document.documentElement.classList.remove("psopen"); });
 
@@ -1388,9 +1422,9 @@ function rowHTML(p){ const open=st.open===p._i;
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
 const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
-function appendRows(n){ const end=Math.min(LIST.length,shown+n); if(end<=shown) return; let h="";
+function appendRows(n){ const end=Math.min(LIST.length,shown+n); if(end<=shown) return; let h=""; if(!shown&&amRO) amRO.disconnect();
   for(let k=shown;k<end;k++){ const p=LIST[k]; h+=rowHTML(p); if(st.open===p._i) h+=detailHTML(p); }
-  tbody.insertAdjacentHTML("beforeend",h); shown=end; }
+  tbody.insertAdjacentHTML("beforeend",h); shown=end; const na=tbody.querySelectorAll(".am:not([data-f])"); fitAm(na); if(amRO) na.forEach(e=>amRO.observe(e)); }
 function ensureShown(i){ const k=LIST.findIndex(p=>p._i===i); if(k<0) return false; if(k>=shown) appendRows(k-shown+1+PAGE/2); return true; }
 const sentinel=document.getElementById("more-sentinel");
 function fill(){ if(shown<LIST.length && !isFull() && sentinel.getBoundingClientRect().top<innerHeight+1500){ appendRows(PAGE); requestAnimationFrame(fill); } }
@@ -1618,7 +1652,9 @@ setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
 // a failed or stalled load (20 s) shows "details did not load" + Retry in the open card; the next card, photo or pin tries again; core data keeps working
 function loadMore(){ if(MORE) return Promise.resolve(); if(morePr) return morePr;
   if(MORE_ERR){ MORE_ERR=false; if(st.open!=null) refreshCard(st.open); }
-  morePr=new Promise(res=>{ const sc=document.createElement("script"); sc.src="data_more.js"+(moreTry?"?r="+moreTry:""); moreTry++; sc.async=true; let done=false;
+  morePr=new Promise(res=>{ const sc=document.createElement("script"); // versioned by the build of the core (meta.build, a content hash), so a new release never reuses a cached data_more.js of the previous one; a retry adds r=N
+    const bld=((window.SAUNA_DATA||{}).meta||{}).build; const qs=[bld?"v="+encodeURIComponent(bld):"",moreTry?"r="+moreTry:""].filter(Boolean).join("&");
+    sc.src="data_more.js"+(qs?"?"+qs:""); moreTry++; sc.async=true; let done=false;
     const fail=()=>{ if(done) return; done=true; morePr=null; MORE_ERR=true; if(st.open!=null) refreshCard(st.open); res(); };
     const tm=setTimeout(fail,20000);
     // the first successful response wins; a late response of a superseded attempt is ignored (mergeMore is also idempotent)
@@ -1634,8 +1670,8 @@ function mergeMore(list){ if(MORE) return; const by=new Map(P.map(p=>[p.id,p]));
   if(lbP&&!lb.hidden){ lbBuild(); lbAlign(false); lbShow(); }
   if(curPop&&pvI!=null&&map.hasLayer(curPop)) refreshPopup(); }
 // an open popup gets the full photo strip, staying on the photo that is on screen
-function refreshPopup(){ const el=curPop.getElement(); const sl0=el&&el.querySelector(".pp-sl"); const cur=sl0?Math.round(sl0.scrollLeft/(sl0.clientWidth||1)):0;
-  curPop.setContent(previewHTML(P[pvI])); const el2=curPop.getElement(); if(!el2) return; wirePreview(el2);
+function refreshPopup(){ const el=curPop.getElement(); const sl0=el&&el.querySelector(".pp-sl"); const cur=sl0?Math.round(sl0.scrollLeft/(sl0.clientWidth||1)):0; const all=!!(el&&el.querySelector(".am.amall"));
+  curPop.setContent(previewHTML(P[pvI])); const el2=curPop.getElement(); if(!el2) return; wirePreview(el2); if(all){ const a2=el2.querySelector(".pp-b .am"); if(a2) a2.classList.add("amall"); }
   const sl=el2.querySelector(".pp-sl"); if(sl&&cur){ sl.scrollLeft=cur*sl.clientWidth; const c=el2.querySelector(".pp-cnt"); if(c) c.textContent=t("n_of",cur+1,sl.children.length); } }
 function refreshCard(i){ const d=document.getElementById("det-"+i); if(d) d.outerHTML=detailHTML(P[i]); }
 tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
