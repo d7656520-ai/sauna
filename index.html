@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=c06ae4a365" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=e74296dfbe" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -685,7 +685,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=c06ae4a365"></script>
+<script src="data.js?v=e74296dfbe"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -712,6 +712,7 @@ Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"
 Object.assign(I18N.ru,{wt_low:"не подтверждено",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Данные не подтверждены официальным сайтом, лучше уточнить",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
 Object.assign(I18N.en,{wt_low:"unconfirmed",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site, check before going",wt_sparse_h:"Little info so far: no price, hours or reviews"});
 Object.assign(I18N.pt,{wt_low:"por confirmar",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial, confirme antes de ir",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
+Object.assign(I18N.ru,{book_contact:"Связаться для записи"});Object.assign(I18N.en,{book_contact:"Contact to book"});Object.assign(I18N.pt,{book_contact:"Contactar para reservar"});
 Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
 Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
 Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Península de Setúbal",rg_oeste:"Oeste",rg_centro:"Centro",rg_norte:"Porto e Norte",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Açores",s_dist:"Mais perto de mim",d_fromme:"De si"});
@@ -1287,7 +1288,7 @@ function revTxt(n){ const f=I18N[LANG].reviews||I18N.ru.reviews; let i=n===1?0:1
 // the number of reviews beside it with the right plural, "few ratings" under the count when it is under 50. The same badge in rows, popups and cards
 function rbadge(v,plat,cls,n){ const few=n!=null&&n<50; return `<span class="rbw"><span class="rb ${few?"g3":cls}"><b>${v}</b><i>${plat}</i></span>${n||few?`<span class="rc${few?" few":""}">${n?revHTML(n):""}${few?`<span class="rfew">${esc(t("few"))}</span>`:""}</span>`:""}</span>`; }
 function rb(r){ if(!r) return ""; const o=[]; if(r.google) o.push(rbadge(n1(r.google),"Google","g1",r.google_reviews)); if(r.booking) o.push(rbadge(n1(r.booking),"Booking","bk",r.booking_reviews)); return o.join(""); }
-const bookUrl=p=>{ const u=(p.access||{}).booking_url||p.booking_url; return safeUrl(u); };
+const bookUrl=p=>[(p.access||{}).booking_url,p.booking_url,(p.sch||{}).booking_url].map(safeUrl).find(Boolean)||null;
 const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
 function photoCell(p){ if(!p._ph.length) return `<div class="thumbs">${phdHTML(p)}</div>`;
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
@@ -1365,7 +1366,7 @@ function detail(p){const a=p.access||{};
   // every action in one place: Book, directions, call, website (domain), share, show on map (phone only)
   const bu=bookUrl(p); const tel=p.phone?String(p.phone).replace(/[^\d+]/g,""):""; const site=safeUrl(p.website)||(/^http:\/\//i.test(p.website||"")?p.website:null);
   // phone: icon tiles in one row (the website tile says "Website", the domain shows on desktop)
-  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}</a>`:""}${dest?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}<span class="al">${esc(t("route"))}</span></button>`:""}${tel?`<a class="act" href="tel:${esc(tel)}">${ico("phone")}<span class="al">${esc(t("call"))}</span></a>`:""}${site?`<a class="act" href="${esc(site)}" target="_blank" rel="noopener">${ico("globe")}<span class="al hide-m">${esc(host(site))}</span><span class="al m-only">${esc(t("site"))}</span></a>`:""}<button type="button" class="act" data-share="${p._i}">${ico("share")}<span class="al">${esc(t("share"))}</span></button>${p.lat!=null?`<button type="button" class="act m-only" data-showmap="${p._i}">${ico("map")}<span class="al">${esc(t("showmap"))}</span></button>`:""}</div>`;
+  const acts=`<div class="acts">${bu?`<a class="act prim" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t(/wa\.me|whatsapp|t\.me\/|telegram|instagram\.com/i.test(bu)?"book_contact":"book"))}</a>`:""}${dest?`<button type="button" class="act" data-route="${p._i}">${ico("nav")}<span class="al">${esc(t("route"))}</span></button>`:""}${tel?`<a class="act" href="tel:${esc(tel)}">${ico("phone")}<span class="al">${esc(t("call"))}</span></a>`:""}${site?`<a class="act" href="${esc(site)}" target="_blank" rel="noopener">${ico("globe")}<span class="al hide-m">${esc(host(site))}</span><span class="al m-only">${esc(t("site"))}</span></a>`:""}<button type="button" class="act" data-share="${p._i}">${ico("share")}<span class="al">${esc(t("share"))}</span></button>${p.lat!=null?`<button type="button" class="act m-only" data-showmap="${p._i}">${ico("map")}<span class="al">${esc(t("showmap"))}</span></button>`:""}</div>`;
   // a card opened from a pin starts with "To the map": back to the same map view and preview (the browser's back does the same)
   const hs=HS(); const tomap=(hs.v==="card"&&hs.back==="map"&&(hs.id===p.id||(p.alias_ids||[]).includes(hs.id)))?`<button type="button" class="tomap" data-tomap>${ico("cl","ic-s")}${esc(t("tomap"))}</button>`:"";
   const ov=p.owner&&p.owner.verified_on;
