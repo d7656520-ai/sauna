@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=60350fe1be" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=3d3e89dcf4" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -162,6 +162,19 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .name .wtag{flex:0 0 auto;margin:2px 0 0}
 .wtag{display:inline-block;font-size:11.5px;line-height:1.5;padding:0 7px;background:var(--warn-soft);color:var(--warn);border-radius:6px;white-space:nowrap}
 .wtag.sparse{background:var(--chip);color:var(--muted)}
+/* places without confirmed outside access (shown on request): a quiet tag, the toggle at the top of the filters, the quiet lines around the list */
+.wtag.otag{background:var(--chip);color:var(--muted);white-space:normal;max-width:100%}
+.otog{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;min-height:36px;max-width:100%;padding:6px 12px 6px 10px;border:1px dashed var(--chip-bd);border-radius:9px;font-size:13px;line-height:1.3;color:var(--sea);cursor:pointer;white-space:normal}
+.otog .ic{flex:0 0 auto;width:16px;height:16px}
+.otog.on{border-style:solid;background:var(--sea-soft)}
+.otog.zero{color:var(--muted)}
+.otog:hover{border-color:var(--sea)}
+.otog:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+.hidn{margin:0;padding:10px 14px;font-size:13px;line-height:1.4;color:var(--muted);text-align:center}
+#hidn{border-top:1px solid var(--line)}
+#qhid{border-bottom:1px solid var(--line);text-align:left}
+.hidn button{all:unset;cursor:pointer;color:var(--sea);font-weight:600;padding:4px 2px;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
+.hidn button:focus-visible{outline:2px solid var(--sea);outline-offset:2px;border-radius:4px}
 tr.row.w-status td:not(:first-child){opacity:.78}
 tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .mk.weak{opacity:.6;filter:grayscale(.4)}
@@ -174,7 +187,8 @@ tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
   /* desktop: a compact bar (search, Filters with the active count, sort); the groups open in the panel with one click */
   .filters:not(.open) > .fg,.filters:not(.open) > .fd{display:none}
   .filters:not(.open) > .sortrow{border-top:0;padding-top:0}
-  .filters.open{padding-top:4px}}
+  .filters.open{padding-top:4px}
+  .filters.open > .fg.fopen{display:flex}}
 .sub{color:var(--muted);font-size:13px;margin-top:2px}
 .pill{display:inline-block;font-size:13px;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .p-ok{background:var(--ok-soft);color:var(--ok)}
@@ -262,6 +276,7 @@ html.fpanel .fdone:active{transform:translateY(1px)}
 .sgrid .tm{display:flex;flex-wrap:wrap;gap:3px}.sgrid .tm i{font-style:normal;background:var(--chip);border-radius:6px;padding:0 6px;font-variant-numeric:tabular-nums}
 .sfm{font-size:13px;margin:8px 0 0}.sfm div{display:flex;gap:8px;justify-content:space-between}
 .sup{font-size:13px;color:var(--muted);margin-top:8px}.sup b{color:var(--ink);font-weight:600}
+.hpop .sbk{margin-top:12px}
 .hpop.wide{max-width:320px}
 .tdy{font-size:11.5px;color:var(--muted);line-height:1.35;margin-top:2px}
 .tdy .wkmore{white-space:nowrap}
@@ -366,7 +381,9 @@ a.act{color:var(--ink)}
 .pv-x:focus-visible{outline:2px solid #fff}
 .pp-b{padding:12px 14px 14px}
 .pp-b .pv-h{display:flex;align-items:flex-start;gap:4px}
-.pp-b b.t{font-size:15px;line-height:1.3;flex:1 1 auto;min-width:0}
+.pp-b b.t{font-size:15px;line-height:1.3;flex:1 1 auto;min-width:0;-webkit-user-select:all;user-select:all;-webkit-touch-callout:default;cursor:text}
+/* touch screens: a long-press on the place name in a row selects the whole name (a mouse click keeps toggling the card without selecting) */
+@media (hover:none){.nmb{-webkit-user-select:all;user-select:all;-webkit-touch-callout:default}}
 .pp-b .m-in{display:inline}
 .pv-l{margin-top:6px}
 .pv-pr{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
@@ -621,6 +638,7 @@ tr.skel td{padding:10px 8px}
     <div class="filters" id="filters">
       <div class="fgrab" id="fgrab" aria-hidden="true"></div>
       <div class="fhead" id="fhead"><div class="fsum"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button></div><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="frow fg fopen" id="f-open-row"><button type="button" class="otog" id="otog"></button></div>
       <div class="frow fg" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
@@ -653,12 +671,14 @@ tr.skel td{padding:10px 8px}
 
     <p class="hint" data-th="hint"></p>
     <div class="tablewrap" id="list" tabindex="-1">
+      <p class="hidn" id="qhid" role="status" hidden></p>
       <table>
         <thead><tr id="thead"></tr></thead>
         <tbody id="tbody"><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:58%"></i><i style="width:36%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:70%"></i><i style="width:30%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:48%"></i><i style="width:40%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:64%"></i><i style="width:34%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:54%"></i><i style="width:42%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:66%"></i><i style="width:28%"></i></span></div></td></tr></tbody>
       </table>
       <div id="more-sentinel"></div>
       <div class="empty" id="empty" role="status" hidden><p id="empty-t" data-t="empty"></p><p id="nores" hidden></p><button type="button" class="act prim" id="tryq" hidden></button><button type="button" class="act" id="reset3" data-t="reset">Сбросить всё</button></div>
+      <p class="hidn" id="hidn" hidden></p>
     </div>
     <p class="foot fintro" data-t="intro"></p>
     <p class="hint fhint" data-th="hint"></p>
@@ -688,7 +708,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=60350fe1be"></script>
+<script src="data.js?v=3d3e89dcf4"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -769,6 +789,16 @@ Object.assign(I18N.en,{search:"Name, town, features",nores:"Nothing found for �
 Object.assign(I18N.pt,{search:"Nome, cidade, comodidades",nores:"Nada encontrado para «{0}»",try_q:"Pesquisar «{0}»",daily:"todos os dias",reviews:["{0} avaliação","{0} avaliações"],
  bk_required:"reserva obrigatória",bk_recommended:"reserva recomendada",bk_walk_in:"sem reserva",h_19:"Aberto depois das 19h",h_early:"Antes das 8h",today:"hoje",loading:"A carregar detalhes…",more_err:"Os detalhes não carregaram.",retry:"Tentar de novo",geo_ap:"localização aproximada",
  foot:"Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde é do Google, o azul é do Booking, o cinzento indica poucas avaliações; ao lado está o número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte."});
+// round 7: places without confirmed outside access are hidden by default (owner decision 11.11.2026); dated sessions labelled with the check date
+Object.assign(I18N.ru,{op_show:"Показать ещё {0} {1} без подтверждённого входа для посторонних",op_show0:"Показать места без подтверждённого входа для посторонних",op_hide:"Скрыть места без подтверждённого входа",op_pl:["место","места","мест"],
+ op_line:"ещё {0} {1} без данных о входе",op_more:"показать",op_tag:"вход для посторонних не подтверждён",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди мест без подтверждённого входа",op_qpl:["совпадение","совпадения","совпадений"],
+ op_exc:"Вход для посторонних в это место не подтверждён",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
+Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside access",op_show0:"Show places without confirmed outside access",op_hide:"Hide places without confirmed outside access",op_pl:["place","places"],
+ op_line:"{0} more {1} without access info",op_more:"show",op_tag:"outside access not confirmed",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among places without confirmed access",op_qpl:["match","matches"],
+ op_exc:"Access for non-guests is not confirmed here",sch_up_d:"Upcoming sessions as of {0}"});
+Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Ocultar locais sem acesso confirmado",op_pl:["local","locais"],
+ op_line:"mais {0} {1} sem dados de acesso",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre locais sem acesso confirmado",op_qpl:["resultado","resultados"],
+ op_exc:"O acesso de não hóspedes a este local não está confirmado",sch_up_d:"Próximas sessões à data da verificação {0}"});
 const LANGN={ru:"Русский",en:"English",pt:"Português"};
 let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
@@ -792,7 +822,8 @@ const ICO={cl:"M15 18l-6-6 6-6",cr:"M9 18l6-6-6-6",cd:"M6 9l6 6 6-6",cu:"M18 15l
   ext:"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",sort:"m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16",map:"M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zM8 2v16M16 6v16",list:"M4 6h16M4 12h16M4 18h16",
   check:"M20 6 9 17l-5-5",flag:"M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1zM4 22v-7",thumb:"M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3",
   star:"M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z",sliders:"M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6",
-  loc:"M12 2v3M12 19v3M2 12h3M19 12h3M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16M12 10.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 1 0 0-3"};
+  loc:"M12 2v3M12 19v3M2 12h3M19 12h3M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16M12 10.5a1.5 1.5 0 1 0 0 3a1.5 1.5 0 1 0 0-3",
+  eye:"M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6a3 3 0 1 0 0-6",eyeoff:"M9.9 5.2A9.6 9.6 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-2.2 3.2M6.6 6.6C3.7 8.4 2 12 2 12s3.5 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2M2 2l20 20"};
 const ico=(k,cls)=>`<svg class="ic${cls?" "+cls:""}" viewBox="0 0 24 24" aria-hidden="true"><path ${k==="star"?'fill="currentColor" stroke="none"':'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"'} d="${ICO[k]}"/></svg>`;
 // amenities: one item per facility with its family (colour) and pictogram; amen() keeps the plain labels for search
 const AFAM={sauna:"heat",finnish:"heat",banya:"heat",bio:"heat",infrared:"heat",rooms:"heat",cap:"heat",steam:"steam",hammam:"steam",cold_plunge:"cold",ice_bath:"cold",ice_fountain:"cold",ice_room:"cold",pool:"water",heated_pool:"water",jacuzzi:"water",hot_tub:"water",massage:"rose",gym:"gym",sea_view:"sea",beach_access:"sea"};
@@ -858,7 +889,7 @@ const COLS = [
 ];
 const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
 
-const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rmin:null,price:null,sort:"score",dir:-1,open:null};
+const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rmin:null,price:null,sort:"score",dir:-1,open:null,all:false,exc:null};
 try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&SORTS.has(s.sort)&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 try{ history.scrollRestoration="manual"; }catch(e){}
 
@@ -873,6 +904,17 @@ const cap = s => s ? s.charAt(0).toUpperCase()+s.slice(1) : s;
 const kmTxt = d => d<1?t("lt1"):String(Math.round(d));
 
 const phOf=p=>(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u||""));
+// confirmed outside access (owner decision 11.11.2026): someone not staying at the hotel can confirmedly get in. Any of: an offer that is not
+// guests-only (an entry kind, or any offer with a price); a visit / treatment / month / pack / group price in hl; a day-pass or membership price in
+// access; day_pass, membership or treatment_access true; a standalone sauna or a municipal facility unless day_pass is false.
+// Not confirmed: day_pass false with nothing else, or nothing known. Only confirmed places are listed by default; the rest appear via one toggle.
+const OPENK=new Set(["visit","day","circuit","pack","pass","treatment","membership","private","trial"]);
+const GUESTC=/guest|hosped|h[oó]spede/i;
+function openOf(p){ const a=p.access||{}, h=p.hl||{};
+  if((p.of||[]).some(o=>o.for!=="guests"&&!(o.conditions||[]).some(c=>GUESTC.test(String(c)))&&(OPENK.has(o.kind)||o.price_eur!=null))) return true;
+  if(["visit_from_eur","treatment_from_eur","month_from_eur","pack_session_from_eur","group_from_eur"].some(k=>h[k]!=null)) return true;
+  if(a.day_pass===true||a.membership===true||a.treatment_access===true||a.day_pass_price_eur!=null||a.membership_month_eur!=null) return true;
+  return (p.kind==="sauna"||p.kind==="public")&&a.day_pass!==false; }
 P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._d=(p.lat!=null&&p.lon!=null)?km(CASCAIS,[p.lat,p.lon]):999; p._near=p._d<=55;
   const g=r.google?r.google:(r.booking?r.booking/2:0); const n=r.google?(r.google_reviews||10):(r.booking?(r.booking_reviews||10):0);
@@ -890,7 +932,13 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._weak = p.status==="soon"||p.status==="closed" ? "status" : p.confidence==="low" ? "low" : sparse ? "sparse" : null;
   if(p._weak) p._score-=0.6;
   p._ses=hl.visit_minutes||a.session_minutes||null;
+  p._open=openOf(p);
 });
+const OPENN=P.filter(p=>p._open).length;
+// the places the list starts from: confirmed ones, or all when the toggle is on, plus one deep-linked exception
+const inBase=p=>st.all||p._open||p._i===st.exc;
+const baseN=()=>st.all?P.length:OPENN+(st.exc!=null&&!P[st.exc]._open?1:0);
+const plf=(n,k)=>{ const f=I18N[LANG][k]||I18N.ru[k]; let i=n===1?0:1; if(LANG==="ru"){ const a=n%10,b=n%100; i=a===1&&b!==11?0:a>=2&&a<=4&&(b<12||b>14)?1:2; } return f[Math.min(i,f.length-1)]; };
 const lsGet=k=>{ try{ return localStorage.getItem(k); }catch(e){ return null; } };
 const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
 const fmtDate=s=>{ const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||""); return m?`${m[3]}.${m[2]}.${m[1]}`:(s||""); };
@@ -1091,7 +1139,7 @@ const sortEl=document.getElementById("sort");
 function setSort(k,dir){ st.sort=k; st.dir=dir||DEFDIR[k]||1; sortEl.value=k; lsSet("sauna-f4",JSON.stringify({sort:st.sort,dir:st.dir})); renderHead(); render(); }
 sortEl.onchange=()=>setSort(sortEl.value);
 sortEl.value=st.sort;
-function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear()); st.price=null; st.rmin=null; st.rad=null;
+function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear()); st.price=null; st.rmin=null; st.rad=null; st.all=false; st.exc=null;
   document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed","false"); });
   drawAreas(); drawRad(); lastAreaKey="*";
   st.sort=ME?"dist":"score"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
@@ -1109,9 +1157,9 @@ function updateFtoggle(){ const nArea=st.area.size+st.muni.size; const nMore=st.
   ft.innerHTML=ico("sliders","ic-s")+esc(lab)+badge(n); ft.classList.toggle("on",n>0); ft.setAttribute("aria-label",n?t("filt_n",n):lab);
   const mf=document.getElementById("mapfilt"); mf.innerHTML=ico("sliders","ic-s")+esc(t("filters"))+badge(nAll); mf.classList.toggle("on",nAll>0); mf.setAttribute("aria-label",nAll?t("filt_n",nAll):t("filters"));
   const an=document.getElementById("area-n"); an.hidden=!nArea; an.textContent=nArea; document.getElementById("area-sum").classList.toggle("on",nArea>0); if(nArea) document.getElementById("area-d").open=true;
-  document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,P.length);
+  document.getElementById("fh-n").innerHTML=t("fh_n",`<b>${LIST.length}</b>`,baseN());
   // reset buttons: coloured and live while there is something to reset, quiet and disabled otherwise
-  const any=!!(nAll||st.q); ["reset","reset2"].forEach(id=>{ const b=document.getElementById(id); b.disabled=!any; b.setAttribute("aria-disabled",String(!any)); });
+  const any=!!(nAll||st.q||st.all||st.exc!=null); ["reset","reset2"].forEach(id=>{ const b=document.getElementById(id); b.disabled=!any; b.setAttribute("aria-disabled",String(!any)); });
   document.getElementById("fdone").textContent=t("showres_n",LIST.length); }
 
 
@@ -1202,6 +1250,8 @@ function wirePreview(el){
     const go=d=>sl.scrollTo({left:((cur()+d+n)%n)*sl.clientWidth,behavior:"smooth"});
     const l=el.querySelector(".pp-nav.l"), r=el.querySelector(".pp-nav.r"); if(l) l.onclick=ev=>{ev.stopPropagation();go(-1);}; if(r) r.onclick=ev=>{ev.stopPropagation();go(1);}; }
   el.querySelectorAll("[data-ph]").forEach(b=>b.onclick=()=>openLB(+b.dataset.i,+b.dataset.ph));
+  // the title selects as a whole on a long-press: the map underneath must not start a drag (which blocks text selection) or treat it as a tap
+  const tt=el.querySelector(".pv-h .t"); if(tt){ L.DomEvent.disableClickPropagation(tt); ["touchstart","pointerdown","mousedown","contextmenu"].forEach(k=>tt.addEventListener(k,ev=>ev.stopPropagation())); }
   const mb=el.querySelector("[data-more]"); if(mb) mb.onclick=()=>openFromMap(+mb.dataset.more);
   const xb=el.querySelector("[data-pvx]"); if(xb) xb.onclick=ev=>{ ev.stopPropagation(); map.closePopup(); };
   // amenities: one line with "+N"; the chip unfolds the full list in place
@@ -1228,7 +1278,7 @@ function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return
 function metaLine(p){ const k=KINDS[kg(p)]; const stars=starsOf(p); const town=muniName(p.muni)||areaName(p.area)||"";
   return `<div class="sub meta"><span class="m-in mk-k">${kico(k[2])}${esc(k[0])}${stars?" "+stars:""} ·</span><span class="mk-t">${esc(town)}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</span></div>`; }
 // one price line for previews: "от €37 · 90 мин", "€31,12 · в пакете", or the plain access text
-function priceLine(p){ const h=p.hl||{}; const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
+function priceLine(p){ const h=p.hl||{}; if(memDup(p)) return `${t("acc_membership")} ${memVal(p)}`; const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
   if(h.visit_from_eur!=null) return [(vis.length>1?t("from")+" ":"")+eur(h.visit_from_eur), fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ");
   if(h.pack_session_from_eur!=null) return `${eur(h.pack_session_from_eur)} · ${t("in_pack")}`;
   if(h.treatment_from_eur!=null) return `${eur(h.treatment_from_eur)} · ${t("w_trt")}`;
@@ -1296,6 +1346,7 @@ const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unc
 function photoCell(p){ if(!p._ph.length) return `<div class="thumbs">${phdHTML(p)}</div>`;
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCellOld(p){const a=p.access||{}; const w=warn(p);
+  if(memDup(p)) return `<span class="price num">${esc(memVal(p))}</span>${w}<div class="sub">${esc(t("acc_membership").toLowerCase())}</div>`;
   if(a.day_pass_price_eur!=null) return `<span class="price num">${eur(a.day_pass_price_eur)}</span>${w}${a.session_minutes?`<div class="sub num">${t("min",a.session_minutes)}</div>`:""}`;
   if(p._grp&&!p._day) return `<span class="dim">${esc(t("acc_rent"))}</span>${w}`;
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="dim">${esc(t("guests"))}</span>`;
@@ -1400,6 +1451,7 @@ function filtered(){
   const coll=st.sort==="name"?new Intl.Collator(LANG,{ignorePunctuation:true,sensitivity:"base"}):null;
   const R=runSearch(); lastR=R; // place index -> relevance; null when there is no usable query word
   const pass=(p,skip)=>{
+    if(skip!=="open"&&!inBase(p)) return false;
     if(R&&!R.has(p._i)) return false;
     if(skip!=="hrs"&&!hrsOk(p,st.hrs)) return false;
     if(st.scope==="near" && !p._near) return false;
@@ -1430,12 +1482,16 @@ function filtered(){
 const tbody=document.getElementById("tbody");
 const KNOWN_HRS=P.filter(p=>p.wk||p.sch).length;
 const PAGE=40; let LIST=[], shown=0, lastAreaKey="", lastMk="";
-function memLine(p){ const h=p.hl||{}, a=p.access||{}; let v=null;
-  if(h.month_from_eur!=null) v=`${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}`; else if(!p.hl&&a.membership_month_eur!=null) v=`${eur(a.membership_month_eur)}${t("per_mo")}`;
+function memVal(p){ const h=p.hl||{}, a=p.access||{};
+  if(h.month_from_eur!=null) return `${eur(h.month_from_eur)}${perSfx(h.month_per||"month")}`; if(!p.hl&&a.membership_month_eur!=null) return `${eur(a.membership_month_eur)}${t("per_mo")}`; return null; }
+// the price slot says only "membership" (no visit, pack, treatment or group price) and a monthly price is known: one line "Membership €968 /mo", no second line
+const memDup=p=>{ const h=p.hl||{}, a=p.access||{}; return !!memVal(p)&&h.visit_from_eur==null&&h.pack_session_from_eur==null&&h.treatment_from_eur==null&&h.group_from_eur==null&&a.day_pass_price_eur==null&&!(p._grp&&!p._day)&&!(p.kind==="hotel"&&p.stay&&a.day_pass===false&&!p._trt&&!p._day)&&!p._day&&!p._trt&&p._mem&&a.day_pass!==true; };
+function memLine(p){ const v=memDup(p)?null:memVal(p);
   return v?`<div class="sub mline">${esc(t("mx_mem"))} <span class="num">${esc(v)}</span></div>`:""; }
 function rowHTML(p){ const open=st.open===p._i;
   // status (not open yet / temporarily closed) is shown once, as the pill by the name
-  const wk=p._weak?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(p._weak==="status"?t(p.status):t("wt_"+p._weak))}</span>`:"";
+  const ot=p._open?"":`<span class="wtag otag">${esc(t("op_tag"))}</span>`;
+  const wk=p._weak&&!(ot&&p._weak==="sparse")?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(p._weak==="status"?t(p.status):t("wt_"+p._weak))}</span>`:"";
   const rbm=rb(p.ratings);
   // a subtitle that only repeats the town (or just the hotel stars, which the meta line shows) is dropped
   const sub0=tr(p,"subtitle")||""; const town=muniName(p.muni)||areaName(p.area)||"";
@@ -1445,7 +1501,7 @@ function rowHTML(p){ const open=st.open===p._i;
   const hl=hoursLine(p); const rline=hl?`<div class="hrm">${hl}</div>`:"";
   const bk=bkTag(p); const pc=priceCell(p)+memLine(p)+(bk?`<div class="bkr">${bk}</div>`:"");
   // the thumbnail cell is always there (a placeholder when there is no photo), so names line up
-  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}"><td>${photoCell(p)}</td><td class="nm">${pc?`<div class="pcm">${pc}</div>`:""}<div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${metaLine(p)}${amenHTML(p)}${rline}${rbm?`<div class="rbm">${rbm}</div>`:""}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${pc}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
+  return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}"><td>${photoCell(p)}</td><td class="nm">${pc?`<div class="pcm">${pc}</div>`:""}<div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}${ot}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${metaLine(p)}${amenHTML(p)}${rline}${rbm?`<div class="rbm">${rbm}</div>`:""}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${pc}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
 const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
@@ -1467,8 +1523,9 @@ function render(keep){
   if(st.open!=null){ const k=list.findIndex(p=>p._i===st.open); if(k>=need) need=k+1; }
   shown=0; tbody.textContent=""; appendRows(need);
   const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
-  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${P.length} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",KNOWN_HRS))}</span>`:""}`;
-  updateFtoggle(); facetCounts(); drawNores();
+  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${baseN()} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
+  HIDL=st.all?[]:P.filter(p=>!inBase(p)&&passFn(p,"open")); if(lastR) HIDL.sort((x,y)=>(lastR.get(y._i)||0)-(lastR.get(x._i)||0));
+  updateFtoggle(); facetCounts(); drawNores(); drawOpen();
   requestAnimationFrame(fill);
 }
 function setActiveMk(i){ document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active"); } }
@@ -1485,7 +1542,8 @@ function hReplace(s,url){ try{ history.replaceState(s,"",url); }catch(e){} }
 const byId=id=>P.find(x=>x.id===id||(x.alias_ids||[]).includes(id));
 // expand a card (DOM only). If the current filters hide the place, they are reset with a toast so the card can always be shown
 function openCard(i,noMap){ if(st.open===i) return; const was=st.open; loadMore();
-  if(!ensureShown(i)){ resetAll(true); render(); ensureShown(i); toast(t("f_reset")); }
+  if(!ensureShown(i)){ const hid=!P[i]._open&&!st.all; if(hid){ st.exc=i; render(); }
+    if(!ensureShown(i)){ resetAll(true); if(hid) st.exc=i; render(); ensureShown(i); toast(t("f_reset")); } else toast(t("op_exc")); }
   if(was!=null) closeCard(was,true);
   st.open=i; const r=rowEl(i);
   if(r&&!document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
@@ -1591,11 +1649,16 @@ function popShow(btn,html,o){ o=o||{}; popOpener=btn; hpop.classList.toggle("wid
 function closePop(refocus){ if(hpop.hidden) return; hpop.hidden=true; hpop.dataset.for=""; document.getElementById("langsw").setAttribute("aria-expanded","false"); if(refocus&&popOpener&&popOpener.focus) popOpener.focus(); }
 hpop.addEventListener("click",e=>{ if(e.target.closest(".hpop-x")) return closePop(true); const l=e.target.closest("[data-l]"); if(l){ closePop(); setLang(l.dataset.l); return; } if(e.target.closest("a.mi")) closePop(); });
 function showSched(btn){ const p=P[+btn.dataset.sch]; const c=p&&p.sch; if(!c) return; const dk=["mon","tue","wed","thu","fri","sat","sun"];
-  const wk=c.week||c.windows; let grid="";
-  if(wk){ grid=`<div class="sgrid">${dk.map((k,i)=>wk[k]&&wk[k].length?`<span>${DN()[i]}</span><span class="tm">${wk[k].map(x=>`<i>${esc(String(x).replace("-"," "+t("to")+" "))}</i>`).join("")}</span>`:"").join("")}</div>`; if(c.windows&&!c.week) grid=`<div class="sup">${esc(t("sch_win"))}</div>`+grid; }
+  // only the recurring weekly timetable is drawn; a snapshot of free slots (sch.windows) goes stale and is never shown
+  const wk=c.week; let grid="";
+  if(wk){ grid=`<div class="sgrid">${dk.map((k,i)=>wk[k]&&wk[k].length?`<span>${DN()[i]}</span><span class="tm">${wk[k].map(x=>`<i>${esc(String(x).replace("-"," "+t("to")+" "))}</i>`).join("")}</span>`:"").join("")}</div>`; }
   const fm=(c.formats||[]).map(f=>`<div><span>${esc(f["name_"+LANG]||f.name_en||f.name_ru||"")}${f.minutes?" · "+fmtMinU(f.minutes):""}</span><b class="num">${f.price_eur!=null?eur(f.price_eur):""}</b></div>`).join("");
-  const up=(c.upcoming||[]).slice(0,5).map(u=>{ const d=new Date(u.date+"T12:00:00"); const ds=d.toLocaleDateString(LANG==="pt"?"pt-PT":LANG==="en"?"en-GB":"ru-RU",{day:"numeric",month:"short",weekday:"short"}); return `<div><b>${esc(ds)}${u.time?" "+esc(u.time):""}</b> ${esc(u.title||"")}</div>`; }).join("");
-  popShow(btn,`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div class="sub">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(t("sch_up"))}:${up}</div>`:""}`,{wide:true,label:t("sch_t")+" · "+p.name}); }
+  // dated sessions: the ones before today (Lisbon) are dropped, the block is labelled with the date the list was checked; current times are behind the booking button
+  const today=new Intl.DateTimeFormat("en-CA",{timeZone:TZ,year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date());
+  const vd=/^\d{4}-(\d{2})-(\d{2})$/.exec(p.verified_on||""); const upT=vd?t("sch_up_d",vd[2]+"."+vd[1]):t("sch_up");
+  const bu=bookUrl(p); const bkA=bu?`<a class="act prim sbk" href="${esc(bu)}" target="_blank" rel="noopener">${esc(t("book"))}${ico("ext","ic-s")}</a>`:"";
+  const up=(c.upcoming||[]).filter(u=>u&&/^\d{4}-\d{2}-\d{2}/.test(u.date||"")&&String(u.date).slice(0,10)>=today).slice(0,5).map(u=>{ const d=new Date(u.date+"T12:00:00"); const ds=d.toLocaleDateString(LANG==="pt"?"pt-PT":LANG==="en"?"en-GB":"ru-RU",{day:"numeric",month:"short",weekday:"short"}); return `<div><b>${esc(ds)}${u.time?" "+esc(u.time):""}</b> ${esc(u.title||"")}</div>`; }).join("");
+  popShow(btn,`<div class="hpt">${esc(t("sch_t"))} · ${esc(p.name)}</div>${c["summary_"+LANG]||c.summary_en?`<div class="sub">${esc(c["summary_"+LANG]||c.summary_en)}</div>`:""}${grid}${fm?`<div class="sfm">${fm}</div>`:""}${up?`<div class="sup">${esc(upT)}:${up}</div>`:""}${bkA}`,{wide:true,label:t("sch_t")+" · "+p.name}); }
 function showHours(btn){ const p=P[+btn.dataset.hrs]; if(!p||!p.wk) return; useNow(p); popShow(btn,`<div class="hpt">${esc(t("weekhrs"))}</div>${weekTable(p.wk)}`,{label:t("weekhrs")+" · "+p.name}); }
 // popover openers (hours, schedule, route, language) toggle; any other click outside the popover closes it
 document.addEventListener("click",e=>{ if(!e.target.closest) return; const b=e.target.closest(".hbtn,[data-route],#langsw");
@@ -1707,6 +1770,22 @@ function refreshPopup(){ const el=curPop.getElement(); const sl0=el&&el.querySel
   const sl=el2.querySelector(".pp-sl"); if(sl&&cur){ sl.scrollLeft=cur*sl.clientWidth; const c=el2.querySelector(".pp-cnt"); if(c) c.textContent=t("n_of",cur+1,sl.children.length); } }
 function refreshCard(i){ const d=document.getElementById("det-"+i); if(d) d.outerHTML=detailHTML(P[i]); }
 tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
+// places without confirmed outside access: the toggle at the top of the filters (count = hidden places that pass the other filters),
+// a quiet line under the list, and with a query a line above it naming hidden matches
+let HIDL=[];
+function setAll(on){ st.all=!!on; st.exc=(!st.all&&st.open!=null&&!P[st.open]._open)?st.open:null; render(true); }
+function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=document.getElementById("otog");
+  b.classList.toggle("on",on); b.classList.toggle("zero",!on&&!n);
+  b.innerHTML=ico(on?"eyeoff":"eye")+`<span>${esc(on?t("op_hide"):n?t("op_show",nfmt(n),plf(n,"op_pl")):t("op_show0"))}</span>`;
+  const more=`<button type="button" data-oall="1">${esc(t("op_more"))}</button>`;
+  const hl=document.getElementById("hidn"); const nIn=on?LIST.filter(p=>!p._open).length:0;
+  if(!on&&n&&!q){ hl.hidden=false; hl.innerHTML=`${esc(t("op_line",nfmt(n),plf(n,"op_pl")))} · ${more}`; }
+  else if(on&&nIn){ hl.hidden=false; hl.innerHTML=`<button type="button" data-oall="0">${esc(t("op_hide"))}</button>`; }
+  else hl.hidden=true;
+  const qh=document.getElementById("qhid");
+  if(!on&&n&&q){ qh.hidden=false; qh.innerHTML=`${esc(n<=2?t("op_q1",HIDL.map(pname).join(", ")):t("op_qn",nfmt(n),plf(n,"op_qpl")))} · ${more}`; } else qh.hidden=true; }
+document.getElementById("otog").onclick=()=>setAll(!st.all);
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-oall]"); if(b) setAll(b.dataset.oall==="1"); });
 // a query that matches nothing at all: "Nothing found for ..." and one tap on the closest spelling
 function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElementById("nores"), b=document.getElementById("tryq");
   document.getElementById("empty-t").hidden=nr; np.hidden=!nr; if(nr) np.textContent=t("nores",qEl.value.trim());
