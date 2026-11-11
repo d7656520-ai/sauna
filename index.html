@@ -1013,7 +1013,7 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   // recommended order (default): the shrunk rating plus what makes the entry useful to someone looking for a place to sweat: a heat-room first photo
   // (+0.25; a spa-zone photo +0.10; no photo at all -0.15) and a known price for outsiders (single visit +0.25; pack, treatment, group or month only +0.10).
   // Low confidence, "not open yet" and sparse records already carry the -0.6 above. Weights checked on the data: the top 20 all have a price and a heat or spa first photo
-  { const w0=(p._ph[0]||{}).w||""; let b=HEATW.has(w0)?0.25:SPAW.has(w0)?0.1:p._ph.length?0:-0.15;
+  { const w0=(p._ph[0]||{}).w||""; let b=HEATW.has(w0)||w0==="infrared"?0.25:(w0==="pool"&&p.kind==="hotel")?-0.15:SPAW.has(w0)?0.1:p._ph.length?-0.1:-0.15;  /* 12.11 (review 10): a hotel whose first photo is a pool or the building has no heat-room photo at all: penalty */
     b+=p._vp!=null?0.25:(hl.pack_session_from_eur!=null||hl.treatment_from_eur!=null||hl.group_from_eur!=null||p._mp!=null)?0.1:0;
     p._rec=p._score+b; }
   p._ses=hl.visit_minutes||a.session_minutes||null;
