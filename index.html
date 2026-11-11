@@ -3,17 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!-- the language is decided before the first paint (explicit ?lang, then the saved choice, then the device languages, else English: the same order as the app script),
+     so the static header texts render in the right language at once and the translation pass does not rewrap them (no layout shift) -->
+<script>(function(){try{var ok=/^(ru|en|pt)$/,q=new URLSearchParams(location.search).get("lang"),s=null;try{s=localStorage.getItem("sauna-lang")}catch(e){}var L=ok.test(q||"")?q:ok.test(s||"")?s:null;if(!L){var pr=navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""];for(var i=0;i<pr.length;i++){var n=String(pr[i]||"").slice(0,2).toLowerCase();if(ok.test(n)){L=n;break}}}L=L||"en";document.documentElement.lang=L;document.documentElement.dataset.l=L}catch(e){}})()</script>
+<!-- SEO: while on github.io the page stays noindex; on an own domain remove this line (and rebuild pages with build_pages.py) -->
 <meta name="robots" content="noindex">
-<title>Сауны Португалии</title>
-<meta name="description" content="Где попариться у Кашкайша, Оэйраша, Синтры и в Лиссабоне: карта, цены, длительность сеанса, бронь.">
-<meta property="og:title" content="Сауны Португалии · Saunas of Portugal · Saunas de Portugal">
-<meta property="og:description" content="Сауны, бани и спа вокруг Лиссабона и по Португалии: карта, цены разового входа и абонементов, бронь, фото.">
+<title>Сауны Португалии · Saunas of Portugal · Saunas de Portugal</title>
+<meta name="description" content="730 саун, бань, хаммамов и спа по всей Португалии, у 300 подтверждён вход для всех: карта, цены разового входа и абонементов, часы, бронь, фото.">
+<link rel="canonical" href="https://d7656520-ai.github.io/sauna/">
+<link rel="alternate" hreflang="ru" href="https://d7656520-ai.github.io/sauna/ru/">
+<link rel="alternate" hreflang="en" href="https://d7656520-ai.github.io/sauna/en/">
+<link rel="alternate" hreflang="pt-PT" href="https://d7656520-ai.github.io/sauna/pt/">
+<link rel="alternate" hreflang="x-default" href="https://d7656520-ai.github.io/sauna/en/">
+<meta property="og:site_name" content="Сауны Португалии">
 <meta property="og:type" content="website">
+<meta property="og:title" content="Сауны Португалии · Saunas of Portugal · Saunas de Portugal">
+<meta property="og:description" content="Сауны, бани, хаммамы и спа по всей Португалии: карта, цены разового входа и абонементов, часы, бронь, фото.">
 <meta property="og:url" content="https://d7656520-ai.github.io/sauna/">
-<meta property="og:image" content="https://images.ctfassets.net/h00dcmbjgibb/XO6ZBHwtvHI3lVKtnc79D/9cbc931012cce558338a0815e334b4ed/Thalassotherapy_Cascais.jpg?w=1200&amp;h=630&amp;fit=fill&amp;fm=jpg&amp;q=80">
+<meta property="og:image" content="https://d7656520-ai.github.io/sauna/img/og-default.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:locale:alternate" content="en_GB">
+<meta property="og:locale:alternate" content="pt_PT">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://d7656520-ai.github.io/sauna/img/og-default.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"Сауны Португалии","alternateName":["Saunas of Portugal","Saunas de Portugal"],"url":"https://d7656520-ai.github.io/sauna/","inLanguage":["ru","en","pt-PT"],
+ "potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://d7656520-ai.github.io/sauna/index.html?q={search_term_string}"},"query-input":"required name=search_term_string"}}
+</script>
 <meta name="theme-color" content="#f4f6f5" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0f1513" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f6b72'/%3E%3Cpath d='M22 44c-4-6 4-10 0-17M32 44c-4-6 4-10 0-17M42 44c-4-6 4-10 0-17' fill='none' stroke='%23fff' stroke-width='4.5' stroke-linecap='round'/%3E%3Crect x='14' y='47' width='36' height='5' rx='2.5' fill='%23f0a24a'/%3E%3C/svg%3E">
@@ -22,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=6961d54ad6" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=e76d636f61" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -31,6 +49,13 @@
 <style>
 /* Layout: split screen. Left: header, filters, sortable table. Right: sticky map. Phone: header, map preview, sticky search bar, compact rows, bottom sheets. */
 /* Type scale: 15/600 names and prices, 13/400 body and controls, 11.5/400 captions; display face only for the title. Spacing on a 4/8 grid. Radii: 6 tags, 8 buttons and thumbs, 12 cards and popups, 16 sheets, 999 pills. */
+/* fallback faces carrying Onest's metrics, so the swap to Onest keeps every line where it was (no layout shift while the font loads). size-adjust measured in Chromium on the
+   site's own texts (Onest / Arial-metric Liberation Sans at 15 px: RU 1.039, EN 1.054, PT 1.045; 600 weight 0.97 to 0.99); ascent and descent from hhea (Onest 970 / 305 per 1000) divided by it */
+@font-face{font-family:"Onest Fb";font-weight:400;src:local("Arial"),local("Liberation Sans"),local("Arimo"),local("Helvetica");size-adjust:104.5%;ascent-override:92.8%;descent-override:29.2%;line-gap-override:0%}
+@font-face{font-family:"Onest Fb";font-weight:600;src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("Arimo Bold"),local("Helvetica Bold");size-adjust:99%;ascent-override:98%;descent-override:30.8%;line-gap-override:0%}
+@font-face{font-family:"Onest FbR";src:local("Roboto");size-adjust:107%;ascent-override:90.7%;descent-override:28.5%;line-gap-override:0%}
+/* the display face (Unbounded 600: 792 / 995 / 245 per 1000) gets the same treatment, so the title wraps the same way before and after the swap */
+@font-face{font-family:"Unbounded Fb";src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("Arimo Bold"),local("Helvetica Bold");size-adjust:130%;ascent-override:76.5%;descent-override:18.8%;line-gap-override:0%}
 :root{
   --bg:#f4f6f5; --panel:#ffffff; --ink:#18201d; --muted:#5d6a65; --line:#dde3e0;
   --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf;
@@ -41,8 +66,8 @@
   --chip-bd:#d6dedb;
   --chip:#eef2f0; --scrim:rgba(8,14,12,.985); --tilefilter:none;
   --sel-chev:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%235d6a65' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
-  --f-display:"Unbounded","Onest",system-ui,sans-serif;
-  --f-body:"Onest",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-display:"Unbounded","Unbounded Fb","Onest",system-ui,sans-serif;
+  --f-body:"Onest","Onest Fb","Onest FbR",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
@@ -60,6 +85,8 @@
 }}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
+/* static header texts in three languages: only the page language shows (chosen in <head> before the first paint); the script then replaces them with the same string */
+.l-ru,.l-en,.l-pt{display:none} html[lang=ru] .l-ru,html[lang=en] .l-en,html[lang=pt] .l-pt{display:inline}
 html,body{margin:0;height:100%}
 html{overscroll-behavior-y:none}
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-font-smoothing:antialiased}
@@ -82,10 +109,11 @@ b,strong{font-weight:600}
 #map{position:absolute;inset:0;background:var(--chip)}
 .leaflet-tile-pane{filter:var(--tilefilter)}
 .hd h1{font:600 clamp(22px,3vw,30px)/1.1 var(--f-display);letter-spacing:-.01em;margin:0 0 6px;text-wrap:balance}
-.hd p{margin:0;color:var(--muted);max-width:66ch}
-.stats{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 2px;color:var(--muted);font-size:13px}
+.hd p{margin:0;color:var(--muted);max-width:48em} /* em, not ch: the measure must not depend on which font is drawing it; 48em keeps all three intros at two lines with room to spare (RU 0.81, EN 0.92, PT 0.93 of the last line), so the swap cannot add a line */
+/* the stats line and the legend keep one line of height before the data arrives: the list below does not jump when they fill */
+.stats{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 2px;color:var(--muted);font-size:13px;min-height:1.45em}
 .stats b{color:var(--ink);font-variant-numeric:tabular-nums}
-.legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:8px 0 0}
+.legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:8px 0 0;min-height:1.45em}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .fwrap{display:grid;gap:8px;margin:16px 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
 .filters{display:grid;gap:8px}
@@ -220,6 +248,11 @@ tr.detail > td{background:var(--bg);padding:12px;max-width:0}
 .dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 20px;font-size:13px;line-height:1.4;margin:0}
 .dgrid dt{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
 .dgrid dd{margin:0;overflow-wrap:anywhere}
+/* card body on a wide panel (600 px of card width and more): the prices on the left, the details (address, booking, hours, contacts) stacked on the right; one column below that */
+.det{container-type:inline-size}
+.dcols{display:grid;grid-template-columns:minmax(0,1fr);gap:12px 28px;align-items:start}
+.dcols .prices{margin-bottom:0}
+@container (min-width:600px){.dcols{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr)} .dcols .dgrid{grid-template-columns:minmax(0,1fr)}}
 /* social links in the card: one round icon button per network (the same tile as the phone action icons), the handle is the accessible name */
 .socs{display:flex;flex-wrap:wrap;gap:8px;margin-top:3px}
 .soc{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--sea);text-decoration:none}
@@ -228,7 +261,7 @@ tr.detail > td{background:var(--bg);padding:12px;max-width:0}
 .note{margin:8px 0 0;font-size:13px;max-width:80ch}
 .src{margin-top:8px;font-size:11.5px;color:var(--muted)}
 .src a{color:var(--muted)}
-.foot{margin-top:20px;font-size:13px;color:var(--muted);max-width:78ch}
+.foot{margin-top:20px;font-size:13px;color:var(--muted);max-width:52em}
 .foot + .foot{margin-top:6px}
 .show-m{display:none}
 /* share button next to a title (popup and preview sheet) */
@@ -624,6 +657,7 @@ tr.skel td{padding:10px 8px}
   td .rbm .rbw{margin-right:0}
 }
 @media (max-width:360px){
+  .hd h1{font-size:16px} /* the title stays on one line beside the language button at 320 */
   #fh-n b{font-size:16px}
   .fsum{column-gap:12px}
   .fsum .reset{padding:0 8px}
@@ -647,8 +681,8 @@ tr.skel td{padding:10px 8px}
 <a class="skip" href="#list" data-t="tolist">К списку</a>
 <div class="app">
   <header class="hd">
-    <div class="toprow"><h1 data-t="title">Сауны Португалии</h1><button type="button" class="langb" id="langsw" aria-haspopup="dialog" aria-expanded="false" data-ta="lang">RU</button></div>
-    <p data-t="intro"></p>
+    <div class="toprow"><h1 data-t="title"><span class="l-ru">Сауны Португалии</span><span class="l-en">Saunas of Portugal</span><span class="l-pt">Saunas de Portugal</span></h1><button type="button" class="langb" id="langsw" aria-haspopup="dialog" aria-expanded="false" data-ta="lang">RU</button></div>
+    <p data-t="intro"><span class="l-ru">Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.</span><span class="l-en">Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.</span><span class="l-pt">Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.</span></p>
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
@@ -680,6 +714,7 @@ tr.skel td{padding:10px 8px}
       <div class="frow sortrow">
         <label class="range" for="sort"><span data-t="sort">Сортировка</span>
           <select id="sort">
+            <option value="rec" data-t="s_rec">Рекомендуемые</option>
             <option value="score" data-t="s_score"></option>
             <option value="price" data-t="s_price"></option>
             <option value="name" data-t="s_name"></option>
@@ -695,11 +730,12 @@ tr.skel td{padding:10px 8px}
     </div>
     </section>
 
-    <p class="hint" data-th="hint"></p>
+    <p class="hint" data-th="hint"><span class="l-ru">Нажми на строку, чтобы открыть подробности и фото.</span><span class="l-en">Tap a row for details and photos.</span><span class="l-pt">Toque numa linha para ver detalhes e fotos.</span></p>
     <div class="tablewrap" id="list" tabindex="-1">
       <p class="hidn" id="qhid" role="status" hidden></p>
       <table>
-        <thead><tr id="thead"></tr></thead>
+        <!-- the header row is in the markup (the script redraws it with the live sort state), so the skeleton rows do not move when the script runs -->
+        <thead><tr id="thead"><th class="nosort c-photo" scope="col">Фото</th><th class="c-name" scope="col"><button type="button" data-s="name">Место</button></th><th class="c-kind hide-m hide-l" scope="col"><button type="button" data-s="kind">Где сауна</button></th><th class="c-day" scope="col"><button type="button" data-s="price">Разовый вход</button></th><th class="nosort c-hrs hide-s" scope="col">Часы</th><th class="c-rate hide-s" scope="col"><button type="button" data-s="score">Рейтинг</button></th></tr></thead>
         <tbody id="tbody"><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:58%"></i><i style="width:36%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:70%"></i><i style="width:30%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:48%"></i><i style="width:40%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:64%"></i><i style="width:34%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:54%"></i><i style="width:42%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:66%"></i><i style="width:28%"></i></span></div></td></tr></tbody>
       </table>
       <div id="more-sentinel"></div>
@@ -711,6 +747,7 @@ tr.skel td{padding:10px 8px}
     <div class="legend flegend" id="legend2"></div>
     <p class="foot" id="foot"></p>
     <p class="foot" id="foot2"></p>
+    <p class="foot"><a id="catlink" href="ru/" data-t="catalog">Каталог по регионам и городам</a></p>
   </main>
 </div>
 <div class="hpop" id="hpop" hidden role="dialog" tabindex="-1"></div>
@@ -735,7 +772,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=6961d54ad6"></script>
+<script src="data.js?v=e76d636f61"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -772,15 +809,15 @@ Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Pen
 Object.assign(I18N.ru,{hs_open:"Открыто",hs_soon:"Скоро закроется",hs_closed:"Закрыто",hs_until:"до {0}",hs_opens:"откроется в {0}",hs_opens_day:"откроется {0} в {1}"});
 Object.assign(I18N.en,{hs_open:"Open",hs_soon:"Closes soon",hs_closed:"Closed",hs_until:"until {0}",hs_opens:"opens at {0}",hs_opens_day:"opens {0} at {1}"});
 Object.assign(I18N.pt,{hs_open:"Aberto",hs_soon:"Fecha em breve",hs_closed:"Fechado",hs_until:"até às {0}",hs_opens:"abre às {0}",hs_opens_day:"abre {0} às {1}"});
-Object.assign(I18N.ru,{pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",per_session:"{0} за раз",in_pack:"в пакете",pack_n:"пакет {0} {1}",sess_pl:["сеанс","сеанса","сеансов"],on_req:"цена по запросу",s_total:"всего {0}",search_s:"Поиск",photo_rights:"Фото принадлежат владельцам мест и платформам; удалим по запросу",contact_l:"связаться",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",acc_private:"Аренда для компании",
+Object.assign(I18N.ru,{catalog:"Каталог по регионам и городам",pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",per_session:"{0} за раз",in_pack:"в пакете",pack_n:"пакет {0} {1}",sess_pl:["сеанс","сеанса","сеансов"],on_req:"цена по запросу",s_total:"всего {0}",search_s:"Поиск",photo_rights:"Фото принадлежат владельцам мест и платформам; удалим по запросу",contact_l:"связаться",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",acc_private:"Аренда для компании",
  inc:{sauna:"сауна",infrared:"ИК-сауна",steam:"парная",hammam:"хаммам",banya:"баня",venik:"веники",pool:"бассейн",sea_pool:"морская вода",outdoor_pool:"уличный бассейн",jacuzzi:"джакузи",hot_tub:"чан",cold_plunge:"купель",ice_bath:"ледяная ванна",gym:"зал",classes:"занятия",guide:"ведущий",sound:"музыка",towel:"полотенце",robe:"халат",tea:"чай",coffee:"кофе",food:"еда",massage:"массаж",compression:"компрессия"},
  cond:{booking_required:"бронь",booking_recommended:"лучше бронь",age_16_plus:"с 16 лет",age_18_plus:"с 18 лет",under_18_with_adult:"до 18 с родителями",under_16_from_12_with_adult:"с 12 лет со взрослым",under_16_half_price:"до 16 лет за полцены",with_treatment_only:"только с процедурой",men_only:"мужской",women_only:"женский",waitlist:"лист ожидания",trial_once:"один раз",prepayment:"предоплата",voucher:"по ваучеру",swimwear_required:"купальник",bring_towels:"свои полотенца",cap_swimwear_slippers:"шапочка, купальник, шлёпанцы",private_room:"отдельная комната",sauna_after_class_only:"сауна после занятия",cancel_24h:"отмена за 24 ч",cancel_8h_50pct:"отмена позже 8 ч: 50%",sold_out:"мест нет",min_people:"от {0} чел.",joining_fee:"вступительный €{0}",min_term_months:"от {0} мес.",booking_ahead_h:"бронь за {0} ч",valid_days:"действует {0} дн.",time:"{0}"},
  wh:{weekdays:"по будням",weekends:"по выходным",sat:"сб",sun:"вс"}});
-Object.assign(I18N.en,{pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",per_session:"{0} each",in_pack:"in a pack",pack_n:"pack of {0} {1}",sess_pl:["session","sessions"],on_req:"price on request",s_total:"{0} in total",search_s:"Search",photo_rights:"Photos belong to the venues and platforms; we remove them on request",contact_l:"contact",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",acc_private:"Private hire",
+Object.assign(I18N.en,{catalog:"Browse by region and town",pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",per_session:"{0} each",in_pack:"in a pack",pack_n:"pack of {0} {1}",sess_pl:["session","sessions"],on_req:"price on request",s_total:"{0} in total",search_s:"Search",photo_rights:"Photos belong to the venues and platforms; we remove them on request",contact_l:"contact",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",acc_private:"Private hire",
  inc:{sauna:"sauna",infrared:"infrared",steam:"steam room",hammam:"hammam",banya:"banya",venik:"veniki",pool:"pool",sea_pool:"seawater pool",outdoor_pool:"outdoor pool",jacuzzi:"jacuzzi",hot_tub:"hot tub",cold_plunge:"cold plunge",ice_bath:"ice bath",gym:"gym",classes:"classes",guide:"guide",sound:"live sound",towel:"towel",robe:"robe",tea:"tea",coffee:"coffee",food:"food",massage:"massage",compression:"compression"},
  cond:{booking_required:"booking",booking_recommended:"booking advised",age_16_plus:"16+",age_18_plus:"18+",under_18_with_adult:"under 18 with a parent",under_16_from_12_with_adult:"12+ with an adult",under_16_half_price:"under 16 half price",with_treatment_only:"with a treatment only",men_only:"men only",women_only:"women only",waitlist:"waitlist",trial_once:"once",prepayment:"prepayment",voucher:"voucher",swimwear_required:"swimwear",bring_towels:"bring towels",cap_swimwear_slippers:"cap, swimwear, slippers",private_room:"private room",sauna_after_class_only:"sauna after class",cancel_24h:"cancel 24 h ahead",cancel_8h_50pct:"late cancel: 50%",sold_out:"sold out",min_people:"from {0} people",joining_fee:"joining fee €{0}",min_term_months:"min {0} months",booking_ahead_h:"book {0} h ahead",valid_days:"valid {0} days",time:"{0}"},
  wh:{weekdays:"weekdays",weekends:"weekends",sat:"Sat",sun:"Sun"}});
-Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",per_session:"{0} cada",in_pack:"em pacote",pack_n:"pack de {0} {1}",sess_pl:["sessão","sessões"],on_req:"preço sob consulta",s_total:"{0} no total",search_s:"Pesquisar",photo_rights:"As fotos pertencem aos locais e plataformas; removemos a pedido",contact_l:"contacto",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",acc_private:"Aluguer privado",
+Object.assign(I18N.pt,{catalog:"Por região e concelho",pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",per_session:"{0} cada",in_pack:"em pacote",pack_n:"pack de {0} {1}",sess_pl:["sessão","sessões"],on_req:"preço sob consulta",s_total:"{0} no total",search_s:"Pesquisar",photo_rights:"As fotos pertencem aos locais e plataformas; removemos a pedido",contact_l:"contacto",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",acc_private:"Aluguer privado",
  inc:{sauna:"sauna",infrared:"infravermelhos",steam:"banho turco",hammam:"hammam",banya:"banya",venik:"veniks",pool:"piscina",sea_pool:"água do mar",outdoor_pool:"piscina exterior",jacuzzi:"jacuzzi",hot_tub:"ofurô",cold_plunge:"imersão fria",ice_bath:"banho de gelo",gym:"ginásio",classes:"aulas",guide:"guia",sound:"música",towel:"toalha",robe:"roupão",tea:"chá",coffee:"café",food:"comida",massage:"massagem",compression:"pressoterapia"},
  cond:{booking_required:"reserva",booking_recommended:"reserva aconselhada",age_16_plus:"+16",age_18_plus:"+18",under_18_with_adult:"menores com adulto",under_16_from_12_with_adult:"+12 com adulto",under_16_half_price:"menores de 16 a meio preço",with_treatment_only:"só com tratamento",men_only:"só homens",women_only:"só mulheres",waitlist:"lista de espera",trial_once:"uma vez",prepayment:"pré-pagamento",voucher:"voucher",swimwear_required:"fato de banho",bring_towels:"traga toalhas",cap_swimwear_slippers:"touca, fato de banho, chinelos",private_room:"sala privada",sauna_after_class_only:"sauna após aula",cancel_24h:"cancelar 24 h antes",cancel_8h_50pct:"cancelamento tardio: 50%",sold_out:"esgotado",min_people:"mín. {0} pessoas",joining_fee:"inscrição €{0}",min_term_months:"mín. {0} meses",booking_ahead_h:"reservar {0} h antes",valid_days:"válido {0} dias",time:"{0}"},
  wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
@@ -829,8 +866,12 @@ Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside acce
 Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Ocultar locais sem acesso confirmado",op_pl:["local","locais"],
  op_line:"mais {0} {1} sem dados de acesso",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre locais sem acesso confirmado",op_qpl:["resultado","resultados"],
  op_exc:"O acesso de não hóspedes a este local não está confirmado",op_all:"Todos os locais",op_sub:"incluindo locais sem acesso confirmado para não hóspedes",sch_up_d:"Próximas sessões à data da verificação {0}"});
+// round 9 (external review 11.11.2026): recommended order by default, booking wording from the headline offer, hours known for some days only
+Object.assign(I18N.ru,{s_rec:"Рекомендуемые",bk_wi:"Без брони",bk_wi_via:"Без брони; записаться можно: {0}",hrs_rest:"остальные дни: нет данных",hrs_today_na:"сегодня: нет данных"});
+Object.assign(I18N.en,{s_rec:"Recommended",bk_wi:"No booking needed",bk_wi_via:"No booking needed; you can book via: {0}",hrs_rest:"other days: no data",hrs_today_na:"today: no data"});
+Object.assign(I18N.pt,{s_rec:"Recomendados",bk_wi:"Sem reserva",bk_wi_via:"Sem reserva; pode marcar por: {0}",hrs_rest:"outros dias: sem dados",hrs_today_na:"hoje: sem dados"});
 const LANGN={ru:"Русский",en:"English",pt:"Português"};
-let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const prefs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""]); for(const l of prefs){ const n=String(l||"").slice(0,2).toLowerCase(); if(I18N[n]) return n; } return "en"; })();  // explicit ?lang, then the saved choice, then the device language list in order; unknown languages get English
+let LANG=(()=>{ try{ const e=document.documentElement.dataset.l; if(e&&I18N[e]) return e; /* decided in <head> by the same rules, before the first paint */ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const prefs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""]); for(const l of prefs){ const n=String(l||"").slice(0,2).toLowerCase(); if(I18N[n]) return n; } return "en"; })();  // explicit ?lang, then the saved choice, then the device language list in order; unknown languages get English
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
 const tr=(p,f)=>{ const x=p.tr&&p.tr[LANG]&&p.tr[LANG][f]; if(x!=null) return x; if(LANG==="ru") return p[f]; if(f==="subtitle"&&p.subtitle&&!/[А-Яа-яЁё]/.test(p.subtitle)) return p.subtitle; return (p.tr&&p.tr.en&&p.tr.en[f])||""; };
@@ -909,7 +950,7 @@ const HRS = ()=>({now:t("h_now"),h19:t("h_19"),eve:t("h_eve"),early:t("h_early")
 const RMIN = ()=>({"4":t("r_40"),"4.5":t("r_45"),"4.7":t("r_47")}); // one threshold at a time, tap again to clear
 const PRICES=[20,30,50]; // caps from the visit-price distribution: 33 / 66 / 89 of 102 priced places
 const PRICEF=()=>{ const m={}; PRICES.forEach(v=>m[String(v)]=t("upto",v)); return m; };
-const SORTS=new Set(["score","price","name","dist"]);
+const SORTS=new Set(["rec","score","price","name","dist"]); // rec = recommended (default), score = rating only
 const BCL={required:"p-warn",recommended:"p-warn",walk_in:"p-ok"};
 const BOOK = new Proxy({}, {get:(o,k)=>BCL[k]?[t("b_"+k),BCL[k]]:undefined});
 const COLS = [
@@ -920,10 +961,11 @@ const COLS = [
   {k:"hours",t:"hours",sort:null,cls:"c-hrs hide-s"},
   {k:"rate",t:"rating",sort:"score",cls:"c-rate hide-s"},
 ];
-const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,score:-1,dist:1,sea:1};
+const DEFDIR = {name:1,kind:1,price:1,session:-1,book:1,mprice:1,rec:-1,score:-1,dist:1,sea:1};
 
-const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rmin:null,price:null,sort:"score",dir:-1,open:null,all:false,exc:null};
-try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort&&s.sort!=="dist"&&SORTS.has(s.sort)&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
+const st = {muni:new Set(),hrs:new Set(),scope:"all",q:"",qt:[],rad:null,area:new Set(),kind:new Set(),access:new Set(),ext:new Set(),rmin:null,price:null,sort:"rec",dir:-1,open:null,all:false,exc:null};
+// a saved sort is restored; "score" saved by earlier builds was the default of its day and maps to the recommended order
+try{const s=JSON.parse(localStorage.getItem("sauna-f4")||"null"); if(s&&s.sort==="score") s.sort="rec"; if(s&&s.sort&&s.sort!=="dist"&&SORTS.has(s.sort)&&DEFDIR[s.sort]){st.sort=s.sort; st.dir=s.dir||DEFDIR[s.sort]||1;}}catch(e){}
 try{ history.scrollRestoration="manual"; }catch(e){}
 
 let ME=null, meMarker=null;
@@ -943,6 +985,7 @@ const phOf=p=>(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u
 // Not confirmed: day_pass false with nothing else, or nothing known. Only confirmed places are listed by default; the rest appear via one toggle.
 const OPENK=new Set(["visit","day","circuit","pack","pass","treatment","membership","private","trial"]);
 const GUESTC=/guest|hosped|h[oó]spede/i;
+const HEATW=new Set(["sauna","steam","hammam","banya"]), SPAW=new Set(["spa","pool","jacuzzi","cold","relax"]); // first-photo tags: the heat room, then the spa zone
 function openOf(p){ const a=p.access||{}, h=p.hl||{};
   if((p.of||[]).some(o=>o.for!=="guests"&&!(o.conditions||[]).some(c=>GUESTC.test(String(c)))&&(OPENK.has(o.kind)||o.price_eur!=null))) return true;
   if(["visit_from_eur","treatment_from_eur","month_from_eur","pack_session_from_eur","group_from_eur"].some(k=>h[k]!=null)) return true;
@@ -964,6 +1007,12 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   const sparse=!r.google&&!r.booking&&a.day_pass_price_eur==null&&a.membership_month_eur==null&&!p.wk;
   p._weak = p.status==="soon"||p.status==="closed" ? "status" : p.confidence==="low" ? "low" : sparse ? "sparse" : null;
   if(p._weak) p._score-=0.6;
+  // recommended order (default): the shrunk rating plus what makes the entry useful to someone looking for a place to sweat: a heat-room first photo
+  // (+0.25; a spa-zone photo +0.10; no photo at all -0.15) and a known price for outsiders (single visit +0.25; pack, treatment, group or month only +0.10).
+  // Low confidence, "not open yet" and sparse records already carry the -0.6 above. Weights checked on the data: the top 20 all have a price and a heat or spa first photo
+  { const w0=(p._ph[0]||{}).w||""; let b=HEATW.has(w0)?0.25:SPAW.has(w0)?0.1:p._ph.length?0:-0.15;
+    b+=p._vp!=null?0.25:(hl.pack_session_from_eur!=null||hl.treatment_from_eur!=null||hl.group_from_eur!=null||p._mp!=null)?0.1:0;
+    p._rec=p._score+b; }
   p._ses=hl.visit_minutes||a.session_minutes||null;
   p._open=openOf(p);
 });
@@ -1152,7 +1201,14 @@ function facetCounts(){ if(!passFn) return; const base=g=>P.filter(p=>passFn(p,g
   B=base("muni"); setCounts($("f-muni"),k=>B.filter(p=>p.muni===k).length); }
 function drawRad(){ const el=document.getElementById("f-rad"); el.hidden=!ME; if(!ME){ el.innerHTML=""; return; }
   chips(el,{"15":t("rad",15),"55":t("rad",55)},k=>String(st.rad)===k,k=>{ st.rad=String(st.rad)===k?null:+k; }); }
-function applyStatic(){ document.documentElement.lang=LANG; document.title=t("title");
+const META_DESC={ru:"730 саун, бань, хаммамов и спа по всей Португалии, у 300 подтверждён вход для всех: карта, цены разового входа и абонементов, часы, бронь, фото.",
+  en:"730 saunas, banyas, hammams and spas across Portugal, 300 with confirmed access for everyone: map, single visit and membership prices, opening hours, booking, photos.",
+  pt:"730 saunas, banyas, hammams e spas em todo o Portugal, 300 com acesso confirmado para todos: mapa, preços de entrada avulsa e mensalidades, horários, reservas, fotos."};
+function applyStatic(){ document.documentElement.lang=LANG==="pt"?"pt-PT":LANG; document.title=t("title");
+  { const d=document.querySelector('meta[name="description"]'); if(d) d.setAttribute("content",(META_DESC[LANG]||META_DESC.ru).replace(/\b(730|300)\b/g,m=>m==="730"?P.length:OPENN));
+    const ogt=document.querySelector('meta[property="og:title"]'); if(ogt) ogt.setAttribute("content",t("title"));
+    const ogl=document.querySelector('meta[property="og:locale"]'); if(ogl) ogl.setAttribute("content",{ru:"ru_RU",en:"en_GB",pt:"pt_PT"}[LANG]);
+    const cat=document.getElementById("catlink"); if(cat) cat.href=LANG+"/"; }
   document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
   document.querySelectorAll("[data-th]").forEach(e=>e.innerHTML=t(e.dataset.th));
   document.querySelectorAll("[data-ta]").forEach(e=>e.setAttribute("aria-label",t(e.dataset.ta)));
@@ -1181,7 +1237,7 @@ sortEl.value=st.sort;
 function resetAll(noRender){ st.q=""; st.qt=[]; qEl.value=""; [st.area,st.muni,st.kind,st.access,st.ext,st.hrs].forEach(s=>s.clear()); st.price=null; st.rmin=null; st.rad=null; st.all=false; st.exc=null;
   document.querySelectorAll(".filters [aria-pressed]").forEach(b=>{ if(b.dataset.k!=null) b.setAttribute("aria-pressed","false"); });
   drawAreas(); drawRad(); lastAreaKey="*";
-  st.sort=ME?"dist":"score"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
+  st.sort=ME?"dist":"rec"; st.dir=DEFDIR[st.sort]; sortEl.value=st.sort; try{ localStorage.removeItem("sauna-f4"); }catch(e){}
   renderHead(); if(!noRender) render(); }
 document.getElementById("reset").onclick=()=>resetAll();
 document.getElementById("reset2").onclick=()=>resetAll();
@@ -1231,8 +1287,11 @@ const map = window.__map; // created before data.js loads, so the tiles are alre
 // preview keeps one-finger page scroll (no drag) but allows pinch zoom; full-screen map has every gesture
 function syncMapMode(){ const preview=isPhone()&&!isFull(); [map.dragging,map.doubleClickZoom,map.scrollWheelZoom,map.boxZoom,map.keyboard].forEach(h=>{ if(h) preview?h.disable():h.enable(); }); if(map.touchZoom) map.touchZoom.enable(); }
 const MAINLAND=[[36.95,-9.52],[42.16,-6.19]], LISBON=[[38.45,-9.5],[38.95,-8.85]];
-function fitDefault(){ if(isPhone()&&!isFull()) map.fitBounds(LISBON,{padding:[2,2]}); else map.fitBounds(MAINLAND,{padding:[8,8]}); }
-function fitList(list){ let pts=list.filter(p=>p.lat!=null); const isl=st.area.has("madeira")||st.area.has("acores"); const ml=pts.filter(p=>p.lon>-10.5); if(!isl&&ml.length) pts=ml;
+// the mainland points of a list (the islands only when an island region is chosen)
+function mainPts(list){ let pts=list.filter(p=>p.lat!=null); const isl=st.area.has("madeira")||st.area.has("acores"); const ml=pts.filter(p=>p.lon>-10.5); return (!isl&&ml.length)?ml:pts; }
+// phone preview: the map shows what the list shows (the bounds of the current pins, refit on every change of the result set); Lisbon only when nothing is on the map
+function fitDefault(){ if(isPhone()&&!isFull()){ const pts=mainPts(LIST); if(pts.length) map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[14,14],maxZoom:14}); else map.fitBounds(LISBON,{padding:[2,2]}); } else map.fitBounds(MAINLAND,{padding:[8,8]}); }
+function fitList(list){ const pts=mainPts(list);
   if(!pts.length) return fitDefault(); map.fitBounds(pts.map(p=>[p.lat,p.lon]),{padding:[28,28],maxZoom:14}); }
 const qActive=()=>!!(st.q&&LIST.length&&LIST.length<=15);
 function fitAuto(){ if(st.area.size||st.muni.size||qActive()) fitList(LIST); else if(isFull()) fitList(LIST); else fitDefault(); }
@@ -1330,8 +1389,23 @@ function priceLine(p){ const h=p.hl||{}; if(memDup(p)) return `${t("acc_membersh
   return dayTxt(p); }
 // placeholder thumbnail: the type glyph on a soft tint of the type colour, same size and radius as a photo (rows, popup, failed images)
 function phdHTML(p,big){ const k=kg(p); return `<span class="phd${big?" big":""}" style="--kc:${KCOL[k]}" aria-hidden="true"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="${big?1.5:1.8}" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg></span>`; }
+// the offer behind the headline price (the same choice as priceCell): the cheapest priced visit, else the pack, treatment, group hire or membership
+function headOffer(p){ const h=p.hl||{}, of=p.of||[]; if(!of.length) return null;
+  const by=g=>of.filter(o=>offGroup(o)===g&&o.price_eur!=null).sort((x,y)=>x.price_eur-y.price_eur)[0]||null;
+  if(h.visit_from_eur!=null) return of.find(o=>offGroup(o)==="visit"&&o.price_eur===h.visit_from_eur)||by("visit");
+  if(h.pack_session_from_eur!=null) return of.filter(o=>offGroup(o)==="pack"&&o.price_eur!=null&&o.sessions).sort((a,b)=>(a.per_session_eur||a.price_eur/a.sessions)-(b.per_session_eur||b.price_eur/b.sessions))[0]||by("pack");
+  if(h.treatment_from_eur!=null) return by("trt"); if(h.group_from_eur!=null) return by("group"); if(h.month_from_eur!=null) return by("mem"); return null; }
+// booking ahead, as it applies to an outsider: the headline offer's own condition first; then access.booking, except that "walk-in" yields to an entry
+// offer (visit, trial, pack, treatment) that requires or advises booking (a gym whose only way in is a trial by appointment is not "walk-in")
+const BKC={booking_required:"required",booking_recommended:"recommended"};
+const bkCond=o=>{ for(const c of (o.conditions||[])){ const k=BKC[String(c).split(":")[0]]; if(k) return k; } return null; };
+function bkCalc(p){ const a=p.access||{}; const hb=headOffer(p); const h=hb?bkCond(hb):null; if(h) return h;
+  if(a.booking==="walk_in"){ const need=(p.of||[]).filter(o=>o.for!=="guests"&&["visit","day","circuit","pack","pass","trial","treatment"].includes(o.kind)).map(bkCond);
+    if(need.includes("required")) return "required"; if(need.includes("recommended")) return "recommended"; }
+  return BCL[a.booking]?a.booking:null; }
+const bkOf=p=>p._bk!==undefined?p._bk:(p._bk=bkCalc(p));
 // booking ahead: "booking required" / "booking advised" / "walk-in", nothing when unknown (row under the price, popup next to the price)
-const bkTag=p=>{ const b=(p.access||{}).booking; return BCL[b]?`<span class="bkt bk-${b}">${esc(t("bk_"+b))}</span>`:""; };
+const bkTag=p=>{ const b=bkOf(p); return BCL[b]?`<span class="bkt bk-${b}">${esc(t("bk_"+b))}</span>`:""; };
 // place preview (popup on desktop and phones): photos (all, lazy), name + share, meta, ratings, price + booking, hours, amenities, Details / Directions. No labels: the values read on their own.
 function previewHTML(p){ const n=p._ph.length;
   const ph=p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(midSrc(x))}" data-full="${esc(x.u)}" alt=""${j>1?' loading="lazy"':""} decoding="async" referrerpolicy="no-referrer"></button>`).join("");
@@ -1364,7 +1438,8 @@ function hoursLine(p){ const w=p.wk; if(!w) return ""; useNow(p); const same=all
   const s=live(p)?openState(w):null; const parts=[];
   if(s&&s.st==="closed"&&s.tm) parts.push(same?t("hs_opens",fmtT(w[0][0])):s.tm);
   const past=s&&s.st==="closed"&&Array.isArray(x)&&NOW.m>=x[1];
-  if(same) parts.push(`${t("daily")} ${rngT(w[0])}`); else if(Array.isArray(x)&&!past) parts.push(`${t("today")} ${rngT(x)}`); else if(x==="x"&&!s) parts.push(`${t("today")} ${t("dayoff")}`);
+  // a day the data does not cover (null) is neither open nor closed: "today: no data" (the week table lists the known days)
+  if(same) parts.push(`${t("daily")} ${rngT(w[0])}`); else if(Array.isArray(x)&&!past) parts.push(`${t("today")} ${rngT(x)}`); else if(x==="x"&&!s) parts.push(`${t("today")} ${t("dayoff")}`); else if(x==null&&!s) parts.push(t("hrs_today_na"));
   if(!s&&!parts.length) return "";
   return `<div class="hs ${s?s.st:"na"}">${s?`<i class="hdot"></i><b>${esc(s.lab)}</b> `:""}${parts.length?`<span>${s?"· ":""}${esc(parts.join(" · "))}</span>`:""}</div>`; }
 function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))}${ico("cd","ic-s")}</span></div></button>`; }
@@ -1374,7 +1449,9 @@ function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
   const rng={ru:" по ",en:" to ",pt:" a "}[LANG];
   if(g.length===1&&Array.isArray(g[0].x)) return `<div>${esc({ru:"Ежедневно",en:"Daily",pt:"Todos os dias"}[LANG])} ${fmtT(g[0].x[0])} ${t("to")} ${fmtT(g[0].x[1])}</div>`;
-  return `<table class="wkt">${g.map(r=>{ const lab=r.a===r.b?DN()[r.a]:DN()[r.a]+rng+DN()[r.b]; const td=NOW.d>=r.a&&NOW.d<=r.b; return `<tr class="${td?"td":""}"><td>${lab}</td><td>${Array.isArray(r.x)?`${fmtT(r.x[0])} ${t("to")} ${fmtT(r.x[1])}`:r.x==="x"?t("dayoff"):""}</td></tr>`; }).join("")}</table>`; }
+  // days without data (null) are left out of the table and named once below it: "other days: no data", never "closed"
+  const known=g.filter(r=>r.x!=null);
+  return `<table class="wkt">${known.map(r=>{ const lab=r.a===r.b?DN()[r.a]:DN()[r.a]+rng+DN()[r.b]; const td=NOW.d>=r.a&&NOW.d<=r.b; return `<tr class="${td?"td":""}"><td>${lab}</td><td>${Array.isArray(r.x)?`${fmtT(r.x[0])} ${t("to")} ${fmtT(r.x[1])}`:r.x==="x"?t("dayoff"):""}</td></tr>`; }).join("")}</table>${known.length<g.length?`<div class="sub">${esc(t("hrs_rest"))}</div>`:""}`; }
 const n1=v=>Number(v).toFixed(1).replace(".",LANG==="en"?".":",");
 // thousands with a narrow no-break space (RU 5 323, PT 5323 / 12 345), EN 5,323
 const nfmt=n=>{ const s=String(n); if(LANG==="en") return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); if(LANG==="pt"&&s.length<5) return s; return s.replace(/\B(?=(\d{3})+(?!\d))/g,"\u202f"); };
@@ -1460,7 +1537,9 @@ function detail(p){const a=p.access||{};
   const dn=noStatus(p,tr(p,"day_note")), mn=noStatus(p,tr(p,"mem_note")), notes=noStatus(p,tr(p,"notes"));
   if(!p.of){ if(dn) add(t("d_day"), esc([cap(dayTxt(p)), cap(dn)].filter(Boolean).join(". ")));
   if(mn||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(mn)].filter(Boolean).join(". "))); }
-  add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):""].filter(Boolean).join(", "));
+  // "Без брони; записаться можно: сайт, WhatsApp" for walk-in places (the channels are a way to book a slot, not a requirement); "Нужна, через: …" otherwise
+  { const bk=bkOf(p), how=tr(p,"booking_how");
+    add(t("d_book"), bk==="walk_in"?esc(how?t("bk_wi_via",how):t("bk_wi")):[BOOK[bk]?esc(BOOK[bk][0]):"", how?esc(t("d_via",how)):""].filter(Boolean).join(", ")); }
   add(t("d_hours"), p.wk?(hoursLine(p)+(allSame(p.wk)?"":weekTable(p.wk))):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
   add(t("d_social"), socHTML(p));
   // ratings are shown in the row (both platforms); the card does not repeat them
@@ -1484,7 +1563,9 @@ function detail(p){const a=p.access||{};
   const ov=p.owner&&p.owner.verified_on;
   const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:[p.verified_on?esc(t("checked",fmtDate(p.verified_on))):"",conf?esc(t("reliab",conf)):""].filter(Boolean).join(", ")+(src?`${p.verified_on||conf?". ":""}${esc(t("sources"))}: ${src}`:"");
   const wait=MORE?"":MORE_ERR?`<p class="dload err" role="status">${esc(t("more_err"))} <button type="button" class="act" data-retry>${esc(t("retry"))}</button></p>`:`<p class="dload" role="status">${esc(t("loading"))}</p>`;
-  return `${tomap}${wait}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${p.of?`<div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}`:""}<dl class="dgrid">${it.join("")}</dl>${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}`;
+  // prices and the details grid share the width: two columns on a wide card (.dcols, container query), one column on phones; without an offers block the grid alone flows as before
+  const grid=`<dl class="dgrid">${it.join("")}</dl>`; const body=p.of?`<div class="dcols"><div class="dcol"><div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}</div>${grid}</div>`:grid;
+  return `<div class="det">${tomap}${wait}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${body}${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}</div>`;
 }
 // leading "Ещё не открыто." / "Not open yet." / "Temporarily closed." (any of the three languages) is dropped from a text when the status pill is shown
 const STATUS_RX=new RegExp("^\\s*(?:"+["ru","en","pt"].flatMap(L=>[I18N[L].soon,I18N[L].closed]).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\s*[.;:,]?\\s*","i");
@@ -1532,7 +1613,8 @@ function filtered(){
       case "kind": return d*(KINDS[kg(x)][0].localeCompare(KINDS[kg(y)][0]))||x._d-y._d;
       case "dist": return d*(x._d-y._d);
       case "name": return d*coll.compare(pname(x),pname(y));
-      default: return d*(x._score-y._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
+      case "score": return d*(x._score-y._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
+      default: return d*(x._rec-y._rec)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
     }
   });
 }
@@ -1573,11 +1655,13 @@ const sentinel=document.getElementById("more-sentinel");
 function fill(){ if(shown<LIST.length && !isFull() && sentinel.getBoundingClientRect().top<innerHeight+1500){ appendRows(PAGE); requestAnimationFrame(fill); } }
 try{ new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)) fill(); },{rootMargin:"1500px 0px"}).observe(sentinel); }catch(e){ window.addEventListener("scroll",fill,{passive:true}); }
 function updateMarkers(list){ const ms=[]; let key=""; list.forEach(p=>{ const m=markers[p._i]; if(m){ ms.push(m); key+=p._i+","; } });
-  if(key===lastMk) return; lastMk=key; cluster.clearLayers(); cluster.addLayers(ms); }
+  if(key===lastMk) return false; lastMk=key; cluster.clearLayers(); cluster.addLayers(ms); return true; }
 function render(keep){
   const list=filtered(); LIST=list;
-  updateMarkers(list);
-  const ak=[...st.area].sort().join(",")+"|"+[...st.muni].sort().join(",")+"|"+(qActive()?st.q:""); if(ak!==lastAreaKey){ lastAreaKey=ak; fitAuto(); }
+  const mkCh=updateMarkers(list);
+  // desktop and full-screen map refit on a new area, town or narrow query; the phone preview refits whenever the set of pins changes
+  const ak=[...st.area].sort().join(",")+"|"+[...st.muni].sort().join(",")+"|"+(qActive()?st.q:""); const akCh=ak!==lastAreaKey; if(akCh) lastAreaKey=ak;
+  if(akCh||(mkCh&&isPhone()&&!isFull())) fitAuto();
   document.getElementById("empty").hidden = list.length>0;
   let need=keep?Math.max(shown,PAGE):PAGE;
   if(st.open!=null){ const k=list.findIndex(p=>p._i===st.open); if(k>=need) need=k+1; }
@@ -1642,7 +1726,9 @@ tbody.addEventListener("mouseleave",()=>{ tbody.dataset.hov=""; document.querySe
 // near me
 // my location, shared by "Near me" (filters) and the locate button on the map: blue dot + accuracy circle, distances, sort by distance
 let meAcc=null;
-function setMe(ll,acc,view){ ME=ll; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); }); document.getElementById("opt-dist").hidden=false;
+function setMe(ll,acc,view){ ME=ll; P.forEach(p=>{ if(p.lat!=null) p._d=km(ME,[p.lat,p.lon]); });
+  // the distance sort is named after its origin: "Near me" for the device location, "Closest to Cascais" for the fallback centre
+  const od=document.getElementById("opt-dist"); od.hidden=false; od.dataset.t=(ll[0]===CASCAIS[0]&&ll[1]===CASCAIS[1])?"s_dist":"geo_ok"; od.textContent=t(od.dataset.t);
   if(meMarker) meMarker.setLatLng(ME); else meMarker=L.circleMarker(ME,{radius:7,color:"#fff",weight:2,fillColor:"#2f6fb2",fillOpacity:1,interactive:false}).addTo(map);
   if(acc!=null&&acc<5000){ if(meAcc) meAcc.setLatLng(ME).setRadius(acc); else meAcc=L.circle(ME,{radius:acc,color:"#2f6fb2",weight:1,opacity:.5,fillColor:"#2f6fb2",fillOpacity:.12,interactive:false}).addTo(map); meAcc.bringToBack(); }
   document.getElementById("near").innerHTML=esc(t("geo_ok"))+ico("check","ic-s"); document.getElementById("nearc").hidden=true; locb.classList.add("on");
@@ -1668,10 +1754,13 @@ tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(p
 
 // copy link
 function toast(msg){ document.querySelectorAll(".cptoast").forEach(e=>e.remove()); const tt=document.createElement("div"); tt.className="cptoast"; tt.setAttribute("role","status"); tt.textContent=msg; document.body.appendChild(tt); setTimeout(()=>tt.remove(),1800); }
-function copyLink(i,btn){ const u=location.origin+location.pathname+"#p-"+P[i].id; const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} toast(t("copied")); };
+// static page of the place in the current language (own og:image / og:title for messengers); the page has a button back to the app
+const SEO_PREFIX=location.pathname.replace(/[^/]*$/,"");
+const placeUrl=p=>location.origin+SEO_PREFIX+LANG+"/place/"+p.id+"/";
+function copyLink(i,btn){ const u=placeUrl(P[i]); const ok=()=>{ if(btn){btn.classList.add("ok"); setTimeout(()=>btn.classList.remove("ok"),1500);} toast(t("copied")); };
   if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(u).then(ok,()=>prompt("Link",u)); else prompt("Link",u); }
 // share: native sheet on phones, copy link elsewhere (one implementation, one toast)
-function shareLink(i,btn){ const p=P[i]; const u=location.origin+location.pathname+"#p-"+p.id; if(navigator.share&&isPhone()){ navigator.share({title:pname(p),url:u}).catch(()=>{}); return; } copyLink(i,btn); }
+function shareLink(i,btn){ const p=P[i]; const u=placeUrl(p); if(navigator.share&&isPhone()){ navigator.share({title:pname(p),url:u}).catch(()=>{}); return; } copyLink(i,btn); }
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest(".cpl"); if(b){ e.stopPropagation(); e.preventDefault(); shareLink(+b.dataset.cp,b); } },true);
 // route menu (Google Maps / Apple Maps / Waze): anchored popover on desktop, bottom sheet on phones
 function showRoute(btn){ const p=P[+btn.dataset.route]; if(!p||p.lat==null) return; const dest=`${p.lat},${p.lon}`;
@@ -1857,7 +1946,8 @@ function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElem
 document.getElementById("tryq").onclick=e=>{ qEl.value=e.currentTarget.dataset.q||""; applyQ(); };
 renderHead(); render();
 // first view: a saved state (reload) is restored; a deep link #p-id (alias ids too) opens as a card entry, so the browser's back collapses it
-function initNav(){ const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); const p=mm?byId(mm[1]):null;
+function initNav(){ try{ const q0=new URLSearchParams(location.search).get("q"); if(q0){ qEl.value=q0; applyQ(); } }catch(_){}
+  const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); const p=mm?byId(mm[1]):null;
   if(s.v){ applyState(s); return; }
   if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
   else hReplace({v:"list"},location.href); }

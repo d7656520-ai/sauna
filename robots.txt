@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /sauna/owner.html
+
+Sitemap: https://d7656520-ai.github.io/sauna/sitemap.xml
