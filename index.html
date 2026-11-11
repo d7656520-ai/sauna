@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=06f25e6e89" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=8e6f385a05" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -774,7 +774,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=06f25e6e89"></script>
+<script src="data.js?v=8e6f385a05"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1327,7 +1327,7 @@ P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
 function pvOpts(off){ const ph=isPhone(); const w=ph?Math.min(Math.round(innerWidth*0.92),360):312;
   return {offset:[0,off==null?-42:off],closeButton:false,maxWidth:w,minWidth:w,autoPan:true,autoPanPaddingTopLeft:[ph?10:20,ph?60:20],autoPanPaddingBottomRight:[ph?10:20,ph?78:72],className:ph?"pv-m":"pv-d"}; } // phone: 60 on top keeps the popup under the "All places" pill, 78 below keeps it above the List / Filters bar
 let pvI=null, curPop=null;
-function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; loadMore();
+function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; loadMore(); loadPh(p);
   const pop=curPop=L.popup(pvOpts(off)); pop.pvI=i; pop.setLatLng(m.getLatLng()).setContent(previewHTML(p)).openOn(map); }
 // User selection gets a neighbourhood view; history restoration keeps its saved zoom.
 // Reveal overlapping pins at this zoom instead of zoomToShowLayer's max-zoom fallback.
@@ -1582,7 +1582,8 @@ function detail(p){const a=p.access||{};
   const hs=HS(); const tomap=(hs.v==="card"&&hs.back==="map"&&(hs.id===p.id||(p.alias_ids||[]).includes(hs.id)))?`<button type="button" class="tomap" data-tomap>${ico("cl","ic-s")}${esc(t("tomap"))}</button>`:"";
   const ov=p.owner&&p.owner.verified_on;
   const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:[p.verified_on?esc(t("checked",fmtDate(p.verified_on))):"",conf?esc(t("reliab",conf)):""].filter(Boolean).join(", ")+(src?`${p.verified_on||conf?". ":""}${esc(t("sources"))}: ${src}`:"");
-  const wait=MORE?"":MORE_ERR?`<p class="dload err" role="status">${esc(t("more_err"))} <button type="button" class="act" data-retry>${esc(t("retry"))}</button></p>`:`<p class="dload" role="status">${esc(t("loading"))}</p>`;
+  const phWait=!!p.pc&&!p._phl; // the rest of the photos is still on its way (or failed)
+  const wait=MORE&&!phWait?"":MORE_ERR||(MORE&&p._phe)?`<p class="dload err" role="status">${esc(t("more_err"))} <button type="button" class="act" data-retry>${esc(t("retry"))}</button></p>`:`<p class="dload" role="status">${esc(t("loading"))}</p>`;
   // prices and the details grid share the width: two columns on a wide card (.dcols, container query), one column on phones; without an offers block the grid alone flows as before
   const grid=`<dl class="dgrid">${it.join("")}</dl>`; const body=p.of?`<div class="dcols"><div class="dcol"><div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}</div>${grid}</div>`:grid;
   return `<div class="det">${tomap}${wait}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${body}${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}</div>`;
@@ -1719,7 +1720,7 @@ function hPush(s,url){ try{ history.pushState(s,"",url); }catch(e){} }
 function hReplace(s,url){ try{ history.replaceState(s,"",url); }catch(e){} }
 const byId=id=>P.find(x=>x.id===id||(x.alias_ids||[]).includes(id));
 // expand a card (DOM only). If the current filters hide the place, they are reset with a toast so the card can always be shown
-function openCard(i,noMap){ if(st.open===i) return; const was=st.open; loadMore();
+function openCard(i,noMap){ if(st.open===i) return; const was=st.open; loadMore(); loadPh(P[i]);
   if(!ensureShown(i)){ const hid=!P[i]._open&&!st.all; if(hid){ st.exc=i; render(); }
     if(!ensureShown(i)){ resetAll(true); if(hid) st.exc=i; render(); ensureShown(i); toast(t("f_reset")); } else toast(t("op_exc")); }
   if(was!=null) closeCard(was,true);
@@ -1782,7 +1783,7 @@ tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(p
   const sm=e.target.closest("[data-showmap]"); if(sm){ if(HS().v==="card"&&HS().back==="map") history.back(); else showOnMap(+sm.dataset.showmap); return; }
   const sh=e.target.closest("[data-share]"); if(sh){ shareLink(+sh.dataset.share,sh); return; }
   const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
-  if(e.target.closest("[data-retry]")){ loadMore(); return; }
+  if(e.target.closest("[data-retry]")){ loadMore(); if(st.open!=null) loadPh(P[st.open]); return; }
   if(e.target.closest("tr.detail")) return;
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) toggleRow(+r.dataset.i);});
 
@@ -1897,7 +1898,7 @@ function lbShow(){ const x=lbP._ph[lbJ]; if(!x) return;
   const s=document.getElementById("lb-src"); const su=safeUrl(x.s)||(/^http:\/\//.test(x.s||"")?x.s:null); s.hidden=!su; if(su) s.href=su;
   const many=lbP._ph.length>1; ["lb-prev","lb-next"].forEach(id=>document.getElementById(id).hidden=!many);
   [lbJ,lbJ+1,lbJ-1].forEach(j=>{ const sl=lbTrack.children[(j+lbP._ph.length)%lbP._ph.length]; const im=sl&&sl.firstElementChild; if(im&&im.loading==="lazy") im.loading="eager"; }); }
-function openLB(i,j){ loadMore(); lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbBuild(); lbAlign(false); lbShow(); document.getElementById("lb-x").focus(); }
+function openLB(i,j){ loadMore(); loadPh(P[i]); lbP=P[i]; if(!lbP||!lbP._ph.length) return; lbJ=j||0; lastFocus=document.activeElement; lb.hidden=false; document.body.style.overflow="hidden"; lbBuild(); lbAlign(false); lbShow(); document.getElementById("lb-x").focus(); }
 function closeLB(){ lb.hidden=true; document.body.style.overflow=""; lbTrack.innerHTML=""; lbP=null; lastFocus&&lastFocus.focus&&lastFocus.focus(); }
 const step=d=>{ if(!lbP) return; lbJ=(lbJ+d+lbP._ph.length)%lbP._ph.length; lbAlign(true); lbShow(); };
 lbTrack.addEventListener("scroll",()=>{ if(lbRaf||!lbP) return; lbRaf=requestAnimationFrame(()=>{ lbRaf=0; if(!lbP||!lbTrack.clientWidth) return; const j=Math.round(lbTrack.scrollLeft/lbTrack.clientWidth); if(j!==lbJ&&j>=0&&j<lbP._ph.length){ lbJ=j; lbShow(); } }); },{passive:true});
@@ -1952,6 +1953,16 @@ function refreshPopup(){ const el=curPop.getElement(); const sl0=el&&el.querySel
   curPop.setContent(previewHTML(P[pvI])); const el2=curPop.getElement(); if(!el2) return; wirePreview(el2); if(all){ const a2=el2.querySelector(".pp-b .am"); if(a2) a2.classList.add("amall"); }
   const sl=el2.querySelector(".pp-sl"); if(sl&&cur){ sl.scrollLeft=cur*sl.clientWidth; const c=el2.querySelector(".pp-cnt"); if(c) c.textContent=t("n_of",cur+1,sl.children.length); } }
 function refreshCard(i){ const d=document.getElementById("det-"+i); if(d) d.outerHTML=detailHTML(P[i]); }
+// photos after the first live in ph/<id>.json (p.pc = how many photos the place has in all); fetched once when a card, a pin or the photo viewer needs them,
+// versioned by the build id like data_more.js. p._phl: loaded, p._phe: the last attempt failed (the card offers a retry)
+const phPr=new Map();
+function loadPh(p){ if(!p||!p.pc||p._phl) return Promise.resolve(); if(phPr.has(p.id)) return phPr.get(p.id);
+  const bld=((window.SAUNA_DATA||{}).meta||{}).build; p._phe=false;
+  const pr=fetch("ph/"+encodeURIComponent(p.id)+".json"+(bld?"?v="+encodeURIComponent(bld):"")).then(r=>r.ok?r.json():Promise.reject(r.status)).then(list=>{
+    const seen=new Set((p.photos||[]).map(x=>x.u)); p.photos=(p.photos||[]).concat((Array.isArray(list)?list:[]).filter(x=>x&&x.u&&!seen.has(x.u)&&seen.add(x.u))); p._ph=phOf(p); p._phl=true; })
+    .catch(()=>{ p._phe=true; }).then(()=>{ phPr.delete(p.id); afterPh(p); });
+  phPr.set(p.id,pr); return pr; }
+function afterPh(p){ if(st.open===p._i) refreshCard(p._i); if(p._phl&&lbP===p&&!lb.hidden){ lbBuild(); lbAlign(false); lbShow(); } if(p._phl&&curPop&&pvI===p._i&&map.hasLayer(curPop)) refreshPopup(); }
 tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
 // places without confirmed outside access: the toggle at the top of the filters (count = hidden places that pass the other filters),
 // a quiet line under the list, and with a query a line above it naming hidden matches
