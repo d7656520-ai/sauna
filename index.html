@@ -950,7 +950,7 @@ if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListe
 const ACCESS = ()=>({day:t("acc_day"),treatment:t("acc_treatment"),membership:t("acc_membership"),private:t("acc_private")});
 const HEATF = ()=>({sauna:{l:t("x_sauna"),i:aico("heat"),f:"heat"},hammam:{l:t("x_hammam"),i:aico("steam"),f:"steam"},banya:{l:t("x_banya"),i:aico("banya"),f:"heat"},ir:{l:t("x_ir"),i:aico("ir"),f:"heat"}});
 const EXTF = ()=>({cold:{l:t("x_cold"),i:aico("cold"),f:"cold"},pool:{l:t("x_pool"),i:aico("pool"),f:"water"},sea:{l:t("x_sea"),i:aico("sea"),f:"sea"}});
-const HRS = ()=>({now:t("h_now"),h19:t("h_19"),eve:t("h_eve"),early:t("h_early")});
+const HRS = ()=>({now:t("h_now"),h19:t("h_19"),eve:t("h_eve")});  // owner 11.11: "opens before 8" removed (mostly gyms at 6 to 7 am, not useful for a sauna search)
 const RMIN = ()=>({"4":t("r_40"),"4.5":t("r_45"),"4.7":t("r_47")}); // one threshold at a time, tap again to clear
 const PRICES=[20,30,50]; // caps from the visit-price distribution: 33 / 66 / 89 of 102 priced places
 const PRICEF=()=>{ const m={}; PRICES.forEach(v=>m[String(v)]=t("upto",v)); return m; };
