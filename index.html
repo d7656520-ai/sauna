@@ -1957,9 +1957,9 @@ tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
 // a quiet line under the list, and with a query a line above it naming hidden matches
 let HIDL=[];
 function setAll(on){ st.all=!!on; st.exc=(!st.all&&st.open!=null&&!P[st.open]._open)?st.open:null; render(true); }
-// the switch "All places (+N)": off, N = hidden places that pass the other filters; on, N = such places now in the list. The same switch in the sheet and on the full-screen map
+// the switch "All places (N)": N = how many places the list holds with the switch on (current filters applied). The same switch in the sheet and on the full-screen map
 function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=document.getElementById("otog");
-  const nIn=on?LIST.filter(p=>!p._open).length:0; const k=on?nIn:n; const lab=t("op_all")+(k?` (+${nfmt(k)})`:"");
+  const nIn=on?LIST.filter(p=>!p._open).length:0; const tot=on?LIST.length:LIST.length+n; const lab=t("op_all")+(tot?` (${nfmt(tot)})`:"");  // owner: show the total number of places with the switch on, not "+hidden"
   b.classList.toggle("on",on); b.classList.toggle("zero",!on&&!n); b.setAttribute("aria-checked",String(on));
   b.innerHTML=`<span class="sw" aria-hidden="true"></span><span class="otl"><b>${esc(lab)}</b><small>${esc(t("op_sub"))}</small></span>`;
   const m=document.getElementById("mapall"); m.classList.toggle("zero",!on&&!n); m.setAttribute("aria-checked",String(on)); m.setAttribute("aria-label",`${lab}: ${t("op_sub")}`); m.title=t("op_sub");
