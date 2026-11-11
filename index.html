@@ -193,24 +193,18 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .wtag.low{white-space:normal;flex:0 1 auto;max-width:100%}
 /* places without confirmed outside access (shown on request): a quiet tag, the toggle at the top of the filters, the quiet lines around the list */
 .wtag.otag{background:var(--chip);color:var(--muted);white-space:normal;max-width:100%}
-/* "All places (+N)": a real switch (role=switch), the first row of the filter sheet and a pill at the top left of the full-screen map; one state (st.all) for both */
-.sw{position:relative;flex:0 0 auto;width:34px;height:20px;border-radius:999px;background:var(--chip-bd);transition:background-color .15s}
-.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.28);transition:transform .15s}
-[aria-checked="true"] > .sw{background:var(--sea)}
-[aria-checked="true"] > .sw::after{transform:translateX(14px)}
-.otog{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:44px;max-width:100%;padding:4px 0;cursor:pointer;color:var(--ink);text-align:left}
-.otog .otl{display:flex;flex-direction:column;min-width:0;font-size:13px;line-height:1.3}
-.otog .otl b{font-weight:600}
-.otog .otl small{font-size:11.5px;color:var(--muted)}
-.otog.zero .otl b{font-weight:400;color:var(--muted)}
-.otog:hover .sw{background:color-mix(in srgb,var(--sea) 35%,var(--chip-bd))}
-.otog[aria-checked="true"]:hover .sw{background:var(--sea)}
-.otog:focus-visible{outline:none}
-.otog:focus-visible .sw{outline:2px solid var(--sea);outline-offset:2px}
+/* owner 12.11: two-option segmented control instead of a switch: "Можно прийти N" | "Все места N"; one state (st.all) for the sheet and the map */
+.seg{display:inline-flex;gap:2px;padding:3px;border-radius:999px;background:var(--panel);border:1px solid var(--line);box-shadow:0 1px 4px rgba(0,0,0,.12);max-width:100%}
+.seg button{all:unset;box-sizing:border-box;cursor:pointer;padding:7px 12px;border-radius:999px;font-size:13.5px;line-height:1.2;color:var(--ink);white-space:nowrap}
+.seg button .n{opacity:.7;margin-left:5px;font-variant-numeric:tabular-nums}
+.seg button[aria-checked="true"]{background:var(--sea);color:#fff;font-weight:600}
+.seg button[aria-checked="true"] .n{opacity:.9}
+.seg button:focus-visible{outline:2px solid var(--sea);outline-offset:1px}
+.otog{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:4px 0}
+.otog .seg{box-shadow:none}
+.otog .otsub{font-size:11.5px;color:var(--muted);line-height:1.3}
 html:not(.mapfull) .mapall{display:none}
-html.mapfull .mapall{display:inline-flex;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));gap:8px;padding-left:8px;max-width:calc(100vw - 24px)}
-.mapall.zero{color:var(--muted)}
-.mapall:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+html.mapfull .mapall{display:inline-flex;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));max-width:calc(100vw - 24px)}
 .hidn{margin:0;padding:10px 14px;font-size:13px;line-height:1.4;color:var(--muted);text-align:center}
 #hidn{border-top:1px solid var(--line)}
 #qhid{border-bottom:1px solid var(--line);text-align:left}
@@ -686,7 +680,7 @@ tr.skel td{padding:10px 8px}
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap" role="region" aria-label="Карта" data-ta="map"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><button type="button" class="locb" id="locb" data-ta="locate" aria-label="Моё местоположение"></button><button type="button" class="pillb light mapall" id="mapall" role="switch" aria-checked="false"><span class="sw" aria-hidden="true"></span>Все места</button><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
+  <div class="mapwrap" id="mapwrap" role="region" aria-label="Карта" data-ta="map"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><button type="button" class="locb" id="locb" data-ta="locate" aria-label="Моё местоположение"></button><div class="mapall seg" id="mapall" role="radiogroup" aria-label="Какие места показывать"></div><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
   <main class="main">
     <section class="fwrap" data-ta="filters">
     <div class="fscrim" id="fscrim" aria-hidden="true"></div>
@@ -698,7 +692,7 @@ tr.skel td{padding:10px 8px}
     <div class="filters" id="filters">
       <div class="fgrab" id="fgrab" aria-hidden="true"></div>
       <div class="fhead" id="fhead"><div class="fsum"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button></div><button class="fx" id="fclose" type="button" data-ta="close" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-      <div class="frow fg fopen" id="f-open-row"><button type="button" class="otog" id="otog" role="switch" aria-checked="false"><span class="sw" aria-hidden="true"></span><span class="otl"><b>Все места</b></span></button></div>
+      <div class="frow fg fopen" id="f-open-row"><div class="otog" id="otog"><div class="seg" id="otseg" role="radiogroup" aria-label="Какие места показывать"></div><small class="otsub" id="otsub"></small></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
@@ -804,7 +798,8 @@ Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"
 Object.assign(I18N.ru,{wt_low:"не подтверждено официальным сайтом",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Не подтверждено официальным сайтом",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
 Object.assign(I18N.en,{wt_low:"not confirmed by the official site",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site",wt_sparse_h:"Little info so far: no price, hours or reviews"});
 Object.assign(I18N.pt,{wt_low:"não confirmado no site oficial",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
-Object.assign(I18N.ru,{op_only:"Открыто для всех",op_sub_on:"{0} из {1}: вход для посторонних подтверждён",op_sub_none:"все {0} мест открыты для всех",op_sub_off:"показаны все {0}, включая места только для гостей и без данных",h_early:"Открывается до 8:00"});Object.assign(I18N.en,{op_only:"Open to everyone",op_sub_on:"{0} of {1}: outside visitors confirmed",op_sub_none:"all {0} places are open to everyone",op_sub_off:"showing all {0}, incl. guests-only and unknown",h_early:"Opens before 8 am"});Object.assign(I18N.pt,{op_only:"Aberto a todos",op_sub_on:"{0} de {1}: entrada de visitantes confirmada",op_sub_none:"todos os {0} locais abertos a todos",op_sub_off:"todos os {0}, incluindo só para hóspedes e sem dados",h_early:"Abre antes das 8h"});
+Object.assign(I18N.ru,{seg_open:"Можно прийти",seg_all:"Все места"});Object.assign(I18N.en,{seg_open:"Open to visitors",seg_all:"All places"});Object.assign(I18N.pt,{seg_open:"Abertos a visitantes",seg_all:"Todos"});
+Object.assign(I18N.ru,{op_only:"Открыто для всех",op_sub_on:"«Можно прийти»: места, где подтверждён вход без проживания в отеле, по разовому билету, с процедурой или по абонементу",op_sub_none:"все {0} мест открыты для всех",op_sub_off:"показаны все места, включая только для гостей отеля и без данных о входе",h_early:"Открывается до 8:00"});Object.assign(I18N.en,{op_only:"Open to everyone",op_sub_on:"Open to visitors: places where non-guests can get in (single visit, with a treatment or membership)",op_sub_none:"all {0} places are open to everyone",op_sub_off:"showing every place, incl. hotel guests only and unknown access",h_early:"Opens before 8 am"});Object.assign(I18N.pt,{op_only:"Aberto a todos",op_sub_on:"Abertos a visitantes: entrada de não hóspedes confirmada (avulsa, com tratamento ou mensalidade)",op_sub_none:"todos os {0} locais abertos a todos",op_sub_off:"todos os locais, incluindo só para hóspedes e sem dados de acesso",h_early:"Abre antes das 8h"});
 Object.assign(I18N.ru,{book_contact:"Связаться для записи"});Object.assign(I18N.en,{book_contact:"Contact to book"});Object.assign(I18N.pt,{book_contact:"Contactar para reservar"});
 Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
 Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
@@ -1975,10 +1970,9 @@ function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=documen
   // owner 11.11 (2): no number in the label (it confused: the map showed all places); counts live in the subline
   const nIn=on?LIST.filter(p=>!p._open).length:0; const fOn=!on; const tot=fOn?LIST.length+n:LIST.length; const op=fOn?LIST.length:LIST.length-nIn;
   const lab=t("op_only"); const sub=fOn?(n?t("op_sub_on",nfmt(op),nfmt(tot)):t("op_sub_none",nfmt(tot))):t("op_sub_off",nfmt(tot));
-  b.classList.toggle("on",fOn); b.classList.toggle("zero",false); b.setAttribute("aria-checked",String(fOn));
-  b.innerHTML=`<span class="sw" aria-hidden="true"></span><span class="otl"><b>${esc(lab)}</b><small>${esc(sub)}</small></span>`;
-  const m=document.getElementById("mapall"); m.classList.toggle("zero",false); m.classList.toggle("on",fOn); m.setAttribute("aria-checked",String(fOn)); m.setAttribute("aria-label",`${lab}: ${sub}`); m.title=sub;
-  m.innerHTML=`<span class="sw" aria-hidden="true"></span>${esc(lab)}`;
+  const segs=`<button type="button" role="radio" data-seg="open" aria-checked="${fOn}">${esc(t("seg_open"))}<span class="n">${nfmt(op)}</span></button><button type="button" role="radio" data-seg="all" aria-checked="${!fOn}">${esc(t("seg_all"))}<span class="n">${nfmt(tot)}</span></button>`;
+  document.getElementById("otseg").innerHTML=segs; document.getElementById("otsub").textContent=sub;
+  const m=document.getElementById("mapall"); m.innerHTML=segs; m.title=sub;
   const more=`<button type="button" data-oall="1">${esc(t("op_more"))}</button>`;
   const hl=document.getElementById("hidn");
   if(!on&&n&&!q){ hl.hidden=false; hl.innerHTML=`${esc(t("op_line",nfmt(n),plf(n,"op_pl")))} · ${more}`; }
@@ -1986,7 +1980,7 @@ function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=documen
   else hl.hidden=true;
   const qh=document.getElementById("qhid");
   if(!on&&n&&q){ qh.hidden=false; qh.innerHTML=`${esc(n<=2?t("op_q1",HIDL.map(pname).join(", ")):t("op_qn",nfmt(n),plf(n,"op_qpl")))} · ${more}`; } else qh.hidden=true; }
-document.getElementById("otog").onclick=()=>setAll(!st.all); document.getElementById("mapall").onclick=()=>setAll(!st.all);
+for(const id of ["otseg","mapall"]) document.getElementById(id).addEventListener("click",e=>{ const x=e.target.closest("[data-seg]"); if(!x) return; e.stopPropagation(); const all=x.dataset.seg==="all"; if(all!==st.all) setAll(all); });
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-oall]"); if(b) setAll(b.dataset.oall==="1"); });
 // a query that matches nothing at all: "Nothing found for ..." and one tap on the closest spelling
 function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElementById("nores"), b=document.getElementById("tryq");
