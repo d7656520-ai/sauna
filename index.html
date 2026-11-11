@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=64e043efed" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=6ff54b4dbc" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -771,7 +771,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=64e043efed"></script>
+<script src="data.js?v=6ff54b4dbc"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -802,7 +802,7 @@ Object.assign(I18N.ru,{wt_low:"не подтверждено официальн�
 Object.assign(I18N.en,{wt_low:"not confirmed by the official site",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site",wt_sparse_h:"Little info so far: no price, hours or reviews"});
 Object.assign(I18N.pt,{wt_low:"não confirmado no site oficial",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
 Object.assign(I18N.ru,{seg_open:"Разовое посещение",seg_all:"Все места"});Object.assign(I18N.en,{seg_open:"Single visit",seg_all:"All places"});Object.assign(I18N.pt,{seg_open:"Entrada avulsa",seg_all:"Todos"});
-Object.assign(I18N.ru,{op_only:"Открыто для всех",op_sub_on:"Можно прийти один раз: без абонемента и без проживания в отеле",op_sub_none:"все {0} мест открыты для всех",op_sub_off:"Плюс места только по абонементу, спа только для гостей отелей и без данных о входе",h_early:"Открывается до 8:00"});Object.assign(I18N.en,{op_only:"Open to everyone",op_sub_on:"You can come once: no membership, no hotel stay",op_sub_none:"all {0} places are open to everyone",op_sub_off:"Plus membership-only places, hotel spas for guests only and unknown access",h_early:"Opens before 8 am"});Object.assign(I18N.pt,{op_only:"Aberto a todos",op_sub_on:"Pode ir uma vez: sem mensalidade e sem estadia no hotel",op_sub_none:"todos os {0} locais abertos a todos",op_sub_off:"Mais locais só com mensalidade, spas só para hóspedes e sem dados de acesso",h_early:"Abre antes das 8h"});
+Object.assign(I18N.ru,{op_only:"Открыто для всех",op_sub_on:"Места с разовым билетом, спа-кругом или процедурой",op_sub_none:"все {0} мест открыты для всех",op_sub_off:"Плюс абонементы, спа для гостей отелей и места без данных",h_early:"Открывается до 8:00"});Object.assign(I18N.en,{op_only:"Open to everyone",op_sub_on:"Places with a single ticket, spa circuit or treatment",op_sub_none:"all {0} places are open to everyone",op_sub_off:"Plus memberships, guests-only hotel spas and unknown",h_early:"Opens before 8 am"});Object.assign(I18N.pt,{op_only:"Aberto a todos",op_sub_on:"Locais com bilhete avulso, circuito ou tratamento",op_sub_none:"todos os {0} locais abertos a todos",op_sub_off:"Mais mensalidades, spas só para hóspedes e sem dados",h_early:"Abre antes das 8h"});
 Object.assign(I18N.ru,{book_contact:"Связаться для записи"});Object.assign(I18N.en,{book_contact:"Contact to book"});Object.assign(I18N.pt,{book_contact:"Contactar para reservar"});
 Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
 Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
@@ -989,7 +989,7 @@ const OPENK=new Set(["visit","day","circuit","pack","pass","treatment","membersh
 const GUESTC=/guest|hosped|h[oó]spede/i;
 const HEATW=new Set(["sauna","steam","hammam","banya"]), SPAW=new Set(["spa","pool","jacuzzi","cold","relax"]); // first-photo tags: the heat room, then the spa zone
 function memOnly(p){ const a=p.access||{}, h=p.hl||{}; const ks=new Set((p.of||[]).filter(o=>o.for!=="guests"&&!(o.conditions||[]).some(c=>GUESTC.test(String(c)))).map(o=>o.kind));
-  const once=a.day_pass===true||a.treatment_access===true||a.day_pass_price_eur!=null||["visit_from_eur","treatment_from_eur","pack_session_from_eur","group_from_eur"].some(k=>h[k]!=null)||[...ks].some(k=>k!=="membership");
+  const once=a.day_pass===true||a.treatment_access===true||a.day_pass_price_eur!=null||["visit_from_eur","treatment_from_eur","pack_session_from_eur","group_from_eur"].some(k=>h[k]!=null)||[...ks].some(k=>!["membership","trial","addon"].includes(k));  // a free trial or an add-on is not a single visit
   const mem=a.membership===true||a.membership_month_eur!=null||h.month_from_eur!=null||ks.has("membership"); return mem&&!once; }
 function openOf(p){ const a=p.access||{}, h=p.hl||{};
   if((p.of||[]).some(o=>o.for!=="guests"&&!(o.conditions||[]).some(c=>GUESTC.test(String(c)))&&(OPENK.has(o.kind)||o.price_eur!=null))) return true;
@@ -1703,7 +1703,7 @@ function render(keep){
   if(st.open!=null){ const k=list.findIndex(p=>p._i===st.open); if(k>=need) need=k+1; }
   shown=0; tbody.textContent=""; appendRows(need);
   const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
-  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${baseN()} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
+  document.getElementById("stats").innerHTML=`<span class="s-n">${n===baseN()?`<b>${nfmt(n)}</b> ${plf(n,"op_pl")}`:`<b>${n}</b> ${t("of")} ${baseN()} ${t("places")}`}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
   HIDL=st.all?[]:P.filter(p=>!inBase(p)&&passFn(p,"open")); if(lastR) HIDL.sort((x,y)=>(lastR.get(y._i)||0)-(lastR.get(x._i)||0));
   // chip counts live in the filter panel: computed now when it is open, otherwise once the page is idle (and at the latest when it opens)
   updateFtoggle(); if(fbox.classList.contains("open")) facetCounts(); else if(!fcDirty){ fcDirty=1; idle(()=>{ if(fcDirty) facetCounts(); },1500); } drawNores(); drawOpen();
