@@ -203,6 +203,7 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 @media (max-width:380px){.seg button{padding:7px 9px;font-size:13px}.seg button .n{margin-left:4px}}
 .otog{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:4px 0}
 .otog .seg{box-shadow:none}
+.mainseg{margin:12px 0 0;box-shadow:none}  /* owner 12.11: the same two-option control on the main page above the list */
 .otog .otsub{font-size:11.5px;color:var(--muted);line-height:1.3}
 html:not(.mapfull) .mapall{display:none}
 html.mapfull .mapall{display:inline-flex;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));max-width:calc(100vw - 24px)}
@@ -678,6 +679,7 @@ tr.skel td{padding:10px 8px}
   <header class="hd">
     <div class="toprow"><h1 data-t="title"><span class="l-ru">Сауны Португалии</span><span class="l-en">Saunas of Portugal</span><span class="l-pt">Saunas de Portugal</span></h1><button type="button" class="langb" id="langsw" aria-haspopup="dialog" aria-expanded="false" data-ta="lang">RU</button></div>
     <p data-t="intro"><span class="l-ru">Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии, на Мадейре и Азорах: цены, часы, бронь и фото.</span><span class="l-en">Saunas, banyas, day spas and spa hotels with a sauna across Portugal, Madeira and the Azores: prices, opening hours, booking and photos.</span><span class="l-pt">Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal, na Madeira e nos Açores: preços, horários, reservas e fotos.</span></p>
+    <div class="seg mainseg" id="mainseg" role="radiogroup" aria-label="Какие места показывать"></div>
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
@@ -1701,7 +1703,7 @@ function render(keep){
   if(st.open!=null){ const k=list.findIndex(p=>p._i===st.open); if(k>=need) need=k+1; }
   shown=0; tbody.textContent=""; appendRows(need);
   const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
-  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${baseN()} ${t("places")}</span>${!st.all&&P.length>baseN()?`<span class="s-all">${esc(t("s_total",nfmt(P.length)))}</span>`:""}<span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
+  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${baseN()} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
   HIDL=st.all?[]:P.filter(p=>!inBase(p)&&passFn(p,"open")); if(lastR) HIDL.sort((x,y)=>(lastR.get(y._i)||0)-(lastR.get(x._i)||0));
   // chip counts live in the filter panel: computed now when it is open, otherwise once the page is idle (and at the latest when it opens)
   updateFtoggle(); if(fbox.classList.contains("open")) facetCounts(); else if(!fcDirty){ fcDirty=1; idle(()=>{ if(fcDirty) facetCounts(); },1500); } drawNores(); drawOpen();
@@ -1976,7 +1978,7 @@ function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=documen
   const lab=t("op_only"); const sub=fOn?(n?t("op_sub_on",nfmt(op),nfmt(tot)):t("op_sub_none",nfmt(tot))):t("op_sub_off",nfmt(tot));
   const segs=`<button type="button" role="radio" data-seg="open" aria-checked="${fOn}">${esc(t("seg_open"))}<span class="n">${nfmt(op)}</span></button><button type="button" role="radio" data-seg="all" aria-checked="${!fOn}">${esc(t("seg_all"))}<span class="n">${nfmt(tot)}</span></button>`;
   document.getElementById("otseg").innerHTML=segs; document.getElementById("otsub").textContent=sub;
-  const m=document.getElementById("mapall"); m.innerHTML=segs; m.title=sub;
+  const m=document.getElementById("mapall"); m.innerHTML=segs; m.title=sub; const ms=document.getElementById("mainseg"); ms.innerHTML=segs; ms.title=sub;
   const more=`<button type="button" data-oall="1">${esc(t("op_more"))}</button>`;
   const hl=document.getElementById("hidn");
   if(!on&&n&&!q){ hl.hidden=false; hl.innerHTML=`${esc(t("op_line",nfmt(n),plf(n,"op_pl")))} · ${more}`; }
@@ -1984,7 +1986,7 @@ function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=documen
   else hl.hidden=true;
   const qh=document.getElementById("qhid");
   if(!on&&n&&q){ qh.hidden=false; qh.innerHTML=`${esc(n<=2?t("op_q1",HIDL.map(pname).join(", ")):t("op_qn",nfmt(n),plf(n,"op_qpl")))} · ${more}`; } else qh.hidden=true; }
-for(const id of ["otseg","mapall"]) document.getElementById(id).addEventListener("click",e=>{ const x=e.target.closest("[data-seg]"); if(!x) return; e.stopPropagation(); const all=x.dataset.seg==="all"; if(all!==st.all) setAll(all); });
+for(const id of ["otseg","mapall","mainseg"]) document.getElementById(id).addEventListener("click",e=>{ const x=e.target.closest("[data-seg]"); if(!x) return; e.stopPropagation(); const all=x.dataset.seg==="all"; if(all!==st.all) setAll(all); });
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-oall]"); if(b) setAll(b.dataset.oall==="1"); });
 // a query that matches nothing at all: "Nothing found for ..." and one tap on the closest spelling
 function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElementById("nores"), b=document.getElementById("tryq");
