@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=73b16dcaad" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=60350fe1be" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -456,7 +456,10 @@ html.mapfull .locb{display:grid}
 html.mapfull.psopen .locb,html.mapfull.fpanel .locb{display:none}
 @media (min-width:901px){.locb{display:grid;bottom:34px;right:12px}}
 /* back to the map, shown in a card opened from a pin */
-.tomap{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:2px;cursor:pointer;min-height:32px;padding:0 12px 0 6px;border-radius:999px;background:var(--sea-soft);color:var(--sea);font-weight:600;font-size:13px;margin:0 0 10px}
+.tomap{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:4px;cursor:pointer;min-height:38px;padding:0 16px 0 10px;border-radius:999px;background:var(--heat);color:#fff;font-weight:700;font-size:14px;margin:0 0 12px;box-shadow:0 2px 8px rgba(194,106,18,.35)}
+.tomap svg{stroke:currentColor}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .tomap{color:#1b1206}}
+:root[data-theme="dark"] .tomap{color:#1b1206}
 .tomap:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 /* list skeleton until data.js has arrived */
 tr.skel td{padding:10px 8px}
@@ -685,7 +688,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=73b16dcaad"></script>
+<script src="data.js?v=60350fe1be"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
