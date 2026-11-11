@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=3d3e89dcf4" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=b464bde6a5" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -144,7 +144,6 @@ select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);back
 .reset:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 .reset:disabled{cursor:default;color:var(--muted);background:transparent;font-weight:400}
 .hint{font-size:13px;color:var(--muted);margin:0 0 8px}
-.warn-i{display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;background:var(--warn-soft);color:var(--warn);font-size:11px;font-weight:600;vertical-align:1px;margin-left:4px}
 .tablewrap{overflow:visible;overflow:clip;background:var(--panel);border:1px solid var(--line);border-radius:12px}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{position:sticky;top:0;z-index:1;background:var(--panel);text-align:left;font-weight:600;font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);padding:0;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -162,14 +161,28 @@ tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
 .name .wtag{flex:0 0 auto;margin:2px 0 0}
 .wtag{display:inline-block;font-size:11.5px;line-height:1.5;padding:0 7px;background:var(--warn-soft);color:var(--warn);border-radius:6px;white-space:nowrap}
 .wtag.sparse{background:var(--chip);color:var(--muted)}
+/* "not confirmed by the official site" is the whole sentence (no hover-only hint behind a short word), so it may wrap under the name */
+.wtag.low{white-space:normal;flex:0 1 auto;max-width:100%}
 /* places without confirmed outside access (shown on request): a quiet tag, the toggle at the top of the filters, the quiet lines around the list */
 .wtag.otag{background:var(--chip);color:var(--muted);white-space:normal;max-width:100%}
-.otog{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;gap:8px;min-height:36px;max-width:100%;padding:6px 12px 6px 10px;border:1px dashed var(--chip-bd);border-radius:9px;font-size:13px;line-height:1.3;color:var(--sea);cursor:pointer;white-space:normal}
-.otog .ic{flex:0 0 auto;width:16px;height:16px}
-.otog.on{border-style:solid;background:var(--sea-soft)}
-.otog.zero{color:var(--muted)}
-.otog:hover{border-color:var(--sea)}
-.otog:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
+/* "All places (+N)": a real switch (role=switch), the first row of the filter sheet and a pill at the top left of the full-screen map; one state (st.all) for both */
+.sw{position:relative;flex:0 0 auto;width:34px;height:20px;border-radius:999px;background:var(--chip-bd);transition:background-color .15s}
+.sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.28);transition:transform .15s}
+[aria-checked="true"] > .sw{background:var(--sea)}
+[aria-checked="true"] > .sw::after{transform:translateX(14px)}
+.otog{all:unset;box-sizing:border-box;display:flex;align-items:center;gap:10px;min-height:44px;max-width:100%;padding:4px 0;cursor:pointer;color:var(--ink);text-align:left}
+.otog .otl{display:flex;flex-direction:column;min-width:0;font-size:13px;line-height:1.3}
+.otog .otl b{font-weight:600}
+.otog .otl small{font-size:11.5px;color:var(--muted)}
+.otog.zero .otl b{font-weight:400;color:var(--muted)}
+.otog:hover .sw{background:color-mix(in srgb,var(--sea) 35%,var(--chip-bd))}
+.otog[aria-checked="true"]:hover .sw{background:var(--sea)}
+.otog:focus-visible{outline:none}
+.otog:focus-visible .sw{outline:2px solid var(--sea);outline-offset:2px}
+html:not(.mapfull) .mapall{display:none}
+html.mapfull .mapall{display:inline-flex;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));gap:8px;padding-left:8px;max-width:calc(100vw - 24px)}
+.mapall.zero{color:var(--muted)}
+.mapall:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 .hidn{margin:0;padding:10px 14px;font-size:13px;line-height:1.4;color:var(--muted);text-align:center}
 #hidn{border-top:1px solid var(--line)}
 #qhid{border-bottom:1px solid var(--line);text-align:left}
@@ -204,13 +217,19 @@ tr.detail > td{background:var(--bg);padding:12px;max-width:0}
 .gallery{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;max-width:var(--detw,100%);width:100%;scroll-snap-type:x proximity;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
 .gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip);scroll-snap-align:start}
 .gallery img{width:100%;height:100%;object-fit:cover;display:block}
-.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px 20px;font-size:13px;line-height:1.4;margin:0}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px 20px;font-size:13px;line-height:1.4;margin:0}
 .dgrid dt{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:1px}
 .dgrid dd{margin:0;overflow-wrap:anywhere}
+/* social links in the card: one round icon button per network (the same tile as the phone action icons), the handle is the accessible name */
+.socs{display:flex;flex-wrap:wrap;gap:8px;margin-top:3px}
+.soc{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:var(--panel);color:var(--sea);text-decoration:none}
+.soc:hover,.soc:focus-visible{border-color:var(--sea);background:var(--sea-soft)}
+.soc .ic{width:18px;height:18px;vertical-align:0}
 .note{margin:8px 0 0;font-size:13px;max-width:80ch}
 .src{margin-top:8px;font-size:11.5px;color:var(--muted)}
 .src a{color:var(--muted)}
 .foot{margin-top:20px;font-size:13px;color:var(--muted);max-width:78ch}
+.foot + .foot{margin-top:6px}
 .show-m{display:none}
 /* share button next to a title (popup and preview sheet) */
 .cpl{all:unset;cursor:pointer;display:inline-grid;place-items:center;flex:0 0 auto;width:32px;height:32px;margin:-6px -6px 0 4px;border-radius:8px;color:var(--muted)}
@@ -249,7 +268,8 @@ html.fpanel .fdone:active{transform:translateY(1px)}
 .price + .sub, td .sub.num{white-space:normal}
 .ofgt{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin:8px 0 4px}
 .ofgt.top{margin:0 0 4px;font-weight:600;color:var(--ink)}
-.prices{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:4px 24px;margin-bottom:12px}
+/* auto-fit: a single group (one pack) spans the card instead of leaving an empty column beside it */
+.prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:4px 24px;margin-bottom:12px}
 .ofg{min-width:0}
 .ofl{display:grid;grid-template-columns:78px minmax(0,1fr);gap:8px;padding:3px 0;font-size:13px;align-items:baseline}
 .ofl.trial .ofp{color:var(--ok)}
@@ -344,7 +364,7 @@ tr.row.active .am.am1,.am.amall.am1{flex-wrap:wrap}
 .dload.err{display:flex;align-items:center;flex-wrap:wrap;gap:8px;color:var(--ink)}
 a.act.prim,a.act.prim:visited,.act.prim{background:var(--sea);border-color:var(--sea);color:var(--on-sea);font-weight:600}
 html.mapfull{overflow:hidden}
-html.mapfull .mapwrap{position:fixed!important;inset:0;height:100%!important;z-index:1500;border:none}
+html.mapfull .mapwrap{position:fixed!important;inset:0;height:100%!important;max-height:none;z-index:1500;border:none}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
 .act{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:6px;min-height:32px;border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:5px 12px;font-size:13px;color:var(--ink);text-decoration:none;white-space:nowrap}
 a.act{color:var(--ink)}
@@ -370,11 +390,14 @@ a.act{color:var(--ink)}
 .leaflet-popup-content{margin:0;width:312px!important;max-width:calc(100vw - 40px);font-size:13px;line-height:1.38;position:relative}
 /* place preview: photo strip + facts, shared by the desktop popup and the phone sheet */
 .pp-sw{position:relative;border-radius:12px 12px 0 0;overflow:hidden;background:var(--chip)}
-.pp-sl{display:flex;height:176px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
+/* photo strip 3:2 (312 × 208): the median photo is 1.50 wide (Booking max1024x768 and Google w1200-h900 are bounds, not crops: half of the first photos are 3:2, 15% 4:3, 18% portrait);
+   a 3:2 box crops 14% of a photo on average, 4:3 18%, the former 16:9 strip 24% (39% on phones). Portrait photos keep their middle (object-position center) */
+.pp-sl{display:flex;height:208px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;touch-action:pan-x}
 .pp-sl::-webkit-scrollbar{display:none}
 .pp-sl button{all:unset;cursor:zoom-in;flex:0 0 100%;scroll-snap-align:center;height:100%}
-.pp-sl img{width:100%;height:100%;object-fit:cover;display:block}
+.pp-sl img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 .pp-nav{all:unset;cursor:pointer;position:absolute;top:50%;transform:translateY(-50%);width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center}
+.pp-nav::before{content:"";position:absolute;inset:-6px} /* 44 px hit area around the 32 px button */
 .pp-nav.l{left:8px}.pp-nav.r{right:8px}
 .pp-cnt{position:absolute;right:8px;bottom:8px;background:rgba(0,0,0,.5);color:#fff;font-size:11.5px;padding:1px 8px;border-radius:999px;font-variant-numeric:tabular-nums}
 .pv-x{all:unset;box-sizing:border-box;cursor:pointer;position:absolute;top:8px;right:8px;z-index:3;width:32px;height:32px;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;display:grid;place-items:center}
@@ -391,10 +414,10 @@ a.act{color:var(--ink)}
 .pv-l .tdy{font-size:13px}
 .pp-b .am{font-size:11.5px;line-height:18px;max-height:18px;margin-top:6px}
 .pp-b .aic{width:14px;height:14px}
-.pp-sw.pp-ph{height:176px}
-/* phone: the same popup, anchored at the pin, a little wider and with a shorter photo */
+.pp-sw.pp-ph{height:208px}
+/* phone: the same popup, anchored at the pin, a little wider (min(92vw,360px)); the photo keeps 3:2, so 239 px tall on a 390 px screen, 196 px on 320 */
 .pv-m .leaflet-popup-content{width:min(92vw,360px)!important;max-width:none}
-.pv-m .pp-sl,.pv-m .pp-sw.pp-ph{height:160px}
+.pv-m .pp-sl,.pv-m .pp-sw.pp-ph{height:min(61.34vw,240px)}
 .pv-m .pp-b{padding:10px 14px 12px}
 .pp-b .pv-acts{margin:12px 0 0;gap:8px;flex-wrap:nowrap}
 .pv-m .pv-acts{margin-top:10px}
@@ -494,8 +517,11 @@ tr.skel td{padding:10px 8px}
   .hd p,.hd .legend{display:none}
   .fintro{display:block}
   .flegend{display:flex;margin-top:12px}
-  .stats{display:none}
-  .mapwrap{position:relative;height:36vh;height:36svh;min-height:210px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
+  /* one quiet line under the title: "300 из 300 мест · всего 730" (the total explains the "All places" switch); the day / membership counts stay desktop-only */
+  .stats{display:flex;gap:0 6px;margin:2px 0 0;font-size:12px;line-height:1.3}
+  .stats .s-d,.stats .s-m,.stats .s-h{display:none}
+  .stats .s-all::before{content:"·";margin-right:6px}
+  .mapwrap{position:relative;height:28vh;height:28svh;min-height:180px;max-height:220px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
   html:not(.mapfull) #map{touch-action:pan-y;cursor:pointer}
   html.mapfull #map{touch-action:none}
   .leaflet-control-zoom{display:none}
@@ -626,7 +652,7 @@ tr.skel td{padding:10px 8px}
     <div class="stats" id="stats" aria-live="polite"></div>
     <div class="legend" id="legend"></div>
   </header>
-  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><button type="button" class="locb" id="locb" data-ta="locate"></button><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
+  <div class="mapwrap" id="mapwrap"><div id="map" role="region" data-ta="mapaz"></div><div class="mapbar"><button type="button" class="pillb dark mapfull-x" id="mapfull-x">Список</button><button type="button" class="pillb light mapfilt" id="mapfilt">Фильтры</button></div><button type="button" class="locb" id="locb" data-ta="locate" aria-label="Моё местоположение"></button><button type="button" class="pillb light mapall" id="mapall" role="switch" aria-checked="false"><span class="sw" aria-hidden="true"></span>Все места</button><span class="mapcue pillb light" id="mapcue" aria-hidden="true">Открыть карту</span></div>
   <main class="main">
     <section class="fwrap" data-ta="filters">
     <div class="fscrim" id="fscrim" aria-hidden="true"></div>
@@ -637,8 +663,8 @@ tr.skel td{padding:10px 8px}
     </div>
     <div class="filters" id="filters">
       <div class="fgrab" id="fgrab" aria-hidden="true"></div>
-      <div class="fhead" id="fhead"><div class="fsum"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button></div><button class="fx" id="fclose" type="button" data-ta="close"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
-      <div class="frow fg fopen" id="f-open-row"><button type="button" class="otog" id="otog"></button></div>
+      <div class="fhead" id="fhead"><div class="fsum"><span id="fh-n"></span><button class="reset" id="reset2" type="button" data-t="reset" disabled aria-disabled="true">Сбросить всё</button></div><button class="fx" id="fclose" type="button" data-ta="close" aria-label="Закрыть"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M18 6 6 18M6 6l12 12"/></svg></button></div>
+      <div class="frow fg fopen" id="f-open-row"><button type="button" class="otog" id="otog" role="switch" aria-checked="false"><span class="sw" aria-hidden="true"></span><span class="otl"><b>Все места</b></span></button></div>
       <div class="frow fg" role="group" aria-labelledby="lab-kind"><span class="flabel" id="lab-kind" data-t="type">Где сауна</span><div class="frow" id="f-kind"></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-heat"><span class="flabel" id="lab-heat" data-t="heat">Жар</span><div class="frow" id="f-heat"></div></div>
       <div class="frow fg" role="group" aria-labelledby="lab-price"><span class="flabel" id="lab-price" data-t="price">Цена входа</span><div class="frow" id="f-price"></div></div>
@@ -684,6 +710,7 @@ tr.skel td{padding:10px 8px}
     <p class="hint fhint" data-th="hint"></p>
     <div class="legend flegend" id="legend2"></div>
     <p class="foot" id="foot"></p>
+    <p class="foot" id="foot2"></p>
   </main>
 </div>
 <div class="hpop" id="hpop" hidden role="dialog" tabindex="-1"></div>
@@ -708,13 +735,16 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=3d3e89dcf4"></script>
+<script src="data.js?v=b464bde6a5"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
 // A: owner form viewform URL, A_id/A_name: "entry.NNN" of its Place ID / Place name fields.
 // B: feedback form ".../formResponse" URL, f: "entry.NNN" per field.
-const FB_API="https://sheldon-dev.tail289d1a.ts.net"; const FB={A:"", B:"", API:FB_API};
+// the owner / feedback API base: one constant (owner.html has its own API constant). Empty until a public domain exists: then no health probe runs and the owner and feedback UI stay hidden
+const FB_API=""; const FB={A:"", B:"", API:FB_API};
+// the site's public contact (an email or a URL) for the photo-rights line in the footer and, later, the domain switch; empty = no contact shown
+const SITE_CONTACT="";
 const D = window.SAUNA_DATA || {places:[],meta:{}};
 const P = D.places;
 // details (photos 4+, long texts, contacts, sources) come from data_more.js, loaded after the first render or as soon as a card, a photo or a pin needs them
@@ -723,7 +753,7 @@ const CASCAIS = [38.6968, -9.4215];
 const AREAS = ["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra","Lisboa e Setúbal","Oeste","Centro","Porto e Norte","Douro","Alentejo","Algarve","Madeira","Açores"];
 const NEAR = new Set(["Cascais","Estoril","Carcavelos","Oeiras","Sintra","Lisboa","Mafra"]);
 const AREA_RU = {Cascais:"Кашкайш",Estoril:"Эшторил",Carcavelos:"Каркавелуш",Oeiras:"Оэйраш",Sintra:"Синтра",Lisboa:"Лиссабон",Mafra:"Мафра","Lisboa e Setúbal":"Сетубал и окрестности",Oeste:"Запад, Оэште",Centro:"Центр","Porto e Norte":"Порту и север",Douro:"Долина Дору",Alentejo:"Алентежу",Algarve:"Алгарве",Madeira:"Мадейра","Açores":"Азоры"};
-const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.", "list": "Список", "filters": "Фильтры", "search": "Поиск по названию или району", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото. <span class=\"warn-i\">?</span> значит, что данные лучше уточнить.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "есть, цена не указана", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "tomorrow": "завтра", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "photo_n": "Фото {0}", "yes": "есть", "w_trt": "с процедурой", "per_mo": " /мес", "beach": "на пляже", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_hours": "Часы", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_rules": "Правила", "from_age": "С {0} лет", "conf_low": "низкая", "showmap": "На карте", "r_apple": "Apple Карты", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.", "list": "List", "filters": "Filters", "search": "Search by name or area", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos. <span class=\"warn-i\">?</span> means the data is worth double-checking.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "yes, price not listed", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "tomorrow": "tomorrow", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "photo_n": "Photo {0}", "yes": "yes", "w_trt": "with treatment", "per_mo": " /mo", "beach": "on the beach", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_hours": "Hours", "d_social": "Social", "d_rate": "Rating", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_rules": "Rules", "from_age": "Age {0}+", "conf_low": "low", "showmap": "On map", "r_apple": "Apple Maps", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.", "list": "Lista", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos. <span class=\"warn-i\">?</span> indica dados a confirmar.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "sim, preço não indicado", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "tomorrow": "amanhã", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "photo_n": "Foto {0}", "yes": "sim", "w_trt": "com tratamento", "per_mo": " /mês", "beach": "na praia", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_hours": "Horário", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_low": "baixa", "showmap": "No mapa", "r_apple": "Apple Maps", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
+const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сауны, бани, спа-центры и спа-отели с сауной по всей Португалии: цены, часы, бронь и фото. Пока больше всего мест в районе Лиссабона, остальные регионы пополняются.", "list": "Список", "filters": "Фильтры", "search": "Поиск по названию или району", "area": "Район", "type": "Тип", "access": "Доступ", "has": "Есть", "rating": "Рейтинг", "price": "Цена", "hours": "Часы", "sort": "Сортировка", "s_dist": "Ближе к Кашкайшу", "s_score": "Рейтинг", "s_price": "Цена разового входа", "s_name": "По названию", "nearme": "Рядом со мной", "reset": "Сбросить всё", "hint": "Нажми на строку, чтобы открыть подробности и фото.", "empty": "Под эти фильтры ничего не нашлось. Ослабь фильтры или нажми «Сбросить всё».", "photos": "Фотографии", "close": "Закрыть", "prev": "Предыдущее фото", "next": "Следующее фото", "photosrc": "источник фото", "mapaz": "Карта саун", "k_hotel": "Отель", "k_spa": "Спа-центр", "k_gym": "Фитнес-клуб", "k_sauna": "Сауна", "k_public": "Муниципальный", "acc_day": "Разовый вход", "acc_membership": "Абонемент", "acc_treatment": "С процедурой", "x_pool": "Бассейн", "x_cold": "Холодная купель", "x_hammam": "Хаммам или парная", "x_sea": "Море рядом", "r_45": "От 4,5", "h_now": "Работает сейчас", "h_eve": "Открыто после 21:00", "b_required": "Нужна", "b_recommended": "Желательна", "b_walk_in": "Не нужна", "c_photo": "Фото", "c_name": "Место", "c_day": "Разовый вход", "of": "из", "places": "мест", "withday": "с ценой разового входа", "withmem": "с ценой абонемента", "soon": "ещё не открыто", "closed": "временно закрыто", "guests": "для гостей отеля", "for_min": "за {0} мин", "min": "{0} мин", "yes_noprice": "разовый вход по запросу", "only_trt": "только с процедурой", "only_mem": "только абонемент", "no": "нет", "per_month": "{0} в месяц", "mem_req": "есть, цена по запросу", "more": "Подробнее", "route": "Маршрут", "openphoto": "Открыть фото", "n_of": "{0} из {1}", "back": "Назад", "fwd": "Вперёд", "km": "км", "lt1": "меньше 1", "tomorrow": "завтра", "dayoff": "выходной", "to": "до", "book": "Забронировать", "unconf": "не подтверждено официальным сайтом", "photo_n": "Фото {0}", "yes": "есть", "w_trt": "с процедурой", "per_mo": " /мес", "beach": "на пляже", "d_addr": "Адрес", "d_gmaps": "открыть в Google Maps", "d_day": "Разовый вход", "d_mem": "Абонемент", "d_book": "Бронь", "d_via": "через: {0}", "d_hours": "Часы", "d_social": "Соцсети", "d_rate": "Рейтинг", "d_lists": "В подборках", "d_sea": "До моря", "m": "м", "d_rules": "Правила", "from_age": "С {0} лет", "conf_low": "низкая", "showmap": "На карте", "r_apple": "Apple Карты", "copied": "Ссылка скопирована", "checked": "Проверено {0}", "reliab": "надёжность данных: {0}", "sources": "Источники", "mx_mem": "Абонемент:", "geo_na": "Геолокация недоступна", "geo_wait": "Определяю…", "geo_ok": "Рядом со мной", "geo_no": "Нет доступа к геолокации", "foot": "Данные собраны {0}: официальные сайты, системы бронирования, Google Maps. Цены и правила меняются, перед походом лучше уточнить. Рейтинг: зелёная плашка со звездой это Google, синяя это Booking, рядом число оценок. Расстояние по прямой. Фото принадлежат их авторам, у каждого есть ссылка на источник.", "updated": "8 ноября 2026", "filt_n": "Фильтры · {0}", "_dn": ["пн", "вт", "ср", "чт", "пт", "сб", "вс"], "_dl": ["П", "В", "С", "Ч", "П", "С", "В"], "_am": {"finnish": "финская сауна", "banya": "русская баня", "steam": "парная", "hammam": "хаммам", "bio": "биосауна", "infrared": "инфракрасная сауна", "pool": "бассейн", "heated_pool": "тёплый бассейн", "jacuzzi": "джакузи", "cold_plunge": "купель", "ice_bath": "ледяная ванна", "massage": "массаж", "gym": "зал", "sea_view": "вид на море", "beach_access": "у пляжа", "hot_tub": "чан", "rooms": "{0} парных", "cap": "парная до {0} чел."}}, "en": {"title": "Saunas of Portugal", "intro": "Saunas, banyas, day spas and spa hotels with a sauna across Portugal: prices, opening hours, booking and photos. Most places so far are in the Lisbon area; other regions are being added.", "list": "List", "filters": "Filters", "search": "Search by name or area", "area": "Area", "type": "Type", "access": "Access", "has": "Has", "rating": "Rating", "price": "Price", "hours": "Hours", "sort": "Sort", "s_dist": "Closest to Cascais", "s_score": "Rating", "s_price": "Single visit price", "s_name": "By name", "nearme": "Near me", "reset": "Reset all", "hint": "Tap a row for details and photos.", "empty": "Nothing matches these filters. Loosen them or press “Reset all”.", "photos": "Photos", "close": "Close", "prev": "Previous photo", "next": "Next photo", "photosrc": "photo source", "mapaz": "Sauna map", "k_hotel": "Hotel", "k_spa": "Day spa", "k_gym": "Gym", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Single visit", "acc_membership": "Membership", "acc_treatment": "With a treatment", "x_pool": "Pool", "x_cold": "Cold plunge", "x_hammam": "Hammam or steam", "x_sea": "Near the sea", "r_45": "4.5+", "h_now": "Open now", "h_eve": "Open after 9 pm", "b_required": "Required", "b_recommended": "Advised", "b_walk_in": "Walk-in", "c_photo": "Photo", "c_name": "Place", "c_day": "Single visit", "of": "of", "places": "places", "withday": "with a single-visit price", "withmem": "with a membership price", "soon": "not open yet", "closed": "temporarily closed", "guests": "hotel guests", "for_min": "for {0} min", "min": "{0} min", "yes_noprice": "single visit on request", "only_trt": "with a treatment only", "only_mem": "membership only", "no": "no", "per_month": "{0} per month", "mem_req": "yes, price on request", "more": "Details", "route": "Directions", "openphoto": "Open photo", "n_of": "{0} of {1}", "back": "Back", "fwd": "Next", "km": "km", "lt1": "under 1", "tomorrow": "tomorrow", "dayoff": "closed", "to": "to", "book": "Book", "unconf": "not confirmed by the official site", "photo_n": "Photo {0}", "yes": "yes", "w_trt": "with treatment", "per_mo": " /mo", "beach": "on the beach", "d_addr": "Address", "d_gmaps": "open in Google Maps", "d_day": "Single visit", "d_mem": "Membership", "d_book": "Booking", "d_via": "via: {0}", "d_hours": "Hours", "d_social": "Social", "d_rate": "Rating", "d_lists": "In our lists", "d_sea": "To the sea", "m": "m", "d_rules": "Rules", "from_age": "Age {0}+", "conf_low": "low", "showmap": "On map", "r_apple": "Apple Maps", "copied": "Link copied", "checked": "Checked {0}", "reliab": "data reliability: {0}", "sources": "Sources", "mx_mem": "Membership:", "geo_na": "Location unavailable", "geo_wait": "Locating…", "geo_ok": "Near me", "geo_no": "No location access", "foot": "Data collected {0} from official sites, booking systems and Google Maps. Prices and rules change, so check before you go. Ratings: the green badge with a star is Google, the blue one is Booking, followed by the number of reviews. Distances are in a straight line. Photos belong to their authors; each one links to its source.", "updated": "8 November 2026", "filt_n": "Filters · {0}", "_dn": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], "_dl": ["M", "T", "W", "T", "F", "S", "S"], "_am": {"finnish": "Finnish sauna", "banya": "Russian banya", "steam": "steam room", "hammam": "hammam", "bio": "bio sauna", "infrared": "infrared sauna", "pool": "pool", "heated_pool": "heated pool", "jacuzzi": "jacuzzi", "cold_plunge": "cold plunge", "ice_bath": "ice bath", "massage": "massage", "gym": "gym", "sea_view": "sea view", "beach_access": "by the beach", "hot_tub": "hot tub", "rooms": "{0} steam rooms", "cap": "sauna for up to {0}"}, "_area": {"Lisboa": "Lisbon", "Lisboa e Setúbal": "Lisbon & Setúbal", "Oeste": "Oeste", "Centro": "Centre", "Porto e Norte": "Porto & North", "Douro": "Douro Valley", "Alentejo": "Alentejo", "Algarve": "Algarve", "Madeira": "Madeira", "Açores": "Azores"}}, "pt": {"title": "Saunas de Portugal", "intro": "Saunas, banyas, spas e hotéis com spa e sauna em todo o Portugal: preços, horários, reservas e fotos. Por agora, a maioria fica na zona de Lisboa; as outras regiões estão a ser acrescentadas.", "list": "Lista", "filters": "Filtros", "search": "Pesquisar por nome ou zona", "area": "Zona", "type": "Tipo", "access": "Acesso", "has": "Tem", "rating": "Avaliação", "price": "Preço", "hours": "Horário", "sort": "Ordenar", "s_dist": "Mais perto de Cascais", "s_score": "Avaliação", "s_price": "Preço da entrada", "s_name": "Por nome", "nearme": "Perto de mim", "reset": "Limpar tudo", "hint": "Toque numa linha para ver detalhes e fotos.", "empty": "Nada corresponde a estes filtros. Alargue-os ou carregue em “Limpar tudo”.", "photos": "Fotos", "close": "Fechar", "prev": "Foto anterior", "next": "Foto seguinte", "photosrc": "fonte da foto", "mapaz": "Mapa de saunas", "k_hotel": "Hotel", "k_spa": "Spa", "k_gym": "Ginásio", "k_sauna": "Sauna", "k_public": "Municipal", "acc_day": "Entrada avulsa", "acc_membership": "Mensalidade", "acc_treatment": "Com tratamento", "x_pool": "Piscina", "x_cold": "Imersão fria", "x_hammam": "Hammam ou banho turco", "x_sea": "Perto do mar", "r_45": "4,5+", "h_now": "Aberto agora", "h_eve": "Aberto depois das 21h", "b_required": "Obrigatória", "b_recommended": "Recomendada", "b_walk_in": "Sem marcação", "c_photo": "Foto", "c_name": "Local", "c_day": "Entrada", "of": "de", "places": "locais", "withday": "com preço de entrada", "withmem": "com preço de mensalidade", "soon": "ainda não abriu", "closed": "temporariamente fechado", "guests": "para hóspedes", "for_min": "por {0} min", "min": "{0} min", "yes_noprice": "entrada avulsa sob consulta", "only_trt": "só com tratamento", "only_mem": "só mensalidade", "no": "não", "per_month": "{0} por mês", "mem_req": "sim, preço sob consulta", "more": "Detalhes", "route": "Direções", "openphoto": "Abrir foto", "n_of": "{0} de {1}", "back": "Anterior", "fwd": "Seguinte", "km": "km", "lt1": "menos de 1", "tomorrow": "amanhã", "dayoff": "fechado", "to": "às", "book": "Reservar", "unconf": "não confirmado no site oficial", "photo_n": "Foto {0}", "yes": "sim", "w_trt": "com tratamento", "per_mo": " /mês", "beach": "na praia", "d_addr": "Morada", "d_gmaps": "abrir no Google Maps", "d_day": "Entrada avulsa", "d_mem": "Mensalidade", "d_book": "Reserva", "d_via": "por: {0}", "d_hours": "Horário", "d_social": "Redes sociais", "d_rate": "Avaliação", "d_lists": "Nas listas", "d_sea": "Até ao mar", "m": "m", "d_rules": "Regras", "from_age": "A partir dos {0} anos", "conf_low": "baixa", "showmap": "No mapa", "r_apple": "Apple Maps", "copied": "Link copiado", "checked": "Verificado em {0}", "reliab": "fiabilidade: {0}", "sources": "Fontes", "mx_mem": "Mensalidade:", "geo_na": "Localização indisponível", "geo_wait": "A localizar…", "geo_ok": "Perto de mim", "geo_no": "Sem acesso à localização", "foot": "Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde com estrela é do Google, o azul é do Booking, seguido do número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte.", "updated": "8 de novembro de 2026", "filt_n": "Filtros · {0}", "_dn": ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"], "_dl": ["S", "T", "Q", "Q", "S", "S", "D"], "_am": {"finnish": "sauna finlandesa", "banya": "banya russa", "steam": "banho turco", "hammam": "hammam", "bio": "biosauna", "infrared": "sauna infravermelha", "pool": "piscina", "heated_pool": "piscina aquecida", "jacuzzi": "jacuzzi", "cold_plunge": "imersão fria", "ice_bath": "banho de gelo", "massage": "massagem", "gym": "ginásio", "sea_view": "vista mar", "beach_access": "junto à praia", "hot_tub": "ofurô", "rooms": "{0} saunas", "cap": "sauna até {0} pessoas"}, "_area": {}}};
 
 Object.assign(I18N.ru,{sch_weekly:"По расписанию",sch_calendar:"По датам",sch_on_request:"По записи",sch_open:"расписание",sch_t:"Расписание",sch_up:"Ближайшие",sch_win:"Свободные окна на этой неделе"});Object.assign(I18N.en,{sch_weekly:"Scheduled sessions",sch_calendar:"Dated sessions",sch_on_request:"By appointment",sch_open:"schedule",sch_t:"Schedule",sch_up:"Upcoming",sch_win:"Free slots this week"});Object.assign(I18N.pt,{sch_weekly:"Sessões com horário",sch_calendar:"Sessões por data",sch_on_request:"Por marcação",sch_open:"horário",sch_t:"Horário",sch_up:"Próximas",sch_win:"Horários livres esta semana"});
 Object.assign(I18N.ru,{showres:"Показать"});Object.assign(I18N.en,{showres:"Show results"});Object.assign(I18N.pt,{showres:"Ver resultados"});
@@ -732,9 +762,9 @@ Object.assign(I18N.ru,{fb_err:"Не отправилось, попробуйте
 Object.assign(I18N.ru,{per_yr:" /год",per_wk:" /нед."});Object.assign(I18N.en,{per_yr:" /yr",per_wk:" /wk"});Object.assign(I18N.pt,{per_yr:" /ano",per_wk:" /sem."});
 Object.assign(I18N.ru,{few:"мало оценок"});Object.assign(I18N.en,{few:"few ratings"});Object.assign(I18N.pt,{few:"poucas avaliações"});
 Object.assign(I18N.ru,{weekhrs:"Часы работы по дням",weekshort:"неделя"});Object.assign(I18N.en,{weekhrs:"Opening hours by day",weekshort:"week"});Object.assign(I18N.pt,{weekhrs:"Horário por dia",weekshort:"semana"});
-Object.assign(I18N.ru,{wt_low:"не подтверждено",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Данные не подтверждены официальным сайтом, лучше уточнить",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
-Object.assign(I18N.en,{wt_low:"unconfirmed",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site, check before going",wt_sparse_h:"Little info so far: no price, hours or reviews"});
-Object.assign(I18N.pt,{wt_low:"por confirmar",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial, confirme antes de ir",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
+Object.assign(I18N.ru,{wt_low:"не подтверждено официальным сайтом",wt_sparse:"мало данных",wt_status_h:"Место ещё не открыто или временно закрыто",wt_low_h:"Не подтверждено официальным сайтом",wt_sparse_h:"О месте пока мало данных: нет цены, часов и отзывов"});
+Object.assign(I18N.en,{wt_low:"not confirmed by the official site",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site",wt_sparse_h:"Little info so far: no price, hours or reviews"});
+Object.assign(I18N.pt,{wt_low:"não confirmado no site oficial",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
 Object.assign(I18N.ru,{book_contact:"Связаться для записи"});Object.assign(I18N.en,{book_contact:"Contact to book"});Object.assign(I18N.pt,{book_contact:"Contactar para reservar"});
 Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
 Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
@@ -742,15 +772,15 @@ Object.assign(I18N.pt,{muni:"Concelho",rg_lisboa:"Grande Lisboa",rg_setubal:"Pen
 Object.assign(I18N.ru,{hs_open:"Открыто",hs_soon:"Скоро закроется",hs_closed:"Закрыто",hs_until:"до {0}",hs_opens:"откроется в {0}",hs_opens_day:"откроется {0} в {1}"});
 Object.assign(I18N.en,{hs_open:"Open",hs_soon:"Closes soon",hs_closed:"Closed",hs_until:"until {0}",hs_opens:"opens at {0}",hs_opens_day:"opens {0} at {1}"});
 Object.assign(I18N.pt,{hs_open:"Aberto",hs_soon:"Fecha em breve",hs_closed:"Fechado",hs_until:"até às {0}",hs_opens:"abre às {0}",hs_opens_day:"abre {0} às {1}"});
-Object.assign(I18N.ru,{pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",per_session:"{0} за раз",in_pack:"в пакете",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",acc_private:"Аренда для компании",
+Object.assign(I18N.ru,{pr_title:"Цены",g_visit:"Разовый визит",g_pack:"Пакеты",g_mem:"Абонементы",g_trt:"С процедурой",g_group:"Аренда целиком",g_guest:"Гостям отеля",per_session:"{0} за раз",in_pack:"в пакете",pack_n:"пакет {0} {1}",sess_pl:["сеанс","сеанса","сеансов"],on_req:"цена по запросу",s_total:"всего {0}",search_s:"Поиск",photo_rights:"Фото принадлежат владельцам мест и платформам; удалим по запросу",contact_l:"связаться",w_group:"за группу",grp_cap:"за группу до {0} · от {1} с чел.",mo4w:"/4 нед.",free:"бесплатно",from:"от",hrs_u:"ч",acc_private:"Аренда для компании",
  inc:{sauna:"сауна",infrared:"ИК-сауна",steam:"парная",hammam:"хаммам",banya:"баня",venik:"веники",pool:"бассейн",sea_pool:"морская вода",outdoor_pool:"уличный бассейн",jacuzzi:"джакузи",hot_tub:"чан",cold_plunge:"купель",ice_bath:"ледяная ванна",gym:"зал",classes:"занятия",guide:"ведущий",sound:"музыка",towel:"полотенце",robe:"халат",tea:"чай",coffee:"кофе",food:"еда",massage:"массаж",compression:"компрессия"},
  cond:{booking_required:"бронь",booking_recommended:"лучше бронь",age_16_plus:"с 16 лет",age_18_plus:"с 18 лет",under_18_with_adult:"до 18 с родителями",under_16_from_12_with_adult:"с 12 лет со взрослым",under_16_half_price:"до 16 лет за полцены",with_treatment_only:"только с процедурой",men_only:"мужской",women_only:"женский",waitlist:"лист ожидания",trial_once:"один раз",prepayment:"предоплата",voucher:"по ваучеру",swimwear_required:"купальник",bring_towels:"свои полотенца",cap_swimwear_slippers:"шапочка, купальник, шлёпанцы",private_room:"отдельная комната",sauna_after_class_only:"сауна после занятия",cancel_24h:"отмена за 24 ч",cancel_8h_50pct:"отмена позже 8 ч: 50%",sold_out:"мест нет",min_people:"от {0} чел.",joining_fee:"вступительный €{0}",min_term_months:"от {0} мес.",booking_ahead_h:"бронь за {0} ч",valid_days:"действует {0} дн.",time:"{0}"},
  wh:{weekdays:"по будням",weekends:"по выходным",sat:"сб",sun:"вс"}});
-Object.assign(I18N.en,{pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",per_session:"{0} each",in_pack:"in a pack",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",acc_private:"Private hire",
+Object.assign(I18N.en,{pr_title:"Prices",g_visit:"Single visit",g_pack:"Packs",g_mem:"Memberships",g_trt:"With a treatment",g_group:"Private hire",g_guest:"Hotel guests",per_session:"{0} each",in_pack:"in a pack",pack_n:"pack of {0} {1}",sess_pl:["session","sessions"],on_req:"price on request",s_total:"{0} in total",search_s:"Search",photo_rights:"Photos belong to the venues and platforms; we remove them on request",contact_l:"contact",w_group:"per group",grp_cap:"per group up to {0} · from {1} pp",mo4w:"/4 wks",free:"free",from:"from",hrs_u:"h",acc_private:"Private hire",
  inc:{sauna:"sauna",infrared:"infrared",steam:"steam room",hammam:"hammam",banya:"banya",venik:"veniki",pool:"pool",sea_pool:"seawater pool",outdoor_pool:"outdoor pool",jacuzzi:"jacuzzi",hot_tub:"hot tub",cold_plunge:"cold plunge",ice_bath:"ice bath",gym:"gym",classes:"classes",guide:"guide",sound:"live sound",towel:"towel",robe:"robe",tea:"tea",coffee:"coffee",food:"food",massage:"massage",compression:"compression"},
  cond:{booking_required:"booking",booking_recommended:"booking advised",age_16_plus:"16+",age_18_plus:"18+",under_18_with_adult:"under 18 with a parent",under_16_from_12_with_adult:"12+ with an adult",under_16_half_price:"under 16 half price",with_treatment_only:"with a treatment only",men_only:"men only",women_only:"women only",waitlist:"waitlist",trial_once:"once",prepayment:"prepayment",voucher:"voucher",swimwear_required:"swimwear",bring_towels:"bring towels",cap_swimwear_slippers:"cap, swimwear, slippers",private_room:"private room",sauna_after_class_only:"sauna after class",cancel_24h:"cancel 24 h ahead",cancel_8h_50pct:"late cancel: 50%",sold_out:"sold out",min_people:"from {0} people",joining_fee:"joining fee €{0}",min_term_months:"min {0} months",booking_ahead_h:"book {0} h ahead",valid_days:"valid {0} days",time:"{0}"},
  wh:{weekdays:"weekdays",weekends:"weekends",sat:"Sat",sun:"Sun"}});
-Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",per_session:"{0} cada",in_pack:"em pacote",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",acc_private:"Aluguer privado",
+Object.assign(I18N.pt,{pr_title:"Preços",g_visit:"Entrada",g_pack:"Pacotes",g_mem:"Mensalidades",g_trt:"Com tratamento",g_group:"Aluguer privado",g_guest:"Hóspedes",per_session:"{0} cada",in_pack:"em pacote",pack_n:"pack de {0} {1}",sess_pl:["sessão","sessões"],on_req:"preço sob consulta",s_total:"{0} no total",search_s:"Pesquisar",photo_rights:"As fotos pertencem aos locais e plataformas; removemos a pedido",contact_l:"contacto",w_group:"por grupo",grp_cap:"por grupo até {0} · desde {1} p/pessoa",mo4w:"/4 sem.",free:"grátis",from:"desde",hrs_u:"h",acc_private:"Aluguer privado",
  inc:{sauna:"sauna",infrared:"infravermelhos",steam:"banho turco",hammam:"hammam",banya:"banya",venik:"veniks",pool:"piscina",sea_pool:"água do mar",outdoor_pool:"piscina exterior",jacuzzi:"jacuzzi",hot_tub:"ofurô",cold_plunge:"imersão fria",ice_bath:"banho de gelo",gym:"ginásio",classes:"aulas",guide:"guia",sound:"música",towel:"toalha",robe:"roupão",tea:"chá",coffee:"café",food:"comida",massage:"massagem",compression:"pressoterapia"},
  cond:{booking_required:"reserva",booking_recommended:"reserva aconselhada",age_16_plus:"+16",age_18_plus:"+18",under_18_with_adult:"menores com adulto",under_16_from_12_with_adult:"+12 com adulto",under_16_half_price:"menores de 16 a meio preço",with_treatment_only:"só com tratamento",men_only:"só homens",women_only:"só mulheres",waitlist:"lista de espera",trial_once:"uma vez",prepayment:"pré-pagamento",voucher:"voucher",swimwear_required:"fato de banho",bring_towels:"traga toalhas",cap_swimwear_slippers:"touca, fato de banho, chinelos",private_room:"sala privada",sauna_after_class_only:"sauna após aula",cancel_24h:"cancelar 24 h antes",cancel_8h_50pct:"cancelamento tardio: 50%",sold_out:"esgotado",min_people:"mín. {0} pessoas",joining_fee:"inscrição €{0}",min_term_months:"mín. {0} meses",booking_ahead_h:"reservar {0} h antes",valid_days:"válido {0} dias",time:"{0}"},
  wh:{weekdays:"dias úteis",weekends:"fim de semana",sat:"sáb",sun:"dom"}});
@@ -792,15 +822,15 @@ Object.assign(I18N.pt,{search:"Nome, cidade, comodidades",nores:"Nada encontrado
 // round 7: places without confirmed outside access are hidden by default (owner decision 11.11.2026); dated sessions labelled with the check date
 Object.assign(I18N.ru,{op_show:"Показать ещё {0} {1} без подтверждённого входа для посторонних",op_show0:"Показать места без подтверждённого входа для посторонних",op_hide:"Скрыть места без подтверждённого входа",op_pl:["место","места","мест"],
  op_line:"ещё {0} {1} без данных о входе",op_more:"показать",op_tag:"вход для посторонних не подтверждён",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди мест без подтверждённого входа",op_qpl:["совпадение","совпадения","совпадений"],
- op_exc:"Вход для посторонних в это место не подтверждён",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
+ op_exc:"Вход для посторонних в это место не подтверждён",op_all:"Все места",op_sub:"включая без подтверждённого входа для посторонних",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
 Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside access",op_show0:"Show places without confirmed outside access",op_hide:"Hide places without confirmed outside access",op_pl:["place","places"],
  op_line:"{0} more {1} without access info",op_more:"show",op_tag:"outside access not confirmed",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among places without confirmed access",op_qpl:["match","matches"],
- op_exc:"Access for non-guests is not confirmed here",sch_up_d:"Upcoming sessions as of {0}"});
+ op_exc:"Access for non-guests is not confirmed here",op_all:"All places",op_sub:"including places without confirmed outside access",sch_up_d:"Upcoming sessions as of {0}"});
 Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Ocultar locais sem acesso confirmado",op_pl:["local","locais"],
  op_line:"mais {0} {1} sem dados de acesso",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre locais sem acesso confirmado",op_qpl:["resultado","resultados"],
- op_exc:"O acesso de não hóspedes a este local não está confirmado",sch_up_d:"Próximas sessões à data da verificação {0}"});
+ op_exc:"O acesso de não hóspedes a este local não está confirmado",op_all:"Todos os locais",op_sub:"incluindo locais sem acesso confirmado para não hóspedes",sch_up_d:"Próximas sessões à data da verificação {0}"});
 const LANGN={ru:"Русский",en:"English",pt:"Português"};
-let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const n=(navigator.language||"").slice(0,2); return I18N[n]?n:"ru"; })();
+let LANG=(()=>{ try{ const q=new URLSearchParams(location.search).get("lang"); if(q&&I18N[q]) return q; const s=localStorage.getItem("sauna-lang"); if(s&&I18N[s]) return s; }catch(e){} const prefs=(navigator.languages&&navigator.languages.length?navigator.languages:[navigator.language||""]); for(const l of prefs){ const n=String(l||"").slice(0,2).toLowerCase(); if(I18N[n]) return n; } return "en"; })();  // explicit ?lang, then the saved choice, then the device language list in order; unknown languages get English
 const t=(k,...a)=>{ let v=(I18N[LANG]&&I18N[LANG][k]); if(v==null) v=I18N.ru[k]; if(v==null) return k; return String(v).replace(/\{(\d)\}/g,(m,i)=>a[+i]); };
 const areaName=a=>LANG==="ru"?(AREA_RU[a]||a):((I18N[LANG]._area||{})[a]||a);
 const tr=(p,f)=>{ const x=p.tr&&p.tr[LANG]&&p.tr[LANG][f]; if(x!=null) return x; if(LANG==="ru") return p[f]; if(f==="subtitle"&&p.subtitle&&!/[А-Яа-яЁё]/.test(p.subtitle)) return p.subtitle; return (p.tr&&p.tr.en&&p.tr.en[f])||""; };
@@ -816,7 +846,10 @@ const KICO={sauna:"M8 18c-3-3.5 3-6.5 0-10M12 18c-3-3.5 3-6.5 0-10M16 18c-3-3.5 
 const kico=(k,cls)=>`<svg class="ki ${cls||""}" viewBox="0 0 24 24" aria-hidden="true" style="color:${KCOL[k]}"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
 const pinIco=k=>`<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="${KICO[k]}"/></svg>`;
 // UI icon set: 24 grid, 2px round strokes, same family as the type glyphs (chevrons, close, route, phone, share, globe, external, sort, map, list, check, flag, thumb, star, sliders)
-const ICO={cl:"M15 18l-6-6 6-6",cr:"M9 18l6-6-6-6",cd:"M6 9l6 6 6-6",cu:"M18 15l-6-6-6 6",x:"M18 6 6 18M6 6l12 12",nav:"M3 11l19-9-9 19-2-8z",
+const ICO={instagram:"M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM17.5 6.5h.01",telegram:"M22 2 11 13M22 2l-7 20-4-9-9-4z",
+  facebook:"M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z",whatsapp:"M12 3a9 9 0 0 0-7.7 13.7L3 21l4.4-1.2A9 9 0 1 0 12 3zM9 9c.5 3 2.5 5 5.5 5.5l1.2-1.4-1.7-1-1 .9a5 5 0 0 1-2.4-2.4l.9-1-1-1.7z",
+  tiktok:"M15 3v9.5a3.5 3.5 0 1 1-3.5-3.5M15 3a5 5 0 0 0 5 5",youtube:"M3 8.5A3.5 3.5 0 0 1 6.5 5h11A3.5 3.5 0 0 1 21 8.5v7a3.5 3.5 0 0 1-3.5 3.5h-11A3.5 3.5 0 0 1 3 15.5zM10 9l5 3-5 3z",
+  cl:"M15 18l-6-6 6-6",cr:"M9 18l6-6-6-6",cd:"M6 9l6 6 6-6",cu:"M18 15l-6-6-6 6",x:"M18 6 6 18M6 6l12 12",nav:"M3 11l19-9-9 19-2-8z",
   phone:"M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z",
   share:"M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13",globe:"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z",
   ext:"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",sort:"m21 16-4 4-4-4M17 20V4M3 8l4-4 4 4M7 4v16",map:"M1 6v16l7-4 8 4 7-4V2l-7 4-8-4-7 4zM8 2v16M16 6v16",list:"M4 6h16M4 12h16M4 18h16",
@@ -967,7 +1000,7 @@ const REGS=["lisboa","setubal","oeste","centro","norte","alentejo","algarve","ma
 const regName=r=>t("rg_"+r);
 // Russian names of the towns in the data (RU interface and search aliases)
 const MUNI_RU={"Lisboa":"Лиссабон","Cascais":"Кашкайш","Sintra":"Синтра","Oeiras":"Оэйраш","Mafra":"Мафра","Vila Franca de Xira":"Вила-Франка-ди-Шира","Almada":"Алмада","Sesimbra":"Сезимбра","Moita":"Мойта","Alcochete":"Алкошете","Setúbal":"Сетубал","Seixal":"Сейшал","Amadora":"Амадора","Loures":"Лориш","Odivelas":"Одивелаш","Torres Vedras":"Торреш-Ведраш","Lourinhã":"Лориньян","Peniche":"Пениш","Óbidos":"Обидуш","Nazaré":"Назаре","Alcobaça":"Алкобаса","Porto":"Порту","Vila Nova de Gaia":"Вила-Нова-ди-Гая","Albufeira":"Албуфейра","Loulé":"Лоле","Portimão":"Портиман","Lagos":"Лагуш","Faro":"Фару","Funchal":"Фуншал","Évora":"Эвора","Coimbra":"Коимбра","Grândola":"Грандула",
-  "Ponta Delgada":"Понта-Делгада","Lagoa":"Лагоа","Angra do Heroísmo":"Ангра-ду-Эроишму","Vila do Conde":"Вила-ду-Конде","Covilhã":"Ковильян","Santa Cruz":"Санта-Круш","Figueira da Foz":"Фигейра-да-Фош","Matosinhos":"Матозиньюш","Viana do Castelo":"Виана-ду-Каштелу","Chaves":"Шавеш","Braga":"Брага","Manteigas":"Мантейгаш","Leiria":"Лейрия","Tomar":"Томар","Lamego":"Ламегу","Viseu":"Визеу","Calheta":"Калета","Arcos de Valdevez":"Аркуш-ди-Валдевеш","Póvoa de Varzim":"Повуа-ди-Варзин","Odemira":"Одемира","Câmara de Lobos":"Камара-ди-Лобуш","Guimarães":"Гимарайнш","Porto Santo":"Порту-Санту","Tavira":"Тавира","Amarante":"Амаранте","São Vicente":"Сан-Висенте","Aveiro":"Авейру","Horta":"Орта","Sines":"Синеш","Montemor-o-Novo":"Монтемор-у-Нову","Vila Real de Santo António":"Вила-Реал-ди-Санту-Антониу","Espinho":"Эшпинью","Seia":"Сейя","Fundão":"Фундан","Silves":"Силвеш","Machico":"Машику","Porto Moniz":"Порту-Мониш","Maia":"Майя","Elvas":"Элваш","Ponte de Lima":"Понте-де-Лима","Bragança":"Браганса","Beja":"Бежа","Monchique":"Моншике","Caldas da Rainha":"Калдаш-да-Раинья","Olhão":"Ольян","Estremoz":"Эштремош","Aljezur":"Алжезур","Guarda":"Гуарда","Castelo Branco":"Каштелу-Бранку","Palmela":"Палмела","Barreiro":"Баррейру","Santarém":"Сантарен","Ourém":"Орен"};
+  "Ponta Delgada":"Понта-Делгада","Lagoa":"Лагоа","Angra do Heroísmo":"Ангра-ду-Эроишму","Vila do Conde":"Вила-ду-Конде","Covilhã":"Ковильян","Santa Cruz":"Санта-Круш","Figueira da Foz":"Фигейра-да-Фош","Matosinhos":"Матозиньюш","Viana do Castelo":"Виана-ду-Каштелу","Chaves":"Шавеш","Braga":"Брага","Manteigas":"Мантейгаш","Leiria":"Лейрия","Tomar":"Томар","Lamego":"Ламегу","Viseu":"Визеу","Calheta":"Калета","Arcos de Valdevez":"Аркуш-ди-Валдевеш","Póvoa de Varzim":"Повуа-ди-Варзин","Odemira":"Одемира","Câmara de Lobos":"Камара-ди-Лобуш","Guimarães":"Гимарайнш","Porto Santo":"Порту-Санту","Tavira":"Тавира","Amarante":"Амаранте","São Vicente":"Сан-Висенте","Aveiro":"Авейру","Horta":"Орта","Sines":"Синеш","Montemor-o-Novo":"Монтемор-у-Нову","Vila Real de Santo António":"Вила-Реал-ди-Санту-Антониу","Espinho":"Эшпинью","Seia":"Сейя","Fundão":"Фундан","Silves":"Силвеш","Machico":"Машику","Porto Moniz":"Порту-Мониш","Maia":"Майя","Elvas":"Элваш","Ponte de Lima":"Понте-де-Лима","Bragança":"Браганса","Beja":"Бежа","Monchique":"Моншике","Caldas da Rainha":"Калдаш-да-Раинья","Olhão":"Ольян","Estremoz":"Эштремош","Aljezur":"Алжезур","Guarda":"Гуарда","Castelo Branco":"Каштелу-Бранку","Palmela":"Палмела","Barreiro":"Баррейру","Santarém":"Сантарен","Ourém":"Оурен"};
 // resorts, neighbourhoods, islands and regions that are not municipalities, plus English exonyms (search only)
 const AREA_RU2={"Estoril":"Эшторил","Carcavelos":"Каркавелуш","Vilamoura":"Виламора","Carvoeiro":"Карвоэйру","Alvor":"Алвор","Quarteira":"Куартейра","Almancil":"Алмансил","Comporta":"Компорта","Tróia":"Тройя","Caparica":"Капарика","Ericeira":"Эрисейра","Belém":"Белен","Chiado":"Шиаду","Guincho":"Гиншу","Fátima":"Фатима","Gerês":"Жереш","Furnas":"Фурнаш","Parede":"Пареде","Caxias":"Кашиаш","Algés":"Алжеш","Monte Estoril":"Монте-Эшторил","Praia da Rocha":"Прайя-да-Роша","Monte Gordo":"Монте-Горду","Sagres":"Сагреш","Terceira":"Терсейра","Pico":"Пику","Faial":"Файял","Graciosa":"Грасиоза","Madeira":"Мадейра","Açores":"Азоры","Algarve":"Алгарве","Alentejo":"Алентежу","Douro":"Дору","Minho":"Минью","Serra da Estrela":"Серра-да-Эштрела"};
 const TOWN_EN={"Lisboa":"Lisbon","Porto":"Oporto","Açores":"Azores","Évora":"Evora"};
@@ -1118,7 +1151,8 @@ function applyStatic(){ document.documentElement.lang=LANG; document.title=t("ti
   document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
   document.querySelectorAll("[data-th]").forEach(e=>e.innerHTML=t(e.dataset.th));
   document.querySelectorAll("[data-ta]").forEach(e=>e.setAttribute("aria-label",t(e.dataset.ta)));
-  document.querySelectorAll("[data-tp]").forEach(e=>{e.placeholder=t(e.dataset.tp); e.setAttribute("aria-label",t(e.dataset.tp));});
+  // phone: a short placeholder that fits the search box ("Name or town"); the full one stays as the accessible name
+  document.querySelectorAll("[data-tp]").forEach(e=>{e.placeholder=t(e.dataset.tp==="search"&&matchMedia("(max-width:900px)").matches?"search_s":e.dataset.tp); e.setAttribute("aria-label",t(e.dataset.tp));});
   document.getElementById("langsw").innerHTML=ico("globe","ic-s")+`<span>${LANG.toUpperCase()}</span>`+ico("cd","ic-s");
   document.getElementById("mapcue").innerHTML=ico("map","ic-s")+esc(t("openmap"));
   document.getElementById("mapfull-x").innerHTML=ico("list","ic-s")+esc(t("list"));
@@ -1184,7 +1218,7 @@ const map = window.__map; // created before data.js loads, so the tiles are alre
   el.addEventListener("wheel",e=>{ if(isPhone()&&!isFull()) return; e.preventDefault(); },{passive:false});
   // preview map on phones: a single tap opens the full-screen map (after a short double-tap window), a double tap zooms in like Google Maps
   let tapT=0, tapTimer=0;
-  document.getElementById("mapwrap").addEventListener("click",e=>{ if(!isPhone()||isFull()) return; if(e.target.closest(".mapbar")) return; e.stopPropagation(); e.preventDefault();
+  document.getElementById("mapwrap").addEventListener("click",e=>{ if(!isPhone()||isFull()) return; if(e.target.closest(".mapbar,.mapall")) return; e.stopPropagation(); e.preventDefault();
     const now=Date.now();
     if(tapT&&now-tapT<320){ clearTimeout(tapTimer); tapT=0; try{ map.setZoomAround(map.mouseEventToLatLng(e),map.getZoom()+1); }catch(_){ map.zoomIn(); } return; }
     tapT=now; tapTimer=setTimeout(()=>{ tapT=0; openFull(); },320); },true);
@@ -1212,7 +1246,7 @@ P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
 });
 // a pin opens the place preview: an anchored Leaflet popup on desktop and on phones (the map stays visible and draggable, a tap on it closes the popup)
 function pvOpts(off){ const ph=isPhone(); const w=ph?Math.min(Math.round(innerWidth*0.92),360):312;
-  return {offset:[0,off==null?-42:off],closeButton:false,maxWidth:w,minWidth:w,autoPan:true,autoPanPaddingTopLeft:[ph?10:20,ph?28:20],autoPanPaddingBottomRight:[ph?10:20,ph?78:72],className:ph?"pv-m":"pv-d"}; }
+  return {offset:[0,off==null?-42:off],closeButton:false,maxWidth:w,minWidth:w,autoPan:true,autoPanPaddingTopLeft:[ph?10:20,ph?60:20],autoPanPaddingBottomRight:[ph?10:20,ph?78:72],className:ph?"pv-m":"pv-d"}; } // phone: 60 on top keeps the popup under the "All places" pill, 78 below keeps it above the List / Filters bar
 let pvI=null, curPop=null;
 function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; loadMore();
   const pop=curPop=L.popup(pvOpts(off)); pop.pvI=i; pop.setLatLng(m.getLatLng()).setContent(previewHTML(p)).openOn(map); }
@@ -1269,7 +1303,8 @@ function dayTxt(p){const a=p.access||{};
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return t("guests");
   if(p._day) return t("yes_noprice");
   if(p._trt) return t("w_trt");
-  if(p._mem&&a.day_pass!==true) return t(a.day_pass===false?"only_mem":"acc_membership");
+  // "membership" alone says nothing: without a known price it reads "membership, price on request" (popup and card)
+  if(p._mem&&a.day_pass!==true){ const s=t(a.day_pass===false?"only_mem":"acc_membership"); return memVal(p)?s:`${s}, ${t("on_req")}`; }
   if(a.day_pass===false) return t("no");
   return "";
 }
@@ -1277,10 +1312,14 @@ function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return
 // one meta line: "● Type 4★ · Town [· km]" (stars pulled out of the subtitle), shared by rows and previews
 function metaLine(p){ const k=KINDS[kg(p)]; const stars=starsOf(p); const town=muniName(p.muni)||areaName(p.area)||"";
   return `<div class="sub meta"><span class="m-in mk-k">${kico(k[2])}${esc(k[0])}${stars?" "+stars:""} ·</span><span class="mk-t">${esc(town)}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</span></div>`; }
-// one price line for previews: "от €37 · 90 мин", "€31,12 · в пакете", or the plain access text
+// a pack as the headline price: the pack total with "pack of N sessions · €30 each" (the per-session price alone would read as a single visit)
+function packHead(p){ const h=p.hl||{}; if(h.pack_session_from_eur==null) return null; const per=eur(h.pack_session_from_eur);
+  const o=(p.of||[]).filter(o=>offGroup(o)==="pack"&&o.price_eur!=null&&o.sessions).sort((a,b)=>(a.per_session_eur||a.price_eur/a.sessions)-(b.per_session_eur||b.price_eur/b.sessions))[0];
+  return o?{big:eur(o.price_eur),sub:`${t("pack_n",o.sessions,plf(o.sessions,"sess_pl"))} · ${t("per_session",per)}`}:{big:per,sub:t("in_pack")}; }
+// one price line for previews: "от €37 · 90 мин", "€120 · пакет 4 сеанса · €30 за раз", or the plain access text
 function priceLine(p){ const h=p.hl||{}; if(memDup(p)) return `${t("acc_membership")} ${memVal(p)}`; const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
   if(h.visit_from_eur!=null) return [(vis.length>1?t("from")+" ":"")+eur(h.visit_from_eur), fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ");
-  if(h.pack_session_from_eur!=null) return `${eur(h.pack_session_from_eur)} · ${t("in_pack")}`;
+  if(h.pack_session_from_eur!=null){ const pk=packHead(p); return `${pk.big} · ${pk.sub}`; }
   if(h.treatment_from_eur!=null) return `${eur(h.treatment_from_eur)} · ${t("w_trt")}`;
   if(h.group_from_eur!=null) return `${eur(h.group_from_eur)} · ${t("w_group")}`;
   return dayTxt(p); }
@@ -1342,7 +1381,7 @@ function revTxt(n){ const f=I18N[LANG].reviews||I18N.ru.reviews; let i=n===1?0:1
 function rbadge(v,plat,cls,n){ const few=n!=null&&n<50; return `<span class="rbw"><span class="rb ${few?"g3":cls}"><b>${v}</b><i>${plat}</i></span>${n||few?`<span class="rc${few?" few":""}">${n?revHTML(n):""}${few?`<span class="rfew">${esc(t("few"))}</span>`:""}</span>`:""}</span>`; }
 function rb(r){ if(!r) return ""; const o=[]; if(r.google) o.push(rbadge(n1(r.google),"Google","g1",r.google_reviews)); if(r.booking) o.push(rbadge(n1(r.booking),"Booking","bk",r.booking_reviews)); return o.join(""); }
 const bookUrl=p=>[(p.access||{}).booking_url,p.booking_url,(p.sch||{}).booking_url].map(safeUrl).find(Boolean)||null;
-const warn = p => p.confidence==="low"?`<span class="warn-i" title="${esc(t("unconf"))}">?</span>`:"";
+const warn = p => "";  // low confidence is shown once as a tag by the name, not as a dead "?" icon next to prices
 function photoCell(p){ if(!p._ph.length) return `<div class="thumbs">${phdHTML(p)}</div>`;
   return `<div class="thumbs">${p._ph.slice(0,2).map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(thumbSrc(x))}" data-full="${esc(x.u)}" width="58" height="44" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`; }
 function dayCellOld(p){const a=p.access||{}; const w=warn(p);
@@ -1352,7 +1391,8 @@ function dayCellOld(p){const a=p.access||{}; const w=warn(p);
   if(p.kind==="hotel" && p.stay && a.day_pass===false && !p._trt && !p._day) return `<span class="dim">${esc(t("guests"))}</span>`;
   if(p._day) return `<span class="pill p-ok">${esc(t("yes"))}</span>${w}`;
   if(p._trt) return `<span class="dim">${esc(t("w_trt"))}</span>${w}`;
-  if(p._mem&&a.day_pass!==true) return `<span class="dim">${esc(t(a.day_pass===false?"only_mem":"acc_membership"))}</span>${w}`;
+  // the row's price slot: "membership" only with a known price (shown by memLine); the bare word stays out
+  if(p._mem&&a.day_pass!==true) return memVal(p)?`<span class="dim">${esc(t(a.day_pass===false?"only_mem":"acc_membership"))}</span>${w}`:"";
   return "";
 }
 function rateCell(r){ const h=rb(r); return h?`<div class="rbs">${h}</div>`:""; }
@@ -1371,7 +1411,7 @@ function offGroup(o){ if(o.for==="guests") return "guest"; if(o.kind==="membersh
 function priceCell(p){ const h=p.hl||{}; const w=warn(p); const vis=(p.of||[]).filter(o=>offGroup(o)==="visit"&&o.price_eur!=null);
   if(h.visit_from_eur!=null){ const sub=[fmtMinU(h.visit_minutes), h.visit_when?(D_().wh||{})[h.visit_when]||"":"", ...(h.visit_conditions||[]).map(condTxt)].filter(Boolean).join(" · ");
     return `<span class="price num">${vis.length>1?esc(t("from"))+" ":""}${eur(h.visit_from_eur)}</span>${w}${sub?`<div class="sub num">${esc(sub)}</div>`:""}`; }
-  if(h.pack_session_from_eur!=null) return `<span class="price num">${eur(h.pack_session_from_eur)}</span>${w}<div class="sub">${esc(t("in_pack"))}</div>`;
+  if(h.pack_session_from_eur!=null){ const pk=packHead(p); return `<span class="price num">${pk.big}</span>${w}<div class="sub">${esc(pk.sub)}</div>`; }
   if(h.treatment_from_eur!=null) return `<span class="price num dim">${eur(h.treatment_from_eur)}</span>${w}<div class="sub">${esc(t("w_trt"))}</div>`;
   if(h.group_from_eur!=null) return `<span class="price num">${eur(h.group_from_eur)}</span>${w}<div class="sub">${esc(t("w_group"))}</div>`;
   return dayCellOld(p); }
@@ -1389,6 +1429,20 @@ function pricesBlock(p){ const of=p.of||[]; if(!of.length) return ""; const G={v
   let h=""; ["visit","pack","mem","trt","group","guest"].forEach(k=>{ if(G[k].length) h+=`<div class="ofg"><div class="ofgt">${esc(t(T[k]))}</div>${G[k].map(offLine).join("")}</div>`; });
   if(G.trial.length) h+=G.trial.map(offLine).join("");
   return `<div class="prices">${h}</div>`; }
+// social links: one round icon button per network, the handle as the accessible name. A field holds a handle ("@name"), a bare name or a profile URL;
+// the whole value must be one of those: a status note, a date or any other free text beside it means no link (and nothing is shown)
+const SOC={
+  instagram:{rx:/^(?:@|(?:https?:\/\/)?(?:www\.)?instagram\.com\/)?([a-z0-9][a-z0-9._]{0,29})\/?(?:[?#].*)?$/i,url:h=>"https://www.instagram.com/"+h+"/",lab:h=>"Instagram @"+h},
+  telegram:{rx:/^(?:@|(?:https?:\/\/)?(?:www\.)?(?:t\.me|telegram\.me)\/(?:s\/)?)?(\+?[a-z0-9_]{4,32})\/?(?:[?#].*)?$/i,url:h=>"https://t.me/"+h,lab:h=>"Telegram "+(h[0]==="+"?"":"@")+h},
+  facebook:{rx:/^(?:@|(?:https?:\/\/)?(?:www\.|m\.)?(?:facebook|fb)\.com\/)?(profile\.php\?id=\d+|[a-z0-9][a-z0-9.\-]{1,60})\/?(?:[?#].*)?$/i,url:h=>"https://www.facebook.com/"+h,lab:h=>"Facebook "+h},
+  whatsapp:{rx:/^(?:(?:https?:\/\/)?(?:wa\.me\/|api\.whatsapp\.com\/send\/?\?phone=))?\+?(\d[\d\s().-]{6,20}\d)\/?(?:[?#].*)?$/i,url:h=>"https://wa.me/"+h.replace(/\D/g,""),lab:h=>"WhatsApp +"+h.replace(/\D/g,"")},
+  tiktok:{rx:/^(?:@|(?:https?:\/\/)?(?:www\.)?tiktok\.com\/@)?([a-z0-9][a-z0-9._]{1,23})\/?(?:[?#].*)?$/i,url:h=>"https://www.tiktok.com/@"+h,lab:h=>"TikTok @"+h},
+  youtube:{rx:/^(?:@|(?:https?:\/\/)?(?:www\.)?youtube\.com\/(?:@|c\/|user\/))?([a-z0-9][a-z0-9._\-]{1,39})\/?(?:[?#].*)?$/i,url:h=>"https://www.youtube.com/@"+h,lab:h=>"YouTube @"+h}
+};
+function socHTML(p){ const out=[];
+  for(const k in SOC){ const v=String(p[k]||"").trim(); if(!v) continue; const m=SOC[k].rx.exec(v); if(!m) continue; const u=SOC[k].url(m[1]), l=SOC[k].lab(m[1]);
+    out.push(`<a class="soc" href="${esc(u)}" target="_blank" rel="noopener" aria-label="${esc(l)}" title="${esc(l)}">${ico(k)}</a>`); }
+  return out.length?`<div class="socs">${out.join("")}</div>`:""; }
 function detail(p){const a=p.access||{};
   const link=(u,t)=>{const s=safeUrl(u)||(/^http:\/\//i.test(u||"")?u:null); return s?`<a href="${esc(s)}" target="_blank" rel="noopener">${esc(t)}</a>`:"";};
   const maps=`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name+" "+(p.address||"")+(p.muni&&!(p.address||"").includes(p.muni)?" "+p.muni:""))}${p.pid?"&query_place_id="+encodeURIComponent(p.pid):""}`;
@@ -1403,9 +1457,7 @@ function detail(p){const a=p.access||{};
   if(mn||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(mn)].filter(Boolean).join(". "))); }
   add(t("d_book"), [BOOK[a.booking]?esc(BOOK[a.booking][0]):"", tr(p,"booking_how")?esc(t("d_via",tr(p,"booking_how"))):""].filter(Boolean).join(", "));
   add(t("d_hours"), p.wk?(hoursLine(p)+(allSame(p.wk)?"":weekTable(p.wk))):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
-  const ig=(p.instagram||"").replace(/^@/,"").replace(/^https?:\/\/(www\.)?instagram\.com\//,"").replace(/\/.*$/,"");
-  const tg=(p.telegram||"").replace(/^@/,"").replace(/^https?:\/\/t\.me\/(s\/)?/,"").replace(/\/.*$/,"");
-  add(t("d_social"), [ig?link("https://www.instagram.com/"+ig+"/","Instagram @"+ig):"", tg?link("https://t.me/"+tg,"Telegram @"+tg):""].filter(Boolean).join(", "));
+  add(t("d_social"), socHTML(p));
   // ratings are shown in the row (both platforms); the card does not repeat them
   if(LANG==="ru") add(t("d_lists"), esc((p.lists||[]).join(", ")));
   add(t("d_rules"), esc([p.min_age?t("from_age",p.min_age):"", cap(tr(p,"rules")||"")].filter(Boolean).join(". ")));
@@ -1415,7 +1467,8 @@ function detail(p){const a=p.access||{};
   // sources: one chip per unique domain
   const seen=new Set(); const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).filter(u=>{ const h=host(u); if(seen.has(h)) return false; seen.add(h); return true; }).slice(0,4).map(u=>`<a class="sd" href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`).join(" ");
   const gal=p._ph.length>1?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(galSrc(x))}" data-full="${esc(x.u)}" width="120" height="84" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
-  const conf=p.confidence==="low"?t("conf_low"):"";
+  // "data reliability: low" only when the name does not already carry the "not confirmed by the official site" tag (a status tag took its place)
+  const conf=p.confidence==="low"&&p._weak!=="low"?t("conf_low"):"";
   const dest=p.lat!=null?`${p.lat},${p.lon}`:"";
   // every action in one place: Book, directions, call, website (domain), share, show on map (phone only)
   const bu=bookUrl(p); const tel=p.phone?String(p.phone).replace(/[^\d+]/g,""):""; const site=safeUrl(p.website)||(/^http:\/\//i.test(p.website||"")?p.website:null);
@@ -1491,7 +1544,9 @@ function memLine(p){ const v=memDup(p)?null:memVal(p);
 function rowHTML(p){ const open=st.open===p._i;
   // status (not open yet / temporarily closed) is shown once, as the pill by the name
   const ot=p._open?"":`<span class="wtag otag">${esc(t("op_tag"))}</span>`;
-  const wk=p._weak&&!(ot&&p._weak==="sparse")?`<span class="wtag ${p._weak}" title="${esc(t("wt_"+p._weak+"_h"))}">${esc(p._weak==="status"?t(p.status):t("wt_"+p._weak))}</span>`:"";
+  // the longer hint is a hover title only where it adds to the tag (status, sparse); the "not confirmed by the official site" tag is the whole sentence
+  const wtx=p._weak?(p._weak==="status"?t(p.status):t("wt_"+p._weak)):"", wth=p._weak?t("wt_"+p._weak+"_h"):"";
+  const wk=p._weak&&!(ot&&p._weak==="sparse")?`<span class="wtag ${p._weak}"${wth.toLowerCase()!==wtx.toLowerCase()?` title="${esc(wth)}"`:""}>${esc(wtx)}</span>`:"";
   const rbm=rb(p.ratings);
   // a subtitle that only repeats the town (or just the hotel stars, which the meta line shows) is dropped
   const sub0=tr(p,"subtitle")||""; const town=muniName(p.muni)||areaName(p.area)||"";
@@ -1523,7 +1578,7 @@ function render(keep){
   if(st.open!=null){ const k=list.findIndex(p=>p._i===st.open); if(k>=need) need=k+1; }
   shown=0; tbody.textContent=""; appendRows(need);
   const n=list.length; let nd=0, nm=0; list.forEach(p=>{ if(p._vp!=null) nd++; if(p._mp!=null) nm++; });
-  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${baseN()} ${t("places")}</span><span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
+  document.getElementById("stats").innerHTML=`<span class="s-n"><b>${n}</b> ${t("of")} ${baseN()} ${t("places")}</span>${!st.all&&P.length>baseN()?`<span class="s-all">${esc(t("s_total",nfmt(P.length)))}</span>`:""}<span class="s-d"><b>${nd}</b> ${t("withday")}</span><span class="s-m"><b>${nm}</b> ${t("withmem")}</span>${st.hrs.size?`<span class="s-h">${esc(t("hrs_known",P.filter(p=>(p.wk||p.sch)&&inBase(p)).length))}</span>`:""}`;
   HIDL=st.all?[]:P.filter(p=>!inBase(p)&&passFn(p,"open")); if(lastR) HIDL.sort((x,y)=>(lastR.get(y._i)||0)-(lastR.get(x._i)||0));
   updateFtoggle(); facetCounts(); drawNores(); drawOpen();
   requestAnimationFrame(fill);
@@ -1573,7 +1628,7 @@ function applyState(s){ cancelPinFocus(); s=s||{v:"list"};
   if(st.open!=null) closeCard(st.open); }
 document.getElementById("mapbtn").onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
 window.addEventListener("popstate",e=>{ let s=e.state; if(!s){ const m=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); if(m&&byId(m[1])){ s={v:"card",id:m[1]}; hReplace(s,location.href); } } applyState(s); });
-const onMQ=()=>{ if(!isPhone()) closeSheet(); closePreview(); map.closePopup(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
+const onMQ=()=>{ document.querySelectorAll("[data-tp]").forEach(e=>{ e.placeholder=t(e.dataset.tp==="search"&&isPhone()?"search_s":e.dataset.tp); }); if(!isPhone()) closeSheet(); closePreview(); map.closePopup(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
 try{ matchMedia("(max-width:900px)").addEventListener("change",onMQ); matchMedia("(max-width:600px)").addEventListener("change",()=>render(true)); }catch(e){}
 // hover a row: highlight its pin (desktop)
 tbody.addEventListener("mouseover",e=>{ const r=e.target.closest("tr.row"); const i=r?r.dataset.i:null; if(i===tbody.dataset.hov) return; tbody.dataset.hov=i||"";
@@ -1741,7 +1796,7 @@ document.addEventListener("error",e=>{ const im=e.target; if(!im||im.tagName!=="
 
 setInterval(()=>{ NOWC={}; if(hpop.hidden&&lb.hidden) render(true); },300000);
 // own API: enable owner/feedback UI only when the service answers
-(function(){ const ctl=new AbortController(); setTimeout(()=>ctl.abort(),6000);
+if(FB_API) (function(){ const ctl=new AbortController(); setTimeout(()=>ctl.abort(),6000);
   fetch(FB_API+"/api/health",{signal:ctl.signal}).then(r=>r.ok?r.json():null).then(j=>{ if(!j||!j.ok) return; FB.B="api"; FB.A="owner.html";
     return fetch(FB_API+"/api/stats").then(r=>r.ok?r.json():{}).then(sx=>{ P.forEach(p=>{ if(sx[p.id]) p.fb=sx[p.id]; }); }).catch(()=>{}).then(()=>{ if(hpop.hidden&&lb.hidden) render(true); }); }).catch(()=>{}); })();
 // a failed or stalled load (20 s) shows "details did not load" + Retry in the open card; the next card, photo or pin tries again; core data keeps working
@@ -1774,17 +1829,21 @@ tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
 // a quiet line under the list, and with a query a line above it naming hidden matches
 let HIDL=[];
 function setAll(on){ st.all=!!on; st.exc=(!st.all&&st.open!=null&&!P[st.open]._open)?st.open:null; render(true); }
+// the switch "All places (+N)": off, N = hidden places that pass the other filters; on, N = such places now in the list. The same switch in the sheet and on the full-screen map
 function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=document.getElementById("otog");
-  b.classList.toggle("on",on); b.classList.toggle("zero",!on&&!n);
-  b.innerHTML=ico(on?"eyeoff":"eye")+`<span>${esc(on?t("op_hide"):n?t("op_show",nfmt(n),plf(n,"op_pl")):t("op_show0"))}</span>`;
+  const nIn=on?LIST.filter(p=>!p._open).length:0; const k=on?nIn:n; const lab=t("op_all")+(k?` (+${nfmt(k)})`:"");
+  b.classList.toggle("on",on); b.classList.toggle("zero",!on&&!n); b.setAttribute("aria-checked",String(on));
+  b.innerHTML=`<span class="sw" aria-hidden="true"></span><span class="otl"><b>${esc(lab)}</b><small>${esc(t("op_sub"))}</small></span>`;
+  const m=document.getElementById("mapall"); m.classList.toggle("zero",!on&&!n); m.setAttribute("aria-checked",String(on)); m.setAttribute("aria-label",`${lab}: ${t("op_sub")}`); m.title=t("op_sub");
+  m.innerHTML=`<span class="sw" aria-hidden="true"></span>${esc(lab)}`;
   const more=`<button type="button" data-oall="1">${esc(t("op_more"))}</button>`;
-  const hl=document.getElementById("hidn"); const nIn=on?LIST.filter(p=>!p._open).length:0;
+  const hl=document.getElementById("hidn");
   if(!on&&n&&!q){ hl.hidden=false; hl.innerHTML=`${esc(t("op_line",nfmt(n),plf(n,"op_pl")))} · ${more}`; }
   else if(on&&nIn){ hl.hidden=false; hl.innerHTML=`<button type="button" data-oall="0">${esc(t("op_hide"))}</button>`; }
   else hl.hidden=true;
   const qh=document.getElementById("qhid");
   if(!on&&n&&q){ qh.hidden=false; qh.innerHTML=`${esc(n<=2?t("op_q1",HIDL.map(pname).join(", ")):t("op_qn",nfmt(n),plf(n,"op_qpl")))} · ${more}`; } else qh.hidden=true; }
-document.getElementById("otog").onclick=()=>setAll(!st.all);
+document.getElementById("otog").onclick=()=>setAll(!st.all); document.getElementById("mapall").onclick=()=>setAll(!st.all);
 document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-oall]"); if(b) setAll(b.dataset.oall==="1"); });
 // a query that matches nothing at all: "Nothing found for ..." and one tap on the closest spelling
 function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElementById("nores"), b=document.getElementById("tryq");
@@ -1800,7 +1859,10 @@ function initNav(){ const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(l
 initNav();
 // details after the window load event (tiles, first photos and fonts go first), while the browser is idle
 if(document.readyState==="complete") idle(()=>loadMore(),2500); else addEventListener("load",()=>idle(()=>loadMore(),2500),{once:true});
-const drawFoot=()=>{ document.getElementById("foot").textContent = t("foot",t("updated")); }; drawFoot();
+// footer: the data note, then the photo-rights line; SITE_CONTACT (email or URL) adds " · contact" as a link, empty leaves the sentence alone
+const drawFoot=()=>{ document.getElementById("foot").textContent = t("foot",t("updated"));
+  const c=SITE_CONTACT.trim(); const href=!c?"":/^(https?:|mailto:)/i.test(c)?c:"mailto:"+c;
+  document.getElementById("foot2").innerHTML=esc(t("photo_rights"))+(href?` · <a href="${esc(href)}"${/^https?:/i.test(href)?' target="_blank" rel="noopener"':""}>${esc(t("contact_l"))}</a>`:""); }; drawFoot();
 })();
 </script>
 </body>
