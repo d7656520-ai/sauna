@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=b464bde6a5" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=6961d54ad6" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -518,7 +518,7 @@ tr.skel td{padding:10px 8px}
   .fintro{display:block}
   .flegend{display:flex;margin-top:12px}
   /* one quiet line under the title: "300 из 300 мест · всего 730" (the total explains the "All places" switch); the day / membership counts stay desktop-only */
-  .stats{display:flex;gap:0 6px;margin:2px 0 0;font-size:12px;line-height:1.3}
+  .stats{display:flex;gap:0 6px;margin:2px 0 0;font-size:12px;line-height:1.3;min-height:1.3em}  /* reserved before data loads: no layout shift */
   .stats .s-d,.stats .s-m,.stats .s-h{display:none}
   .stats .s-all::before{content:"·";margin-right:6px}
   .mapwrap{position:relative;height:28vh;height:28svh;min-height:180px;max-height:220px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
@@ -735,7 +735,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds(phone?[[38.45,-9.5],[38.95,-8.85]]:[[36.95,-9.52],[42.16,-6.19]],{padding:phone?[2,2]:[8,8]});
 })();
 </script>
-<script src="data.js?v=b464bde6a5"></script>
+<script src="data.js?v=6961d54ad6"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -980,9 +980,14 @@ const isG=u=>/googleusercontent\.com\//.test(u||"")&&/=w\d+-h\d+-k-no$/.test(u);
 const gsz=(u,w,h)=>u.replace(/=w\d+-h\d+-k-no$/,`=w${w}-h${h}-k-no`);
 // hosts with a size parameter in the URL: Contentful (?w=), Google-style "=sNNN"
 const rsz=(u,w,h)=>{ if(/^https:\/\/images\.ctfassets\.net\//.test(u)) return u.replace(/\?.*$/,"")+`?w=${w}&h=${h}&fit=fill&q=70`; if(/=s\d+(\?|$)/.test(u)&&/paraty\.es\//.test(u)) return u.replace(/=s\d+/,`=s${w}`); return null; };
-const thumbSrc=x=>isG(x.u)?gsz(x.u,160,120):(x.t||rsz(x.u,160,120)||x.u);
-const galSrc=x=>isG(x.u)?gsz(x.u,320,240):(x.t||rsz(x.u,320,240)||x.u);
-const midSrc=x=>isG(x.u)?gsz(x.u,640,480):(rsz(x.u,640,480)||x.u);
+// image sizes follow the screen density (up to 3x): list row about 58 css px, gallery 120, map popup about 360
+const DPR=Math.min(3,Math.max(1,Math.round(window.devicePixelRatio||1)));
+const isB=u=>/bstatic\.com\/xdata\/images\/hotel\/(max|square)\d+(x\d+)?\//.test(u||"");
+const bsz=(u,s)=>u.replace(/\/(max|square)\d+(x\d+)?\//,`/${s}/`);
+const isL=t=>/^img\/t\//.test(t||""); // own WebP copy made by build_thumbs.py: -s 360x270, -m 720x540
+const thumbSrc=x=>isG(x.u)?gsz(x.u,80*DPR,60*DPR):isB(x.u)?bsz(x.u,DPR>1?"max300":"square240"):(x.t||rsz(x.u,240,180)||x.u);
+const galSrc=x=>isG(x.u)?gsz(x.u,120*DPR,90*DPR):isB(x.u)?bsz(x.u,DPR>1?"max500":"max300"):(x.t||rsz(x.u,360,270)||x.u);
+const midSrc=x=>isG(x.u)?gsz(x.u,Math.min(960,360*DPR),Math.min(720,270*DPR)):isB(x.u)?bsz(x.u,DPR>1?"max1024x768":"max500"):(isL(x.t)?x.t.replace("-s.webp","-m.webp"):(rsz(x.u,720,540)||x.u));
 
 function chips(el,map,get,set){
   el.innerHTML="";
