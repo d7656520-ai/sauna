@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=c35010ca19" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=f3fbe0b110" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -787,7 +787,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=c35010ca19"></script>
+<script src="data.js?v=f3fbe0b110"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1013,6 +1013,8 @@ function openOf(p){ const a=p.access||{}, h=p.hl||{};
   if(["visit_from_eur","treatment_from_eur","month_from_eur","pack_session_from_eur","group_from_eur"].some(k=>h[k]!=null)) return true;
   if(a.day_pass===true||a.membership===true||a.treatment_access===true||a.day_pass_price_eur!=null||a.membership_month_eur!=null) return true;
   return (p.kind==="sauna"||p.kind==="public")&&a.day_pass!==false; }
+// a closure with dates (closed_period [from, to], ALGORITHM.md 1.6): inside the period the place is "temporarily closed" without a rebuild
+{ const td=new Date().toISOString().slice(0,10); P.forEach(p=>{ const c=p.closed_period; if(c&&c[0]<=td&&td<=c[1]&&!p.status) p.status="closed"; }); }
 P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
   p._d=(p.lat!=null&&p.lon!=null)?km(CASCAIS,[p.lat,p.lon]):999; p._near=p._d<=55;
   const g=r.google?r.google:(r.booking?r.booking/2:0); const n=r.google?(r.google_reviews||10):(r.booking?(r.booking_reviews||10):0);
