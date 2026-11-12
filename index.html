@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=b71268b093" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=86c44d57bc" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -771,7 +771,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=b71268b093"></script>
+<script src="data.js?v=86c44d57bc"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1445,21 +1445,24 @@ function nowL(tz){ const now=new Date(), y=now.getUTCFullYear(); const lastSun=m
 let NOWC={}; const nowFor=tz=>NOWC[tz]||(NOWC[tz]=nowL(tz)); let NOW=nowFor(TZ);
 const tzOf=p=>p&&p.reg==="acores"?"Atlantic/Azores":TZ; const useNow=p=>{ NOW=nowFor(tzOf(p)); };
 const fmtT=m=>{ m=m%1440; return `${Math.floor(m/60)}:${String(m%60).padStart(2,"0")}`; };
+// a day's hours: [open, close] or, with a break, [open1, close1, open2, close2, ...] (minutes)
+const ivs=x=>{ const r=[]; for(let i=0;i+1<x.length;i+=2) r.push([x[i],x[i+1]]); return r; };
+const lastC=x=>x[x.length-1];
 function openState(wk){ if(!wk) return null; const {d,m}=NOW; const tt=wk[d];
-  if(Array.isArray(tt)&&m>=tt[0]&&m<tt[1]) return tt[1]-m<=60?{st:"soon",lab:t("hs_soon"),tm:fmtT(tt[1])}:{st:"open",lab:t("hs_open"),tm:t("hs_until",fmtT(tt[1]))};
-  if(Array.isArray(tt)&&m<tt[0]) return {st:"closed",lab:t("hs_closed"),tm:t("hs_opens",fmtT(tt[0]))};
+  if(Array.isArray(tt)){ for(const [o,c] of ivs(tt)){ if(m>=o&&m<c) return c-m<=60?{st:"soon",lab:t("hs_soon"),tm:fmtT(c)}:{st:"open",lab:t("hs_open"),tm:t("hs_until",fmtT(c))};
+      if(m<o) return {st:"closed",lab:t("hs_closed"),tm:t("hs_opens",fmtT(o))}; } }
   if(tt===null) return null;
   for(let k=1;k<=7;k++){ const dd=(d+k)%7, x=wk[dd]; if(Array.isArray(x)) return {st:"closed",lab:t("hs_closed"),tm:t("hs_opens_day",k===1?t("tomorrow"):DN()[dd],fmtT(x[0]))}; if(x===null) return {st:"closed",lab:t("hs_closed"),tm:""}; }
   return null; }
 const live=p=>!(p.status==="soon"||p.status==="closed");
-const allSame=wk=>wk.every(x=>Array.isArray(x)&&x[0]===wk[0][0]&&x[1]===wk[0][1]);
-const rngT=x=>`${fmtT(x[0])} ${t("to")} ${fmtT(x[1])}`;
+const allSame=wk=>wk.every(x=>Array.isArray(x)&&x.length===wk[0].length&&x.every((v,i)=>v===wk[0][i]));
+const rngT=x=>ivs(x).map(([o,c])=>`${fmtT(o)} ${t("to")} ${fmtT(c)}`).join(", ");
 // one hours line for row, card and popup. Same hours every day: "● Открыто · ежедневно 9:00 до 22:00" (closed: "● Закрыто · откроется в 9:00 · ежедневно ...").
 // Hours differ by day: "● Открыто · сегодня 9:00 до 22:00" and a "week" button where there is room; places not open yet / closed get no status, only the hours
 function hoursLine(p){ const w=p.wk; if(!w) return ""; useNow(p); const same=allSame(w), x=w[NOW.d];
   const s=live(p)?openState(w):null; const parts=[];
   if(s&&s.st==="closed"&&s.tm) parts.push(same?t("hs_opens",fmtT(w[0][0])):s.tm);
-  const past=s&&s.st==="closed"&&Array.isArray(x)&&NOW.m>=x[1];
+  const past=s&&s.st==="closed"&&Array.isArray(x)&&NOW.m>=lastC(x);
   // a day the data does not cover (null) is neither open nor closed: "today: no data" (the week table lists the known days)
   if(same) parts.push(`${t("daily")} ${rngT(w[0])}`); else if(Array.isArray(x)&&!past) parts.push(`${t("today")} ${rngT(x)}`); else if(x==="x"&&!s) parts.push(`${t("today")} ${t("dayoff")}`); else if(x==null&&!s) parts.push(t("hrs_today_na"));
   if(!s&&!parts.length) return "";
@@ -1470,10 +1473,10 @@ function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ return `<button type="button
 function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b); const g=[];
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
   const rng={ru:" по ",en:" to ",pt:" a "}[LANG];
-  if(g.length===1&&Array.isArray(g[0].x)) return `<div>${esc({ru:"Ежедневно",en:"Daily",pt:"Todos os dias"}[LANG])} ${fmtT(g[0].x[0])} ${t("to")} ${fmtT(g[0].x[1])}</div>`;
+  if(g.length===1&&Array.isArray(g[0].x)) return `<div>${esc({ru:"Ежедневно",en:"Daily",pt:"Todos os dias"}[LANG])} ${rngT(g[0].x)}</div>`;
   // days without data (null) are left out of the table and named once below it: "other days: no data", never "closed"
   const known=g.filter(r=>r.x!=null);
-  return `<table class="wkt">${known.map(r=>{ const lab=r.a===r.b?DN()[r.a]:DN()[r.a]+rng+DN()[r.b]; const td=NOW.d>=r.a&&NOW.d<=r.b; return `<tr class="${td?"td":""}"><td>${lab}</td><td>${Array.isArray(r.x)?`${fmtT(r.x[0])} ${t("to")} ${fmtT(r.x[1])}`:r.x==="x"?t("dayoff"):""}</td></tr>`; }).join("")}</table>${known.length<g.length?`<div class="sub">${esc(t("hrs_rest"))}</div>`:""}`; }
+  return `<table class="wkt">${known.map(r=>{ const lab=r.a===r.b?DN()[r.a]:DN()[r.a]+rng+DN()[r.b]; const td=NOW.d>=r.a&&NOW.d<=r.b; return `<tr class="${td?"td":""}"><td>${lab}</td><td>${Array.isArray(r.x)?ivs(r.x).map(([o,c])=>`${fmtT(o)} ${t("to")} ${fmtT(c)}`).join("<br>"):r.x==="x"?t("dayoff"):""}</td></tr>`; }).join("")}</table>${known.length<g.length?`<div class="sub">${esc(t("hrs_rest"))}</div>`:""}`; }
 const n1=v=>Number(v).toFixed(1).replace(".",LANG==="en"?".":",");
 // thousands with a narrow no-break space (RU 5 323, PT 5323 / 12 345), EN 5,323
 const nfmt=n=>{ const s=String(n); if(LANG==="en") return s.replace(/\B(?=(\d{3})+(?!\d))/g,","); if(LANG==="pt"&&s.length<5) return s; return s.replace(/\B(?=(\d{3})+(?!\d))/g,"\u202f"); };
@@ -1606,8 +1609,8 @@ function hrsOk(p,set){ if(!set.size) return true; const w=p.wk;
   const days=w.filter(Array.isArray);
   for(const k of set){
     if(k==="now"){ if(!live(p)) return false; useNow(p); const S=openState(w); if(!(S&&(S.st==="open"||S.st==="soon"))) return false; }
-    if(k==="h19"&&!days.some(x=>x[1]>19*60)) return false;
-    if(k==="eve"&&!days.some(x=>x[1]>=21*60+1)) return false;
+    if(k==="h19"&&!days.some(x=>lastC(x)>19*60)) return false;
+    if(k==="eve"&&!days.some(x=>lastC(x)>=21*60+1)) return false;
     if(k==="early"&&!days.some(x=>x[0]<8*60)) return false; }
   return true; }
 function filtered(){
