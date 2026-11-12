@@ -1772,7 +1772,10 @@ function toggleRow(i){ const r0=rowEl(i); const y0=r0?r0.getBoundingClientRect()
 function openFromMap(i){ const p=P[i];
   if(isFull()&&HS().v==="map"){ const c=map.getCenter(); hReplace({v:"map",view:{c:[c.lat,c.lng],z:map.getZoom(),pv:i}},location.href); hPush({v:"card",id:p.id,back:"map"},cardUrl(p.id)); closePreview(); hideFull(); openCard(i,true); scrollToRow(i); return; }
   map.closePopup(); closePreview(); const s={v:"card",id:p.id}; if(HS().v==="card") hReplace(s,cardUrl(s.id)); else hPush(s,cardUrl(s.id)); openCard(i,true); scrollToRow(i); }
-function showFull(noFit,after){ if(isFull()) return; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(!noFit) fitList(LIST); if(after) after(); },60); }
+// the fit must run on the full-screen size: on a slow phone 60 ms is not always enough for the layout, and a fit on the small preview size
+// (150 px tall) leaves the full map zoomed out to half of Europe (owner 12.11.2026). Wait until the map is at least 60 % of the screen tall.
+function whenFullSized(fn,tries){ map.invalidateSize(); const sz=map.getSize(); if(sz.y<innerHeight*0.6&&(tries=tries==null?20:tries)>0) return setTimeout(()=>whenFullSized(fn,tries-1),50); fn(); }
+function showFull(noFit,after){ if(isFull()) return; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>whenFullSized(()=>{ if(!noFit) fitList(LIST); if(after) after(); }),60); }
 function hideFull(){ cancelPinFocus(); if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); }
 function openFull(noFit){ if(isFull()) return; hPush({v:"map"},location.href); showFull(noFit); }
 function closeFull(){ cancelPinFocus(); if(HS().v==="map") history.back(); else hideFull(); }
