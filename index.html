@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=55515c749f" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=7534cab143" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -787,7 +787,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=55515c749f"></script>
+<script src="data.js?v=7534cab143"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1004,7 +1004,7 @@ const phOf=p=>(p.photos||[]).filter(x=>safeUrl(x.u)||/^img\/[\w.\/-]+$/.test(x.u
 // Not confirmed: day_pass false with nothing else, or nothing known. Only confirmed places are listed by default; the rest appear via one toggle.
 const OPENK=new Set(["visit","day","circuit","pack","pass","treatment","membership","private","trial"]);
 const GUESTC=/guest|hosped|h[oó]spede/i;
-const HEATW=new Set(["sauna","steam","hammam","banya"]), SPAW=new Set(["spa","pool","jacuzzi","cold","relax"]); // first-photo tags: the heat room, then the spa zone
+const HEATW=new Set(["sauna","steam","hammam","banya","infrared"]), SPAW=new Set(["spa","pool","jacuzzi","cold","relax"]); // first-photo tags: the heat room, then the spa zone
 function memOnly(p){ const a=p.access||{}, h=p.hl||{}; const ks=new Set((p.of||[]).filter(o=>o.for!=="guests"&&!(o.conditions||[]).some(c=>GUESTC.test(String(c)))).map(o=>o.kind));
   const once=a.day_pass===true||a.treatment_access===true||a.day_pass_price_eur!=null||["visit_from_eur","treatment_from_eur","pack_session_from_eur","group_from_eur"].some(k=>h[k]!=null)||[...ks].some(k=>!["membership","trial","addon"].includes(k));  // a free trial or an add-on is not a single visit
   const mem=a.membership===true||a.membership_month_eur!=null||h.month_from_eur!=null||ks.has("membership"); return mem&&!once; }
