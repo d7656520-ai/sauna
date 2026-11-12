@@ -1019,7 +1019,7 @@ P.forEach((p,i)=>{p._i=i; const a=p.access||{}; const r=p.ratings||{};
     b+=p._vp!=null?0.25:(hl.pack_session_from_eur!=null||hl.treatment_from_eur!=null||hl.group_from_eur!=null||p._mp!=null)?0.1:0;
     p._rec=p._score+b; }
   p._ses=hl.visit_minutes||a.session_minutes||null;
-  p._acc=openOf(p); p._open=p._acc&&!memOnly(p);  // owner 12.11: the default view is "single visit": access confirmed and not membership-only
+  p._acc=openOf(p); p._open=p._acc&&!memOnly(p)&&p.status!=="closed"&&p.status!=="soon";  /* closed or not yet open: only under «Все места» */  // owner 12.11: the default view is "single visit": access confirmed and not membership-only
 });
 const OPENN=P.filter(p=>p._open).length;
 // the places the list starts from: confirmed ones, or all when the toggle is on, plus one deep-linked exception
