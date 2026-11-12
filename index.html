@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=7190843d76" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=b5f81a3c34" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -113,6 +113,8 @@ b,strong{font-weight:600}
 /* the stats line and the legend keep one line of height before the data arrives: the list below does not jump when they fill */
 .stats{display:flex;gap:16px;flex-wrap:wrap;margin:12px 0 2px;color:var(--muted);font-size:13px;min-height:1.45em}
 .stats b{color:var(--ink);font-variant-numeric:tabular-nums}
+/* owner 12.11.2026: no count line under the toggle (the toggle carries the numbers); the live region stays for screen readers */
+#stats{position:absolute!important;width:1px!important;height:1px!important;min-height:0!important;margin:0!important;padding:0!important;overflow:hidden!important;clip:rect(0 0 0 0);white-space:nowrap}
 .legend{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin:8px 0 0;min-height:1.45em}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .fwrap{display:grid;gap:8px;margin:16px 0;padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
@@ -185,8 +187,10 @@ tr.row{cursor:pointer}
 tr.row:hover td{background:var(--sea-soft)}
 /* the open card (row + details) reads as one block (owner 12.11.2026): warm tint, a heat-coloured bar down the left edge, a line on top and
    at the bottom, and a «Свернуть» button at the end */
+/* 12.11.2026 owner: one even 2px frame on all four sides (was a 4px bar on the left, a thin top and no right edge) */
 tr.row.active td,tr.row.active:hover td{background:var(--act-bg);box-shadow:inset 0 2px 0 var(--heat)}
-tr.row.active td:first-child{box-shadow:inset 4px 0 0 var(--heat),inset 0 2px 0 var(--heat)}
+tr.row.active td:first-child{box-shadow:inset 2px 0 0 var(--heat),inset 0 2px 0 var(--heat)}
+tr.row.active td.lastv{box-shadow:inset -2px 0 0 var(--heat),inset 0 2px 0 var(--heat)}
 .num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .name{display:flex;align-items:flex-start;gap:2px 6px;flex-wrap:wrap}
 .name .nmb{flex:0 1 auto;min-width:0;font-size:15px;line-height:1.3}
@@ -207,7 +211,11 @@ tr.row.active td:first-child{box-shadow:inset 4px 0 0 var(--heat),inset 0 2px 0 
 @media (max-width:380px){.seg button{padding:7px 9px;font-size:13px}.seg button .n{margin-left:4px}}
 .otog{display:flex;flex-direction:column;align-items:flex-start;gap:5px;padding:4px 0}
 .otog .seg{box-shadow:none}
-.mainseg{margin:12px 0 0;box-shadow:none;min-height:38px;box-sizing:border-box;vertical-align:top}  /* owner 12.11: the same two-option control on the main page above the list */
+.mainseg{margin:12px 0 0;box-shadow:none;min-height:38px;box-sizing:border-box;vertical-align:top}
+.mainseg{display:flex;width:max-content;max-width:100%}  /* a block box: with the count line gone an inline box made the header height depend on line metrics (CLS) */
+@media (max-width:640px){.mainseg{margin-top:8px}}
+.foot:empty{display:none}
+.tablewrap:has(tr.skel){min-height:100vh;min-height:100svh}  /* while the skeleton shows, the list fills the screen: the footer never flashes into the first screen (CLS, 12.11.2026) */  /* owner 12.11: the same two-option control on the main page above the list */
 .otog .otsub{font-size:11.5px;color:var(--muted);line-height:1.3}
 html:not(.mapfull) .mapall{display:none}
 html.mapfull .mapall{display:inline-flex;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));max-width:calc(100vw - 24px)}
@@ -241,7 +249,7 @@ tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:8px;overflow:hidden;background:var(--chip);width:58px;height:44px}
 .thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
-tr.detail > td{background:var(--act-bg);padding:12px 12px 8px 16px;max-width:0;box-shadow:inset 4px 0 0 var(--heat),inset 0 -2px 0 var(--heat)}
+tr.detail > td{background:var(--act-bg);padding:12px 14px 8px;max-width:0;box-shadow:inset 2px 0 0 var(--heat),inset -2px 0 0 var(--heat),inset 0 -2px 0 var(--heat)}
 .dcoll{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;margin-top:10px;border-top:1px solid var(--line);color:var(--heat-text,var(--heat));font-weight:600;cursor:pointer}
 .dcoll:hover,.dcoll:focus-visible{text-decoration:underline;text-underline-offset:3px}
 .dcoll svg{width:14px;height:14px}
@@ -557,7 +565,7 @@ tr.skel td{padding:10px 8px}
   .stats{display:flex;gap:0 6px;margin:2px 0 0;font-size:12px;line-height:1.3;min-height:1.3em}  /* reserved before data loads: no layout shift */
   .stats .s-d,.stats .s-m,.stats .s-h{display:none}
   .stats .s-all::before{content:"·";margin-right:6px}
-  .mapwrap{position:relative;height:28vh;height:28svh;min-height:180px;max-height:220px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
+  .mapwrap{position:relative;height:22vh;height:22svh;min-height:150px;max-height:180px;border-left:none;border-block:1px solid var(--line);overscroll-behavior:contain}
   html:not(.mapfull) #map{touch-action:pan-y;cursor:pointer}
   html.mapfull #map{touch-action:none}
   .leaflet-control-zoom{display:none}
@@ -779,7 +787,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=7190843d76"></script>
+<script src="data.js?v=b5f81a3c34"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1691,9 +1699,11 @@ function rowHTML(p){ const open=st.open===p._i;
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
 const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}<button type="button" class="dcoll" data-coll="${p._i}">${esc(t("collapse"))}${ico("cu","ic-s")}</button></td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
+function markLast(){ const r=tbody.querySelector("tr.row.active"); if(!r) return; const tds=[...r.children]; tds.forEach(td=>td.classList.remove("lastv")); const v=tds.filter(td=>td.offsetWidth>0); if(v.length>1) v[v.length-1].classList.add("lastv"); }
+addEventListener("resize",()=>markLast());
 function appendRows(n){ const end=Math.min(LIST.length,shown+n); if(end<=shown) return; let h=""; if(!shown&&amRO) amRO.disconnect();
   for(let k=shown;k<end;k++){ const p=LIST[k]; h+=rowHTML(p); if(st.open===p._i) h+=detailHTML(p); }
-  tbody.insertAdjacentHTML("beforeend",h); shown=end; const na=tbody.querySelectorAll(".am:not([data-f])"); fitAm(na); if(amRO) na.forEach(e=>amRO.observe(e)); }
+  tbody.insertAdjacentHTML("beforeend",h); shown=end; markLast(); const na=tbody.querySelectorAll(".am:not([data-f])"); fitAm(na); if(amRO) na.forEach(e=>amRO.observe(e)); }
 function ensureShown(i){ const k=LIST.findIndex(p=>p._i===i); if(k<0) return false; if(k>=shown) appendRows(k-shown+1+PAGE/2); return true; }
 const sentinel=document.getElementById("more-sentinel");
 // rows below the first screen are added in small idle slices (a page of 40 rows with their layout was one long task on a slow phone);
@@ -1748,7 +1758,7 @@ function openCard(i,noMap){ if(st.open===i) return; const was=st.open; loadMore(
     if(!ensureShown(i)){ resetAll(true); if(hid) st.exc=i; render(); ensureShown(i); toast(t("f_reset")); } else toast(t("op_exc")); }
   if(was!=null) closeCard(was,true);
   st.open=i; const r=rowEl(i);
-  if(r&&!document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); }
+  if(r&&!document.getElementById("det-"+i)){ r.classList.add("active"); const b=r.querySelector(".nmb"); if(b) b.setAttribute("aria-expanded","true"); r.insertAdjacentHTML("afterend",detailHTML(P[i])); markLast(); }
   setActiveMk(i);
   if(noMap||isPhone()||!markers[i]) return;
   focusPin(i); }
