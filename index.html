@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=78dcf8e5b1" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=a999735e30" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -787,7 +787,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=78dcf8e5b1"></script>
+<script src="data.js?v=a999735e30"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1192,7 +1192,7 @@ function srchFields(p){ const k=kg(p);
   const name=[p.name,p.nm_lat,...(p.alias_names||[]),...(p.alt_names||[])];
   // a town inside the name gets its Russian and English spellings as name words too, so "лиссабон" ranks "Sheraton Lisboa" above the rest of Lisbon
   Object.keys(TOWNS).forEach(tn=>{ if(p.name.includes(tn)){ name.push(TOWNS[tn]); if(TOWN_EN[tn]) name.push(TOWN_EN[tn]); name.push(...(TOWN_AL[tn]||[])); } });
-  const town=[p.muni,townRu(p.muni),TOWN_EN[p.muni],...(TOWN_AL[p.muni]||[]),p.area,townRu(p.area),TOWN_EN[p.area],...(TOWN_AL[p.area]||[]),...LANGS3.map(L=>(I18N[L]._area||{})[p.area])];
+  const town=[p.loc,p.muni,townRu(p.muni),TOWN_EN[p.muni],...(TOWN_AL[p.muni]||[]),p.area,townRu(p.area),TOWN_EN[p.area],...(TOWN_AL[p.area]||[]),...LANGS3.map(L=>(I18N[L]._area||{})[p.area])];
   const type=[...LANGS3.map(L=>I18N[L]["rg_"+p.reg]),...LANGS3.flatMap(L=>[I18N[L]["k_"+k],I18N[L]["kf_"+k],...amen(p,L)]),...(p.sauna_types||[]),...(p.extras||[]).map(x=>x.replace(/_/g," "))];
   const text=[p.subtitle,p.address,p.hours_short,...(p.lists||[]),...LANGS3.flatMap(L=>{ const T=(p.tr||{})[L]||{}; return [T.name,T.subtitle,T.notes,T.day_note,T.mem_note,T.hours_text,T.rules]; }),p.notes,p.rules];
   return [name,town,type,text]; }
@@ -1417,7 +1417,8 @@ function dayTxt(p){const a=p.access||{};
 }
 function memTxt(p){const a=p.access||{}; if(a.membership_month_eur!=null) return t("per_month",eur(a.membership_month_eur)); if(p._mem) return t("mem_req"); if(a.membership===false) return t("no"); return null;}
 // one meta line: "● Type 4★ · Town [· km]" (stars pulled out of the subtitle), shared by rows and previews
-function metaLine(p){ const k=KINDS[kg(p)]; const stars=starsOf(p); const town=muniName(p.muni)||areaName(p.area)||"";
+const locName=p=>p.loc?(LANG==="ru"?(townRu(p.loc)||p.loc):p.loc):"";
+function metaLine(p){ const k=KINDS[kg(p)]; const stars=starsOf(p); const town=locName(p)||muniName(p.muni)||areaName(p.area)||"";  // loc: the town itself (Ericeira), municipality only when unknown
   return `<div class="sub meta"><span class="m-in mk-k">${kico(k[2])}${esc(k[0])}${stars?" "+stars:""} ·</span><span class="mk-t">${esc(town)}${ME&&p._d<900?` · ${kmTxt(p._d)} ${t("km")}`:""}</span></div>`; }
 // a pack as the headline price: the pack total with "pack of N sessions · €30 each" (the per-session price alone would read as a single visit)
 function packHead(p){ const h=p.hl||{}; if(h.pack_session_from_eur==null) return null; const per=eur(h.pack_session_from_eur);
@@ -1690,7 +1691,7 @@ function rowHTML(p){ const open=st.open===p._i;
   const wk=p._weak&&!(ot&&p._weak==="sparse")?`<span class="wtag ${p._weak}"${wth.toLowerCase()!==wtx.toLowerCase()?` title="${esc(wth)}"`:""}>${esc(wtx)}</span>`:"";
   const rbm=rb(p.ratings);
   // a subtitle that only repeats the town (or just the hotel stars, which the meta line shows) is dropped
-  const sub0=tr(p,"subtitle")||""; const town=muniName(p.muni)||areaName(p.area)||"";
+  const sub0=tr(p,"subtitle")||""; const town=locName(p)||muniName(p.muni)||areaName(p.area)||"";
   let rest=sub0.replace(/\d★\s*(·\s*)?/,"").replace(/\s*·\s*$/,"").trim(); if(rest&&(rest===town||rest===p.muni)) rest="";
   // phone only (desktop has rating and hours columns): the hours line under the amenities and the rating badges on one line at the bottom of the row;
   // price, duration and booking tag float at the right of the main cell (the price column is hidden on phone), so text below them uses the full width; no buttons in the collapsed row
