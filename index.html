@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=c6972a8f1a" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=7190843d76" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -779,7 +779,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=c6972a8f1a"></script>
+<script src="data.js?v=7190843d76"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -2026,7 +2026,7 @@ renderHead(); render();
 function initNav(){ try{ const q0=new URLSearchParams(location.search).get("q"); if(q0){ qEl.value=q0; applyQ(); } }catch(_){}
   const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); const p=mm?byId(mm[1]):null;
   if(s.v){ applyState(s); return; }
-  if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) cluster.zoomToShowLayer(markers[p._i],()=>{}); }
+  if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) map.whenReady(()=>{ try{ cluster.zoomToShowLayer(markers[p._i],()=>{}); }catch(_){} }); }  /* deep link before the map has a view: wait for it (Leaflet getBounds on an unset view threw) */
   else hReplace({v:"list"},location.href); }
 initNav();
 // details after the window load event (tiles, first photos and fonts go first), while the browser is idle
