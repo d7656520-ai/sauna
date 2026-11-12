@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=465068e83f" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=aa503cbedf" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -771,7 +771,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=465068e83f"></script>
+<script src="data.js?v=aa503cbedf"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -802,7 +802,8 @@ Object.assign(I18N.ru,{wt_low:"не подтверждено официальн�
 Object.assign(I18N.en,{wt_low:"not confirmed by the official site",wt_sparse:"little info",wt_status_h:"Not open yet or temporarily closed",wt_low_h:"Not confirmed by the official site",wt_sparse_h:"Little info so far: no price, hours or reviews"});
 Object.assign(I18N.pt,{wt_low:"não confirmado no site oficial",wt_sparse:"pouca info",wt_status_h:"Ainda não abriu ou está temporariamente fechado",wt_low_h:"Não confirmado no site oficial",wt_sparse_h:"Ainda há pouca informação: sem preço, horário ou avaliações"});
 Object.assign(I18N.ru,{seg_open:"Разовое посещение",seg_all:"Все места"});Object.assign(I18N.en,{seg_open:"Single visit",seg_all:"All places"});Object.assign(I18N.pt,{seg_open:"Entrada avulsa",seg_all:"Todos"});
-Object.assign(I18N.ru,{op_only:"Открыто для всех",op_sub_on:"Места с разовым билетом, спа-кругом или процедурой",op_sub_none:"все {0} мест открыты для всех",op_sub_off:"Плюс абонементы, спа для гостей отелей и места без данных",h_early:"Открывается до 8:00"});Object.assign(I18N.en,{op_only:"Open to everyone",op_sub_on:"Places with a single ticket, spa circuit or treatment",op_sub_none:"all {0} places are open to everyone",op_sub_off:"Plus memberships, guests-only hotel spas and unknown",h_early:"Opens before 8 am"});Object.assign(I18N.pt,{op_only:"Aberto a todos",op_sub_on:"Locais com bilhete avulso, circuito ou tratamento",op_sub_none:"todos os {0} locais abertos a todos",op_sub_off:"Mais mensalidades, spas só para hóspedes e sem dados",h_early:"Abre antes das 8h"});
+Object.assign(I18N.ru,{op_only:"Открыто для всех",op_sub_on:"Места с разовым билетом, спа-кругом или процедурой",op_sub_none:"Места с разовым билетом, спа-кругом или процедурой",op_sub_off:"Плюс абонементы, спа для гостей отелей и места без данных о входе",h_early:"Открывается до 8:00"});Object.assign(I18N.en,{op_only:"Open to everyone",op_sub_on:"Places with a single ticket, spa circuit or treatment",op_sub_none:"Places with a single ticket, spa circuit or treatment",op_sub_off:"Plus memberships, guests-only hotel spas and places with no access data",h_early:"Opens before 8 am"});Object.assign(I18N.pt,{op_only:"Aberto a todos",op_sub_on:"Locais com bilhete avulso, circuito ou tratamento",op_sub_none:"Locais com bilhete avulso, circuito ou tratamento",op_sub_off:"Mais mensalidades, spas só para hóspedes e locais sem dados",h_early:"Abre antes das 8h"});
+Object.assign(I18N.ru,{bk_how:"Запись: {0}"});Object.assign(I18N.en,{bk_how:"Book via {0}"});Object.assign(I18N.pt,{bk_how:"Marcação: {0}"});
 Object.assign(I18N.ru,{book_contact:"Связаться для записи"});Object.assign(I18N.en,{book_contact:"Contact to book"});Object.assign(I18N.pt,{book_contact:"Contactar para reservar"});
 Object.assign(I18N.ru,{muni:"Город",rg_lisboa:"Большой Лиссабон",rg_setubal:"Полуостров Сетубал",rg_oeste:"Оэште",rg_centro:"Центр",rg_norte:"Порту и Север",rg_alentejo:"Алентежу",rg_algarve:"Алгарве",rg_madeira:"Мадейра",rg_acores:"Азоры",s_dist:"Ближе ко мне",d_fromme:"От тебя"});
 Object.assign(I18N.en,{muni:"Town",rg_lisboa:"Greater Lisbon",rg_setubal:"Setúbal Peninsula",rg_oeste:"Oeste",rg_centro:"Centre",rg_norte:"Porto & North",rg_alentejo:"Alentejo",rg_algarve:"Algarve",rg_madeira:"Madeira",rg_acores:"Azores",s_dist:"Closest to me",d_fromme:"From you"});
@@ -862,7 +863,7 @@ Object.assign(I18N.ru,{op_show:"Показать ещё {0} {1} без подт�
  op_line:"ещё {0} {1} без разового посещения",op_more:"показать",op_tag:"вход для посторонних не подтверждён",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди остальных мест",op_qpl:["совпадение","совпадения","совпадений"],
  op_exc:"Вход для посторонних в это место не подтверждён",op_all:"Все места",op_sub:"включая без подтверждённого входа для посторонних",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
 Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside access",op_show0:"Show places without confirmed outside access",op_hide:"Single visit only",op_pl:["place","places"],
- op_line:"{0} more {1} without single visit",op_more:"show",op_tag:"outside access not confirmed",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
+ op_line:"{0} more {1} without a single-visit option",op_more:"show",op_tag:"access for non-guests not confirmed",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
  op_exc:"Access for non-guests is not confirmed here",op_all:"All places",op_sub:"including places without confirmed outside access",sch_up_d:"Upcoming sessions as of {0}"});
 Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Só entrada avulsa",op_pl:["local","locais"],
  op_line:"mais {0} {1} sem entrada avulsa",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre os outros locais",op_qpl:["resultado","resultados"],
@@ -1561,7 +1562,7 @@ function detail(p){const a=p.access||{};
   if(mn||(memTxt(p)&&p._vp==null&&p._mp==null)) add(t("d_mem"), esc([cap(memTxt(p)||""), cap(mn)].filter(Boolean).join(". "))); }
   // "Без брони; записаться можно: сайт, WhatsApp" for walk-in places (the channels are a way to book a slot, not a requirement); "Нужна, через: …" otherwise
   { const bk=bkOf(p), how=tr(p,"booking_how");
-    add(t("d_book"), bk==="walk_in"?esc(how?t("bk_wi_via",how):t("bk_wi")):[BOOK[bk]?esc(BOOK[bk][0]):"", how?esc(t("d_via",how)):""].filter(Boolean).join(", ")); }
+    add(t("d_book"), bk==="walk_in"?esc(how?t("bk_wi_via",how):t("bk_wi")):!BOOK[bk]&&how?esc(t("bk_how",how)):[BOOK[bk]?esc(BOOK[bk][0]):"", how?esc(t("d_via",how)):""].filter(Boolean).join(", ")); }
   add(t("d_hours"), p.wk?(hoursLine(p)+(allSame(p.wk)?"":weekTable(p.wk))):[p.sch?hoursCell(p):"", esc(tr(p,"hours_text")||"")].filter(Boolean).join(""));
   add(t("d_social"), socHTML(p));
   // ratings are shown in the row (both platforms); the card does not repeat them
