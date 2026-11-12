@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=b65fe9eb5d" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=edba090aca" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -457,12 +457,12 @@ a.act{color:var(--ink)}
 .wnote{font-size:13px;color:var(--warn);margin:2px 0}
 .leaflet-container a.leaflet-popup-close-button{display:none}
 /* lightbox */
-.lb{position:fixed;inset:0;z-index:2000;background:var(--scrim);display:grid;grid-template-rows:auto 1fr auto;color:#fff;touch-action:pan-y}
+.lb{position:fixed;inset:0;z-index:2000;background:var(--scrim);display:grid;grid-template-rows:auto 1fr auto;grid-template-columns:minmax(0,1fr);color:#fff;touch-action:pan-y}
 .lb-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:calc(8px + env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) 8px max(16px,env(safe-area-inset-left,0px));font-size:15px}
 .lb-top b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;font-weight:600}
 .lb-top .lbc{color:rgba(255,255,255,.7);flex:0 0 auto;font-variant-numeric:tabular-nums;font-size:13px}
 .lb-top .lbl{display:flex;align-items:baseline;gap:8px;min-width:0;flex:1 1 auto}
-.lb-x{all:unset;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
+.lb-x{all:unset;flex:0 0 auto;cursor:pointer;display:grid;place-items:center;width:44px;height:44px;border-radius:50%}
 .lb-x .ic{width:24px;height:24px}
 .lb-x:hover,.lb-x:focus-visible{background:rgba(255,255,255,.14)}
 .lb-stage{position:relative;min-height:0;display:grid;overflow:hidden}
@@ -772,7 +772,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=b65fe9eb5d"></script>
+<script src="data.js?v=edba090aca"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -861,13 +861,13 @@ Object.assign(I18N.pt,{search:"Nome, cidade, comodidades",nores:"Nada encontrado
  foot:"Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde é do Google, o azul é do Booking, o cinzento indica poucas avaliações; ao lado está o número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte."});
 // round 7: places without confirmed outside access are hidden by default (owner decision 11.11.2026); dated sessions labelled with the check date
 Object.assign(I18N.ru,{op_show:"Показать ещё {0} {1} без подтверждённого входа для посторонних",op_show0:"Показать места без подтверждённого входа для посторонних",op_hide:"Только разовое посещение",op_pl:["место","места","мест"],
- op_line:"ещё {0} {1} без разового посещения",op_more:"показать",op_tag:"вход для посторонних не подтверждён",bl_head:"Не показаны из-за нехватки данных:",bl_price:"без цены {0}",bl_hrs:"без часов {0}",bl_rate:"без рейтинга {0}",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди остальных мест",op_qpl:["совпадение","совпадения","совпадений"],
+ op_line:"ещё {0} {1} без разового посещения",op_more:"показать",op_tag:"вход для посторонних не подтверждён",op_guests:"только для гостей отеля",op_noout:"посторонним вход не продаётся",bl_head:"Не показаны из-за нехватки данных:",bl_price:"без цены {0}",bl_hrs:"без часов {0}",bl_rate:"без рейтинга {0}",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди остальных мест",op_qpl:["совпадение","совпадения","совпадений"],
  op_exc:"Вход для посторонних в это место не подтверждён",op_all:"Все места",op_sub:"включая без подтверждённого входа для посторонних",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
 Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside access",op_show0:"Show places without confirmed outside access",op_hide:"Single visit only",op_pl:["place","places"],
- op_line:"{0} more {1} without a single-visit option",op_more:"show",op_tag:"access for non-guests not confirmed",bl_head:"Not shown for lack of data:",bl_price:"no price {0}",bl_hrs:"no hours {0}",bl_rate:"no rating {0}",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
+ op_line:"{0} more {1} without a single-visit option",op_more:"show",op_tag:"access for non-guests not confirmed",op_guests:"hotel guests only",op_noout:"no entry for non-members",bl_head:"Not shown for lack of data:",bl_price:"no price {0}",bl_hrs:"no hours {0}",bl_rate:"no rating {0}",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
  op_exc:"Access for non-guests is not confirmed here",op_all:"All places",op_sub:"including places without confirmed outside access",sch_up_d:"Upcoming sessions as of {0}"});
 Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Só entrada avulsa",op_pl:["local","locais"],
- op_line:"mais {0} {1} sem entrada avulsa",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",bl_head:"Não mostrados por falta de dados:",bl_price:"sem preço {0}",bl_hrs:"sem horário {0}",bl_rate:"sem avaliação {0}",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre os outros locais",op_qpl:["resultado","resultados"],
+ op_line:"mais {0} {1} sem entrada avulsa",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",op_guests:"só para hóspedes",op_noout:"sem entrada para não clientes",bl_head:"Não mostrados por falta de dados:",bl_price:"sem preço {0}",bl_hrs:"sem horário {0}",bl_rate:"sem avaliação {0}",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre os outros locais",op_qpl:["resultado","resultados"],
  op_exc:"O acesso de não hóspedes a este local não está confirmado",op_all:"Todos os locais",op_sub:"incluindo locais sem acesso confirmado para não hóspedes",sch_up_d:"Próximas sessões à data da verificação {0}"});
 // round 9 (external review 11.11.2026): recommended order by default, booking wording from the headline offer, hours known for some days only
 Object.assign(I18N.ru,{day_req:"вход по запросу"});Object.assign(I18N.en,{day_req:"entry on request"});Object.assign(I18N.pt,{day_req:"entrada sob consulta"});
@@ -1665,7 +1665,9 @@ function memLine(p){ const v=memDup(p)?null:memVal(p);
   return v?`<div class="sub mline">${esc(t("mx_mem"))} <span class="num">${esc(v)}</span></div>`:""; }
 function rowHTML(p){ const open=st.open===p._i;
   // status (not open yet / temporarily closed) is shown once, as the pill by the name
-  const ot=p._acc?"":`<span class="wtag otag">${esc(t("op_tag"))}</span>`;
+  // day_pass false is a confirmed answer, not "not confirmed": hotels say "hotel guests only" (once: the price cell may already say it)
+  const gOnly=(p.access||{}).day_pass===false, gCell=p.kind==="hotel"&&p.stay&&gOnly&&!p._trt&&!p._day;
+  const ot=p._acc||gCell?"":`<span class="wtag otag">${esc(t(gOnly?(p.kind==="hotel"?"op_guests":"op_noout"):"op_tag"))}</span>`;
   // the longer hint is a hover title only where it adds to the tag (status, sparse); the "not confirmed by the official site" tag is the whole sentence
   const wtx=p._weak?(p._weak==="status"?t(p.status):t("wt_"+p._weak)):"", wth=p._weak?t("wt_"+p._weak+"_h"):"";
   const wk=p._weak&&!(ot&&p._weak==="sparse")?`<span class="wtag ${p._weak}"${wth.toLowerCase()!==wtx.toLowerCase()?` title="${esc(wth)}"`:""}>${esc(wtx)}</span>`:"";
