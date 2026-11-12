@@ -58,7 +58,7 @@
 @font-face{font-family:"Unbounded Fb";src:local("Arial Bold"),local("Arial-BoldMT"),local("Liberation Sans Bold"),local("Arimo Bold"),local("Helvetica Bold");size-adjust:130%;ascent-override:76.5%;descent-override:18.8%;line-gap-override:0%}
 :root{
   --bg:#f4f6f5; --panel:#ffffff; --ink:#18201d; --muted:#5d6a65; --line:#dde3e0;
-  --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf;
+  --sea:#0f6b72; --sea-soft:#e2f0f0; --heat:#c26a12; --heat-soft:#fbefdf; --act-bg:#fdf6ea;
   --ok:#276b43; --ok-soft:#e3f2e8; --warn:#7a5400; --warn-soft:#fbf1d6; --no:#a23a3a; --no-soft:#f7e3e3;
   --on-sea:#fff; --heat-text:#9a5410; --star:#e7a300;
   --g1:#1e7d4a; --g2:#3d7a53; --g3:#5f6d67; --bk:#003580;
@@ -72,7 +72,7 @@
 }
 @media (prefers-color-scheme:dark){:root{
   --bg:#0f1513; --panel:#161e1b; --ink:#e6ece9; --muted:#97a6a0; --line:#26322e;
-  --sea:#5cc0c6; --sea-soft:#15302f; --heat:#f0a24a; --heat-soft:#3a2810;
+  --sea:#5cc0c6; --sea-soft:#15302f; --heat:#f0a24a; --heat-soft:#3a2810; --act-bg:#21190e;
   --ok:#6fcf93; --ok-soft:#173326; --warn:#e5bf55; --warn-soft:#3a3010; --no:#ef8a8a; --no-soft:#3d1c1c;
   --chip:#1d2723; --scrim:rgba(0,0,0,.99);
   --on-sea:#0f1513; --heat-text:#f0a24a; --star:#f2b53a;
@@ -182,7 +182,11 @@ th[aria-sort]{color:var(--ink)}
 th.nosort{padding:10px 8px}
 td{padding:8px;border-bottom:1px solid var(--line);vertical-align:top}
 tr.row{cursor:pointer}
-tr.row:hover td,tr.row.active td{background:var(--sea-soft)}
+tr.row:hover td{background:var(--sea-soft)}
+/* the open card (row + details) reads as one block (owner 12.11.2026): warm tint, a heat-coloured bar down the left edge, a line on top and
+   at the bottom, and a «Свернуть» button at the end */
+tr.row.active td,tr.row.active:hover td{background:var(--act-bg);box-shadow:inset 0 2px 0 var(--heat)}
+tr.row.active td:first-child{box-shadow:inset 4px 0 0 var(--heat),inset 0 2px 0 var(--heat)}
 .num{font-variant-numeric:tabular-nums;white-space:nowrap}
 .name{display:flex;align-items:flex-start;gap:2px 6px;flex-wrap:wrap}
 .name .nmb{flex:0 1 auto;min-width:0;font-size:15px;line-height:1.3}
@@ -237,7 +241,10 @@ tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .thumbs button{all:unset;cursor:zoom-in;display:block;border-radius:8px;overflow:hidden;background:var(--chip);width:58px;height:44px}
 .thumbs button + button{display:none}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
-tr.detail > td{background:var(--bg);padding:12px;max-width:0}
+tr.detail > td{background:var(--act-bg);padding:12px 12px 8px 16px;max-width:0;box-shadow:inset 4px 0 0 var(--heat),inset 0 -2px 0 var(--heat)}
+.dcoll{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;margin-top:10px;border-top:1px solid var(--line);color:var(--heat-text,var(--heat));font-weight:600;cursor:pointer}
+.dcoll:hover,.dcoll:focus-visible{text-decoration:underline;text-underline-offset:3px}
+.dcoll svg{width:14px;height:14px}
 .gallery{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;max-width:var(--detw,100%);width:100%;scroll-snap-type:x proximity;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
 .gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip);scroll-snap-align:start}
 .gallery img{width:100%;height:100%;object-fit:cover;display:block}
@@ -861,13 +868,13 @@ Object.assign(I18N.pt,{search:"Nome, cidade, comodidades",nores:"Nada encontrado
  foot:"Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde é do Google, o azul é do Booking, o cinzento indica poucas avaliações; ao lado está o número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte."});
 // round 7: places without confirmed outside access are hidden by default (owner decision 11.11.2026); dated sessions labelled with the check date
 Object.assign(I18N.ru,{op_show:"Показать ещё {0} {1} без подтверждённого входа для посторонних",op_show0:"Показать места без подтверждённого входа для посторонних",op_hide:"Только разовое посещение",op_pl:["место","места","мест"],
- op_line:"ещё {0} {1} без разового посещения",op_more:"показать",op_tag:"вход для посторонних не подтверждён",op_guests:"только для гостей отеля",op_noout:"посторонним вход не продаётся",bl_head:"Не показаны из-за нехватки данных:",bl_price:"без цены {0}",bl_hrs:"без часов {0}",bl_rate:"без рейтинга {0}",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди остальных мест",op_qpl:["совпадение","совпадения","совпадений"],
+ op_line:"ещё {0} {1} без разового посещения",op_more:"показать",op_tag:"вход для посторонних не подтверждён",collapse:"Свернуть",op_guests:"только для гостей отеля",op_noout:"посторонним вход не продаётся",bl_head:"Не показаны из-за нехватки данных:",bl_price:"без цены {0}",bl_hrs:"без часов {0}",bl_rate:"без рейтинга {0}",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди остальных мест",op_qpl:["совпадение","совпадения","совпадений"],
  op_exc:"Вход для посторонних в это место не подтверждён",op_all:"Все места",op_sub:"включая без подтверждённого входа для посторонних",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
 Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside access",op_show0:"Show places without confirmed outside access",op_hide:"Single visit only",op_pl:["place","places"],
- op_line:"{0} more {1} without a single-visit option",op_more:"show",op_tag:"access for non-guests not confirmed",op_guests:"hotel guests only",op_noout:"no entry for non-members",bl_head:"Not shown for lack of data:",bl_price:"no price {0}",bl_hrs:"no hours {0}",bl_rate:"no rating {0}",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
+ op_line:"{0} more {1} without a single-visit option",op_more:"show",op_tag:"access for non-guests not confirmed",collapse:"Collapse",op_guests:"hotel guests only",op_noout:"no entry for non-members",bl_head:"Not shown for lack of data:",bl_price:"no price {0}",bl_hrs:"no hours {0}",bl_rate:"no rating {0}",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
  op_exc:"Access for non-guests is not confirmed here",op_all:"All places",op_sub:"including places without confirmed outside access",sch_up_d:"Upcoming sessions as of {0}"});
 Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Só entrada avulsa",op_pl:["local","locais"],
- op_line:"mais {0} {1} sem entrada avulsa",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",op_guests:"só para hóspedes",op_noout:"sem entrada para não clientes",bl_head:"Não mostrados por falta de dados:",bl_price:"sem preço {0}",bl_hrs:"sem horário {0}",bl_rate:"sem avaliação {0}",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre os outros locais",op_qpl:["resultado","resultados"],
+ op_line:"mais {0} {1} sem entrada avulsa",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",collapse:"Recolher",op_guests:"só para hóspedes",op_noout:"sem entrada para não clientes",bl_head:"Não mostrados por falta de dados:",bl_price:"sem preço {0}",bl_hrs:"sem horário {0}",bl_rate:"sem avaliação {0}",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre os outros locais",op_qpl:["resultado","resultados"],
  op_exc:"O acesso de não hóspedes a este local não está confirmado",op_all:"Todos os locais",op_sub:"incluindo locais sem acesso confirmado para não hóspedes",sch_up_d:"Próximas sessões à data da verificação {0}"});
 // round 9 (external review 11.11.2026): recommended order by default, booking wording from the headline offer, hours known for some days only
 Object.assign(I18N.ru,{day_req:"вход по запросу"});Object.assign(I18N.en,{day_req:"entry on request"});Object.assign(I18N.pt,{day_req:"entrada sob consulta"});
@@ -1682,7 +1689,7 @@ function rowHTML(p){ const open=st.open===p._i;
   // the thumbnail cell is always there (a placeholder when there is no photo), so names line up
   return `<tr class="row${open?" active":""}${p._weak?" weak w-"+p._weak:""}" data-i="${p._i}"><td>${photoCell(p)}</td><td class="nm">${pc?`<div class="pcm">${pc}</div>`:""}<div class="name"><button type="button" class="nmb" aria-expanded="${open}" aria-controls="det-${p._i}">${esc(pname(p))}</button>${wk}${ot}</div>${rest?`<div class="sub">${esc(rest)}</div>`:""}${metaLine(p)}${amenHTML(p)}${rline}${rbm?`<div class="rbm">${rbm}</div>`:""}</td><td class="c-kind hide-m hide-l">${kindCell(p)}</td><td class="c-day">${pc}</td><td class="hide-s hrs">${hoursCell(p)}</td><td class="hide-s">${rateCell(p.ratings)}</td></tr>`; }
 const visCols=()=>[...thead.children].filter(th=>getComputedStyle(th).display!=="none").length||COLS.length;
-const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}</td></tr>`;
+const detailHTML=p=>`<tr class="detail" id="det-${p._i}"><td colspan="${visCols()}">${detail(p)}<button type="button" class="dcoll" data-coll="${p._i}">${esc(t("collapse"))}${ico("cu","ic-s")}</button></td></tr>`;
 const rowEl=i=>tbody.querySelector(`tr.row[data-i="${i}"]`);
 function appendRows(n){ const end=Math.min(LIST.length,shown+n); if(end<=shown) return; let h=""; if(!shown&&amRO) amRO.disconnect();
   for(let k=shown;k<end;k++){ const p=LIST[k]; h+=rowHTML(p); if(st.open===p._i) h+=detailHTML(p); }
@@ -1800,6 +1807,7 @@ tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(p
   const sh=e.target.closest("[data-share]"); if(sh){ shareLink(+sh.dataset.share,sh); return; }
   const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
   if(e.target.closest("[data-retry]")){ loadMore(); if(st.open!=null) loadPh(P[st.open]); return; }
+  const cb=e.target.closest(".dcoll"); if(cb){ const i=+cb.dataset.coll; closeCard(i); const r=rowEl(i); if(r&&r.getBoundingClientRect().top<0) r.scrollIntoView({block:"start"}); return; }
   if(e.target.closest("tr.detail")) return;
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) toggleRow(+r.dataset.i);});
 
