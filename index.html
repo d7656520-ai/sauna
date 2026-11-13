@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=7ab855d92b" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=043bac8eb4" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -787,7 +787,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=7ab855d92b"></script>
+<script src="data.js?v=043bac8eb4"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1323,9 +1323,20 @@ const map = window.__map; // created before data.js loads, so the tiles are alre
     const now=Date.now();
     if(tapT&&now-tapT<320){ clearTimeout(tapTimer); tapT=0; try{ map.setZoomAround(map.mouseEventToLatLng(e),map.getZoom()+1); }catch(_){ map.zoomIn(); } return; }
     tapT=now; tapTimer=setTimeout(()=>{ tapT=0; openFull(); },320); },true);
+  // full-screen map on touch screens: own double-tap detector on touch events (13.11.2026, owner: double tap must zoom like Google Maps;
+  // Leaflet's doubleClickZoom waits for a dblclick that iOS Safari does not reliably deliver). One zoom step around the tapped point;
+  // a tap on a pin, cluster, popup or control is not counted; the second touchend is cancelled, so no click and no Leaflet zoom follow.
+  let t0=0,x0=0,y0=0,sx=0,sy=0,s0=0,multi=false;
+  el.addEventListener("touchstart",e=>{ multi=e.touches.length>1; if(!multi){ sx=e.touches[0].clientX; sy=e.touches[0].clientY; s0=Date.now(); } },{passive:true});
+  el.addEventListener("touchend",e=>{ if(!isPhone()||!isFull()||multi||e.touches.length) return; const t=e.changedTouches[0];
+    if(Math.hypot(t.clientX-sx,t.clientY-sy)>10||Date.now()-s0>300||(e.target.closest&&e.target.closest(".leaflet-marker-icon,.leaflet-popup,.leaflet-control,.pp-sl"))){ t0=0; return; }
+    const now=Date.now();
+    if(t0&&now-t0<320&&Math.hypot(t.clientX-x0,t.clientY-y0)<40){ t0=0; if(e.cancelable) e.preventDefault(); const r=el.getBoundingClientRect(); map.setZoomAround(L.point(t.clientX-r.left,t.clientY-r.top),Math.min(map.getZoom()+1,map.getMaxZoom())); return; }
+    t0=now; x0=t.clientX; y0=t.clientY; },{passive:false});
 })();
 // preview keeps one-finger page scroll (no drag) but allows pinch zoom; full-screen map has every gesture
-function syncMapMode(){ const preview=isPhone()&&!isFull(); [map.dragging,map.doubleClickZoom,map.scrollWheelZoom,map.boxZoom,map.keyboard].forEach(h=>{ if(h) preview?h.disable():h.enable(); }); if(map.touchZoom) map.touchZoom.enable(); }
+function syncMapMode(){ const preview=isPhone()&&!isFull(); [map.dragging,map.doubleClickZoom,map.scrollWheelZoom,map.boxZoom,map.keyboard].forEach(h=>{ if(h) preview?h.disable():h.enable(); }); if(map.touchZoom) map.touchZoom.enable();
+  if(isPhone()&&map.doubleClickZoom) map.doubleClickZoom.disable(); } // phones: double tap is the touch detector above (no second zoom from a late dblclick)
 const MAINLAND=[[36.95,-9.52],[42.16,-6.19]], LISBON=[[38.45,-9.5],[38.95,-8.85]];
 // the mainland points of a list (the islands only when an island region is chosen)
 function mainPts(list){ let pts=list.filter(p=>p.lat!=null); const isl=st.area.has("madeira")||st.area.has("acores"); const ml=pts.filter(p=>p.lon>-10.5); return (!isl&&ml.length)?ml:pts; }
