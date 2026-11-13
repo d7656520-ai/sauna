@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=7f1d40e402" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=1c051725ba" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -787,7 +787,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=7f1d40e402"></script>
+<script src="data.js?v=1c051725ba"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1495,7 +1495,7 @@ function hoursLine(p){ const w=p.wk; if(!w) return ""; useNow(p); const same=all
   return `<div class="hs ${s?s.st:"na"}">${s?`<i class="hdot"></i><b>${esc(s.lab)}</b> `:""}${parts.length?`<span>${s?"· ":""}${esc(parts.join(" · "))}</span>`:""}</div>`; }
 function hoursCell(p){ useNow(p); if(p.sch&&!p.wk){ return `<button type="button" class="hbtn" data-sch="${p._i}"><div class="hs sched"><i class="hdot"></i><b>${esc(t('sch_'+(p.sch.mode||'weekly')))}</b></div><div class="tdy"><span class="wkmore">${esc(t('sch_open'))}${ico("cd","ic-s")}</span></div></button>`; }
   if(p.wk){ const hl=hoursLine(p); if(allSame(p.wk)) return hl; return `<button type="button" class="hbtn" data-hrs="${p._i}" aria-label="${esc(t("weekhrs"))}">${hl}<div class="tdy"><span class="wkmore">${esc(t("weekshort"))}${ico("cd","ic-s")}</span></div></button>`; }
-  const h=LANG==="ru"?p.hours_short:null; return h?`<span class="dim">${esc(h)}</span>`:""; }
+  const h=((p.tr||{})[LANG]||{}).hs||(LANG==="ru"?p.hours_short:null); return h?`<span class="dim">${esc(h)}</span>`:""; }
 function weekTable(wk){ const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b); const g=[];
   wk.forEach((x,i)=>{ const L=g[g.length-1]; if(L&&same(L.x,x)&&L.b===i-1) L.b=i; else g.push({a:i,b:i,x}); });
   const rng={ru:" по ",en:" to ",pt:" a "}[LANG];
