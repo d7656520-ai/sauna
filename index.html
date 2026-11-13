@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=635f10738e" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=1f5ea7d3f6" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -280,6 +280,8 @@ tr.detail > td{background:var(--act-bg);padding:12px 14px 8px;max-width:0;box-sh
 .cpl:hover,.cpl:focus-visible{background:var(--chip);color:var(--sea)}
 .cpl.ok{color:var(--ok)}
 .meta{display:flex;align-items:center;gap:0 4px;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* a long town name (Вила-Реал-ди-Санту-Антониу) set the min-content of the name column and pushed the table past the list (766 px in 700, RV2 13.11): the line takes the column width and ellipsises */
+td .meta{contain:inline-size}
 .meta > span{overflow:hidden;text-overflow:ellipsis;min-width:0}
 .meta .mk-k{flex:0 0 auto}
 .meta .mk-t{flex:0 1 auto}
@@ -787,7 +789,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=635f10738e"></script>
+<script src="data.js?v=1f5ea7d3f6"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1359,7 +1361,7 @@ P.forEach(p=>{ if(p.lat==null||p.lon==null) return;
   const col=KINDS[kg(p)][1];
   const icon=L.divIcon({className:"",html:`<div class="mk${p._weak?" weak":""}${p.geo_approx?" approx":""}" data-i="${p._i}" style="background:${col}">${pinIco(kg(p))}</div>`,iconSize:[26,26],iconAnchor:[13,26],popupAnchor:[0,-24]});
   const m=L.marker([p.lat,p.lon],{icon,title:p.name,keyboard:false});
-  m.on("click",()=>focusPin(p._i));
+  m.on("click",()=>focusPin(p._i,true));  // a tap on a visible pin opens its preview at the current zoom (RV2 13.11: it jumped to 15)
   markers[p._i]=m;
 });
 // a pin opens the place preview: an anchored Leaflet popup on desktop and on phones (the map stays visible and draggable, a tap on it closes the popup)
@@ -1372,7 +1374,7 @@ function openPin(i,off){ const p=P[i], m=markers[i]; if(!p||!m) return; loadMore
 // Reveal overlapping pins at this zoom instead of zoomToShowLayer's max-zoom fallback.
 let focusSeq=0, focusWait=null;
 function cancelPinFocus(){ ++focusSeq; if(focusWait){ cluster.off(focusWait.type,focusWait.fn); focusWait=null; } }
-function focusPin(i){ const m=markers[i]; if(!m||!cluster.hasLayer(m)) return;
+function focusPin(i,keepZoom){ const m=markers[i]; if(!m||!cluster.hasLayer(m)) return;
   cancelPinFocus(); const seq=focusSeq;
   closePreview(); map.stop();
   const wait=(type,fn)=>{ const once=e=>{ cluster.off(type,once); focusWait=null; if(seq===focusSeq&&cluster.hasLayer(m)) fn(e); }; focusWait={type,fn:once}; cluster.on(type,once); };
@@ -1385,7 +1387,7 @@ function focusPin(i){ const m=markers[i]; if(!m||!cluster.hasLayer(m)) return;
     }else openPin(i);
   };
   // Use the venue's coordinates, not a temporarily displaced spiderfied pin.
-  map.setView([P[i].lat,P[i].lon],Math.max(map.getZoom(),15),{animate:false});
+  if(keepZoom) map.panTo([P[i].lat,P[i].lon],{animate:false}); else map.setView([P[i].lat,P[i].lon],Math.max(map.getZoom(),15),{animate:false});
   reveal();
 }
 cluster.on("animationend",()=>setSel(pvI));
@@ -1496,7 +1498,9 @@ const allSame=wk=>wk.every(x=>Array.isArray(x)&&x.length===wk[0].length&&x.every
 const rngT=x=>ivs(x).map(([o,c])=>`${fmtT(o)} ${t("to")} ${fmtT(c)}`).join(", ");
 // one hours line for row, card and popup. Same hours every day: "● Открыто · ежедневно 9:00 до 22:00" (closed: "● Закрыто · откроется в 9:00 · ежедневно ...").
 // Hours differ by day: "● Открыто · сегодня 9:00 до 22:00" and a "week" button where there is room; places not open yet / closed get no status, only the hours
-function hoursLine(p){ const w=p.wk; if(!w) return ""; useNow(p); const same=allSame(w), x=w[NOW.d];
+function hoursLine(p){ const w=p.wk; if(!w){ const h=((p.tr||{})[LANG]||{}).hs; return h?`<span class="dim">${esc(h)}</span>`:""; }
+  // ^ phone row: hours text as written when there is no weekly grid (RV2 13.11)
+  useNow(p); const same=allSame(w), x=w[NOW.d];
   const s=live(p)?openState(w):null; const parts=[];
   if(s&&s.st==="closed"&&s.tm) parts.push(same?t("hs_opens",fmtT(w[0][0])):s.tm);
   const past=s&&s.st==="closed"&&Array.isArray(x)&&NOW.m>=lastC(x);
