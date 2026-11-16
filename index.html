@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=9508aaf27a" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=8ca8f3e686" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -270,8 +270,11 @@ tr.detail > td{background:var(--act-bg);padding:12px 14px 8px;max-width:0;box-sh
 .soc:hover,.soc:focus-visible{border-color:var(--sea);background:var(--sea-soft)}
 .soc .ic{width:18px;height:18px;vertical-align:0}
 .note{margin:8px 0 0;font-size:13px;max-width:80ch}
-.src{margin-top:8px;font-size:11.5px;color:var(--muted)}
-.src a{color:var(--muted)}
+.src{margin-top:8px;font-size:11.5px;line-height:1.7;color:var(--muted)}
+.src .wr a{white-space:normal;word-break:break-all}
+.src a{color:var(--muted);white-space:nowrap;text-decoration-color:var(--line);text-underline-offset:2px}
+.src a:hover{color:var(--sea)}
+.src .srcm{font:inherit;color:var(--sea);background:none;border:0;padding:0 2px;margin-left:2px;cursor:pointer;text-decoration:underline dotted}
 .foot{margin-top:20px;font-size:13px;color:var(--muted);max-width:52em}
 .foot + .foot{margin-top:6px}
 .show-m{display:none}
@@ -505,8 +508,6 @@ a.act{color:var(--ink)}
 .rbm:empty{display:none}
 tr.row{scroll-margin-top:44px}
 .hpop-x{display:none}
-.src a.sd{display:inline-block;padding:1px 7px;margin:2px 2px 0 0;border:1px solid var(--line);border-radius:6px;text-decoration:none;color:var(--muted)}
-.src a.sd:hover{border-color:var(--sea);color:var(--sea)}
 .ovb{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:600;color:var(--ok);background:var(--ok-soft);border-radius:999px;padding:3px 10px 3px 8px;margin:0 0 8px}
 .ovb .ic{width:16px;height:16px}
 .fbl{margin-top:8px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;line-height:1.4}
@@ -617,7 +618,6 @@ tr.skel td{padding:10px 8px}
   #sort{max-width:56vw}
   .main > .hint{display:none}
   .fhint{display:block;margin-top:12px}
-  .src a.sd{padding:6px 9px}
   .fbb{padding:9px 0}
   .fbl a.fbo{padding:9px 0}
   .lb-nav{width:40px;height:40px;background:rgba(255,255,255,.1)}
@@ -773,7 +773,7 @@ tr.skel td{padding:10px 8px}
     <button class="lb-nav lb-prev" id="lb-prev" type="button" data-ta="prev" aria-label="Предыдущее фото"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M15 18l-6-6 6-6"/></svg></button>
     <button class="lb-nav lb-next" id="lb-next" type="button" data-ta="next" aria-label="Следующее фото"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 18l6-6-6-6"/></svg></button>
   </div>
-  <div class="lb-bot"><span></span><a id="lb-src" target="_blank" rel="noopener" data-t="photosrc">источник фото</a></div>
+  <div class="lb-bot"><span></span><a id="lb-src" target="_blank" rel="nofollow noopener noreferrer" data-t="photosrc">источник фото</a></div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -789,7 +789,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=9508aaf27a"></script>
+<script src="data.js?v=8ca8f3e686"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -811,6 +811,7 @@ const I18N={"ru": {"title": "Сауны Португалии", "intro": "Сау�
 
 Object.assign(I18N.ru,{sch_weekly:"По расписанию",sch_calendar:"По датам",sch_on_request:"По записи",sch_open:"расписание",sch_t:"Расписание",sch_up:"Ближайшие",sch_win:"Свободные окна на этой неделе"});Object.assign(I18N.en,{sch_weekly:"Scheduled sessions",sch_calendar:"Dated sessions",sch_on_request:"By appointment",sch_open:"schedule",sch_t:"Schedule",sch_up:"Upcoming",sch_win:"Free slots this week"});Object.assign(I18N.pt,{sch_weekly:"Sessões com horário",sch_calendar:"Sessões por data",sch_on_request:"Por marcação",sch_open:"horário",sch_t:"Horário",sch_up:"Próximas",sch_win:"Horários livres esta semana"});
 Object.assign(I18N.ru,{showres:"Показать"});Object.assign(I18N.en,{showres:"Show results"});Object.assign(I18N.pt,{showres:"Ver resultados"});
+Object.assign(I18N.ru,{src_more:"ещё {0}"});Object.assign(I18N.en,{src_more:"{0} more"});Object.assign(I18N.pt,{src_more:"mais {0}"});
 Object.assign(I18N.ru,{rng:"до"});Object.assign(I18N.en,{rng:"to"});Object.assign(I18N.pt,{rng:"a"});
 Object.assign(I18N.ru,{fb_err:"Не отправилось, попробуйте ещё раз"});Object.assign(I18N.en,{fb_err:"Not sent, please try again"});Object.assign(I18N.pt,{fb_err:"Não enviado, tente novamente"});
 Object.assign(I18N.ru,{per_yr:" /год",per_wk:" /нед."});Object.assign(I18N.en,{per_yr:" /yr",per_wk:" /wk"});Object.assign(I18N.pt,{per_yr:" /ano",per_wk:" /sem."});
@@ -1615,8 +1616,7 @@ function detail(p){const a=p.access||{};
   const fb=p.fb||{}; const vis=[]; if(fb.ok>0) vis.push(t("v_ok",fb.ok)); if(fb.n>=3&&fb.rating!=null) vis.push(t("v_rate",n1(fb.rating),fb.n));
   if(vis.length) add(t("d_visitors"), `<span class="dim">${ico("check","ic-s")}${esc(vis.join(" · "))}</span>`);
   const host=u=>{ try{ return new URL(u).hostname.replace(/^www\./,""); }catch(e){ return u; } };
-  // sources: one chip per unique domain
-  const seen=new Set(); const src=(p.sources||[]).map(u=>safeUrl(u)||(/^http:\/\//.test(u)?u:null)).filter(Boolean).filter(u=>{ const h=host(u); if(seen.has(h)) return false; seen.add(h); return true; }).slice(0,4).map(u=>`<a class="sd" href="${esc(u)}" target="_blank" rel="noopener">${esc(host(u))}</a>`).join(" ");
+  const src=srcHTML(p);
   const gal=p._ph.length>1?`<div class="gallery">${p._ph.map((x,j)=>`<button type="button" data-i="${p._i}" data-ph="${j}" aria-label="${esc(t("photo_n",j+1))}"><img src="${esc(galSrc(x))}" data-full="${esc(x.u)}" width="120" height="84" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"></button>`).join("")}</div>`:"";
   // "data reliability: low" only when the name does not already carry the "not confirmed by the official site" tag (a status tag took its place)
   const conf=p.confidence==="low"&&p._weak!=="low"?t("conf_low"):"";
@@ -1628,13 +1628,68 @@ function detail(p){const a=p.access||{};
   // a card opened from a pin starts with "To the map": back to the same map view and preview (the browser's back does the same)
   const hs=HS(); const tomap=(hs.v==="card"&&hs.back==="map"&&(hs.id===p.id||(p.alias_ids||[]).includes(hs.id)))?`<button type="button" class="tomap" data-tomap>${ico("cl","ic-s")}${esc(t("tomap"))}</button>`:"";
   const ov=p.owner&&p.owner.verified_on;
-  const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?`. ${esc(t("sources"))}: ${src}`:""}`:[p.verified_on?esc(t("checked",fmtDate(p.verified_on))):"",conf?esc(t("reliab",conf)):""].filter(Boolean).join(", ")+(src?`${p.verified_on||conf?". ":""}${esc(t("sources"))}: ${src}`:"");
+  // only the sources are data-nosnippet: the date of the check may be seen (SB review 16.11.2026)
+  const srcSp=src?`<span class="sl" data-nosnippet>${esc(t("sources"))}: ${src}</span>`:"";
+  const srcLine=ov?`${esc(t("ov_line",fmtDate(ov)))}${src?". "+srcSp:""}`:[p.verified_on?esc(t("checked",fmtDate(p.verified_on))):"",conf?esc(t("reliab",conf)):""].filter(Boolean).join(", ")+(src?`${p.verified_on||conf?". ":""}${srcSp}`:"");
   const phWait=!!p.pc&&!p._phl; // the rest of the photos is still on its way (or failed)
   const wait=MORE&&!phWait?"":MORE_ERR||(MORE&&p._phe)?`<p class="dload err" role="status">${esc(t("more_err"))} <button type="button" class="act" data-retry>${esc(t("retry"))}</button></p>`:`<p class="dload" role="status">${esc(t("loading"))}</p>`;
   // prices and the details grid share the width: two columns on a wide card (.dcols, container query), one column on phones; without an offers block the grid alone flows as before
   const grid=`<dl class="dgrid">${it.join("")}</dl>`; const body=p.of?`<div class="dcols"><div class="dcol"><div class="ofgt top">${esc(t("pr_title"))}</div>${pricesBlock(p)}</div>${grid}</div>`:grid;
   return `<div class="det">${tomap}${wait}${ov?`<div class="ovb" title="${esc(fmtDate(ov))}">${ico("check")}${esc(t("ov_badge"))}</div>`:""}${acts}${gal}${body}${notes?`<p class="note">${esc(notes)}</p>`:""}<div class="src">${srcLine}</div>${fbLine(p)}</div>`;
 }
+// sources (16.11.2026, owner: compact everywhere, kept out of search; SB review: nothing dropped, labels differ): one small line,
+// labelled as on the place pages (build_pages.py src_items, ported): one entry per address, a platform once by its name,
+// «Telegram: канал, пост 144» then «пост 151», «host/…/meaningful-part» (a PDF by its file name), the next page of the same
+// site «…/part». The line folds by its width (foldSrc): two rows on a phone, one row wider, the rest behind «ещё N».
+// Links carry nofollow noopener noreferrer; the app page is noindex and draws a card only on a click
+const SRC_NAMES=[["google.com/maps","Google Maps"],["maps.app.goo.gl","Google Maps"],["booking.com","Booking.com"],["instagram.com","Instagram"],["facebook.com","Facebook"],["tripadvisor","Tripadvisor"]];
+const SRC_STOP=new Set(["index.html","index.htm","index.php","en","pt","es","fr","de","ru","pt-pt","pt-br","en-gb","en-us","home"]);
+const TG_POST={ru:"пост {0}",en:"post {0}",pt:"publicação {0}"};
+function srcTail(seg,n=26){ try{ seg=decodeURIComponent(seg); }catch(e){} seg=seg.normalize("NFC").replace(/\.(html?|php|aspx?)$/i,"");
+  if(seg.length<=n) return seg; const i=seg.lastIndexOf("."), ext=i>0?seg.slice(i+1):"";
+  if(i>0&&ext.length>=2&&ext.length<=4) return seg.slice(0,i).slice(0,n-ext.length-2)+"…."+ext; return seg.slice(0,n-1)+"…"; }
+// the same platform page written differently (build_pages.py _plat_key): one Maps place by its id, one Booking hotel, one account
+function platKey(pl,path,q){ if(pl==="Google Maps"){ const m=(path+"?"+q).match(/ChIJ[\w-]{10,}/)||path.match(/0x[0-9a-f]+:0x[0-9a-f]+/); return m?m[0]:path+"?"+q; }
+  if(pl==="Booking.com") return path.toLowerCase().replace(/\/+$/,"").replace(/(\.[a-z]{2}(-[a-z]{2})?)?\.html$/,"");
+  if(pl==="Instagram"||pl==="Facebook") return (path.replace(/^\/+|\/+$/g,"").split("/")[0]||"").toLowerCase(); return path.replace(/\/+$/,"")+"?"+q; }
+const SRC_WORD={ru:{post:"пост",search:"поиск"},en:{post:"post",search:"search"},pt:{post:"publicação",search:"pesquisa"}};
+// what tells two pages of one platform apart (build_pages.py _plat_disc)
+function platDisc(pl,path,q){ const segs=path.split("/").filter(Boolean), w=SRC_WORD[LANG]||SRC_WORD.en;
+  if(pl==="Instagram"||pl==="Facebook"){ if(segs.length&&["p","reel","reels","tv","posts","stories","share"].includes(segs[0].toLowerCase())) return w.post;
+    if(segs.length>1&&["p","reel","reels","tv","posts"].includes(segs[1].toLowerCase())) return "@"+segs[0]+", "+w.post; return segs.length?"@"+segs[0]:""; }
+  if(pl==="Google Maps"){ if(path.includes("/maps/search")){ const qm=q.match(/(?:^|&)query=([^&]*)/); let x=qm?qm[1]:path.includes("/maps/search/")?path.split("/maps/search/")[1].split("/")[0]:"";
+      try{ x=decodeURIComponent(x.replace(/\+/g," ")).trim(); }catch(e){ x=x.replace(/\+/g," ").trim(); } return x&&!/^[-\d., ]+$/.test(x)?srcTail(x,24):w.search; } const m=path.match(/\/maps\/place\/([^/]+)/); return m&&m[1]?srcTail(m[1].replace(/\+/g," "),24):""; }
+  if(pl==="Booking.com"){ const m=path.toLowerCase().match(/\/hotel\/[a-z]{2}\/([^/.]+)/); return m?m[1].slice(0,24):""; }
+  return ""; }
+function srcItems(list){ const ents=[], keys=new Set();
+  for(const v of list||[]){ const u=String(v).trim().split(/\s+/)[0]; const s=safeUrl(u)||(/^http:\/\//i.test(u)?u:null); if(!s) continue;
+    // the address as written, not URL(): URL() turns termasdemelgaço.pt into xn--… and re-encodes the path
+    const mm=s.match(/^https?:\/\/([^\/?#]*)([^?#]*)(?:\?([^#]*))?/i); if(!mm) continue; const host=mm[1].toLowerCase().replace("www.",""), path=mm[2]||"", q=mm[3]||"";
+    const pl=(SRC_NAMES.find(([k])=>(host+path.toLowerCase()).includes(k))||[])[1];
+    const key=pl?"p|"+pl+"|"+platKey(pl,path,q):host+"|"+path.replace(/\/+$/,"")+"|"+q; if(keys.has(key)) continue; keys.add(key); ents.push([s,host,pl,path,q]); }
+  const pc={}; ents.forEach(e=>{ if(e[2]) pc[e[2]]=(pc[e[2]]||0)+1; });
+  const out=[], labs=new Set(); let prevHost=null, prevCh=null;
+  for(const [s,host,pl,path,q] of ents){ let segs=path.split("/").filter(Boolean), lab, ch=null;
+    if(pl){ const d=pc[pl]>1?platDisc(pl,path,q):""; lab=pl+(d?(d[0]==="@"?" ":": ")+d:""); }
+    else if(host==="t.me"||host==="telegram.me"){ if(segs[0]==="s") segs=segs.slice(1); ch=segs[0]||""; const post=segs[1]||"";
+      lab=!post?"Telegram: "+ch:ch===prevCh?(TG_POST[LANG]||TG_POST.en).replace("{0}",post):`Telegram: ${ch}, `+(TG_POST[LANG]||TG_POST.en).replace("{0}",post); }
+    else { let mean=segs.filter(z=>!SRC_STOP.has(z.toLowerCase())); if(!mean.length) mean=segs.slice(-1); const chained=host===prevHost;
+      let tail=mean.length?srcTail(mean[mean.length-1],chained?26:Math.max(14,40-host.length-4)):"";
+      if(tail&&(/^\d+$/.test(tail)||tail.length<=3)&&mean.length>1) tail=srcTail(mean[mean.length-2],16)+"/"+tail;
+      lab=chained&&tail?"…/"+tail:host+(tail?"/"+(segs.length>1?"…/":"")+tail:"");
+      if(labs.has(lab.toLowerCase())&&mean.length>1) lab=(host!==prevHost?host+"/…/":"…/")+srcTail(mean[mean.length-2],16)+"/"+tail; }
+    const ls=segs.map(z=>z.toLowerCase()).find(z=>SRC_STOP.has(z)&&!z.includes(".")&&z!=="home"); if(labs.has(lab.toLowerCase())&&ls) lab+=` (${ls})`; // «…/faq (en)»
+    const base=lab; let k=2; while(labs.has(lab.toLowerCase())) lab=`${base} (${k++})`;
+    labs.add(lab.toLowerCase()); prevHost=pl?null:host; prevCh=ch; out.push([s,lab]); }
+  return out; }
+function srcHTML(p){ return srcItems(p.sources).map(([u,l],i)=>`<span class="si">${i?" · ":""}<a href="${esc(u)}" target="_blank" rel="nofollow noopener noreferrer">${esc(l)}</a></span>`).join(""); }
+// fold a card's sources line to its width (after the card is in the page and on resize); an opened line stays open
+function foldSrc(b){ if(!b||b.dataset.open) return; const it=b.querySelectorAll(".si"); const m=b.querySelector(".srcm"); if(m) m.remove(); it.forEach(x=>{ x.hidden=false; x.classList.remove("wr"); });
+  const lh=parseFloat(getComputedStyle(b).lineHeight)||20, lim=lh*(isPhone()?2:1)+lh/2; if(b.offsetHeight<=lim||!it.length) return;
+  const bt=document.createElement("button"); bt.type="button"; bt.className="srcm"; bt.dataset.srcmore="";
+  for(let k=it.length-1;k>=1;k--){ it[k].hidden=true; bt.textContent=t("src_more",it.length-k); it[k-1].after(bt); if(b.offsetHeight<=lim) break; }
+  if(b.offsetHeight>lim) it[0].classList.add("wr"); } // one long label left: let it break rather than take a third row
+function foldSrcs(){ document.querySelectorAll(".det .src").forEach(foldSrc); }
 // leading "Ещё не открыто." / "Not open yet." / "Temporarily closed." (any of the three languages) is dropped from a text when the status pill is shown
 const STATUS_RX=new RegExp("^\\s*(?:"+["ru","en","pt"].flatMap(L=>[I18N[L].soon,I18N[L].closed]).map(s=>s.replace(/[.*+?^${}()|[\]\\]/g,"\\$&")).join("|")+")\\s*[.;:,]?\\s*","i");
 function noStatus(p,s){ s=s||""; return p._weak==="status"?s.replace(STATUS_RX,""):s; }
@@ -1844,12 +1899,16 @@ document.getElementById("nearc").onclick=()=>{ document.getElementById("nearc").
 const locb=document.getElementById("locb");
 locb.onclick=()=>{ if(locb.classList.contains("wait")) return; if(ME) map.setView(ME,Math.max(map.getZoom(),13)); locb.classList.add("wait");
   geoGet((ll,acc)=>{ locb.classList.remove("wait"); setMe(ll,acc,"loc"); },k=>{ locb.classList.remove("wait"); toast(t(k)); }); };
+// the sources line folds once a card is in the page (render, open, refresh after data_more) and when the width changes
+new MutationObserver(foldSrcs).observe(tbody,{childList:true}); { let W=innerWidth; addEventListener("resize",()=>{ if(innerWidth!==W){ W=innerWidth; foldSrcs(); } }); }
+if(document.fonts&&document.fonts.addEventListener) document.fonts.addEventListener("loadingdone",foldSrcs);
 tbody.addEventListener("click",e=>{ const ph=e.target.closest("[data-ph]"); if(ph){ e.stopPropagation(); openLB(+ph.dataset.i,+ph.dataset.ph); return; }
   const tm=e.target.closest("[data-tomap]"); if(tm){ history.back(); return; }
   const sm=e.target.closest("[data-showmap]"); if(sm){ if(HS().v==="card"&&HS().back==="map") history.back(); else showOnMap(+sm.dataset.showmap); return; }
   const sh=e.target.closest("[data-share]"); if(sh){ shareLink(+sh.dataset.share,sh); return; }
   const fbb=e.target.closest("[data-fb]"); if(fbb){ fbClick(fbb); return; }
   if(e.target.closest("[data-retry]")){ loadMore(); if(st.open!=null) loadPh(P[st.open]); return; }
+  const smo=e.target.closest("[data-srcmore]"); if(smo){ const b=smo.closest(".src"), h=b.querySelectorAll(".si[hidden]"); b.dataset.open=1; h.forEach(x=>x.hidden=false); smo.remove(); if(h[0]) h[0].querySelector("a").focus(); return; }
   const cb=e.target.closest(".dcoll"); if(cb){ const i=+cb.dataset.coll; closeCard(i); const r=rowEl(i); if(r&&r.getBoundingClientRect().top<0) r.scrollIntoView({block:"start"}); return; }
   if(e.target.closest("tr.detail")) return;
   const r=e.target.closest("tr.row"); if(r && !e.target.closest("a")) toggleRow(+r.dataset.i);});
