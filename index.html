@@ -88,7 +88,7 @@
 /* static header texts in three languages: only the page language shows (chosen in <head> before the first paint); the script then replaces them with the same string */
 .l-ru,.l-en,.l-pt{display:none} html[lang=ru] .l-ru,html[lang=en] .l-en,html[lang=pt] .l-pt{display:inline}
 html,body{margin:0;height:100%}
-html{overscroll-behavior-y:none}
+html{overscroll-behavior-y:none;touch-action:manipulation} /* no double-tap page zoom on filters/list (owner 16.11.2026); pinch stays */
 body{background:var(--bg);color:var(--ink);font:15px/1.45 var(--f-body);-webkit-font-smoothing:antialiased}
 a{color:var(--sea)}
 button,input,select{font:inherit;color:inherit}
