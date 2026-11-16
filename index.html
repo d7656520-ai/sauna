@@ -1759,7 +1759,7 @@ function render(keep){
   requestAnimationFrame(fill);
 }
 function setActiveMk(i){ document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active"); } }
-function scrollToRow(i){ const go=()=>{ const r=rowEl(i); if(r) r.scrollIntoView({block:"start"}); }; go(); requestAnimationFrame(go); setTimeout(go,150); }
+function scrollToRow(i){ const go=()=>{ if(isFull()) return; const r=rowEl(i); if(r) r.scrollIntoView({block:"start"}); };  /* no scroll under the full-screen map: iOS Safari then shifts the fixed map up (owner 16.11.2026) */ go(); requestAnimationFrame(go); setTimeout(go,150); }
 // ----- navigation = history entries: list -> card (#p-id) -> full-screen map -> card opened from a pin. Every move through history
 // goes through applyState(), so the browser's back (and the iOS edge swipe) returns to exactly the previous view, including the map's
 // centre, zoom and open preview. Before this, "Details" on a pin did history.back() and then replaced the hash on the entry being
@@ -2070,7 +2070,7 @@ function initNav(){ try{ const q0=new URLSearchParams(location.search).get("q");
   const s=HS(); const m0=/^#([pm])-(.+)$/.exec(decodeURIComponent(location.hash||"")); const mm=m0&&[m0[0],m0[2]]; const p=mm?byId(mm[1]):null;
   if(s.v){ applyState(s); return; }
   if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) map.whenReady(()=>{ try{ cluster.zoomToShowLayer(markers[p._i],()=>{}); }catch(_){} });
-    if(m0[1]==="m"&&isPhone()&&markers[p._i]) map.whenReady(()=>showOnMap(p._i)); }  /* #m-id (16.11.2026, owner: «Открыть на карте» on a place page led to the list): on phones the full-screen map at the pin, back = the card */  /* deep link before the map has a view: wait for it (Leaflet getBounds on an unset view threw) */
+    if(m0[1]==="m"&&isPhone()&&markers[p._i]) map.whenReady(()=>setTimeout(()=>showOnMap(p._i),250)); }  /* after scrollToRow has settled (its last pass is at 150 ms) */  /* #m-id (16.11.2026, owner: «Открыть на карте» on a place page led to the list): on phones the full-screen map at the pin, back = the card */  /* deep link before the map has a view: wait for it (Leaflet getBounds on an unset view threw) */
   else hReplace({v:"list"},location.href); }
 initNav();
 // details after the window load event (tiles, first photos and fonts go first), while the browser is idle
