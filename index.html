@@ -9,7 +9,7 @@
 <!-- SEO: while on github.io the page stays noindex; on an own domain remove this line (and rebuild pages with build_pages.py) -->
 <meta name="robots" content="noindex">
 <title>Сауны Португалии · Saunas of Portugal · Saunas de Portugal</title>
-<meta name="description" content="1113 саун, бань, хаммамов и спа по всей Португалии, у 412 подтверждён вход для всех: карта, цены разового входа и абонементов, часы, бронь, фото.">
+<meta name="description" content="1113 саун, бань, хаммамов и спа по всей Португалии, у 440 подтверждён вход для всех: карта, цены разового входа и абонементов, часы, бронь, фото.">
 <link rel="canonical" href="https://d7656520-ai.github.io/sauna/">
 <link rel="alternate" hreflang="ru" href="https://d7656520-ai.github.io/sauna/ru/">
 <link rel="alternate" hreflang="en" href="https://d7656520-ai.github.io/sauna/en/">
@@ -40,7 +40,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=0b9b9d3ec5" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=14275a112f" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -220,7 +220,7 @@ tr.row.active td.lastv{box-shadow:inset -2px 0 0 var(--heat),inset 0 2px 0 var(-
 html:not(.mapfull) .mapall{display:none}
 html.mapfull .mapall{display:inline-flex;position:absolute;z-index:1600;top:calc(10px + env(safe-area-inset-top,0px));left:max(12px,env(safe-area-inset-left,0px));max-width:calc(100vw - 24px)}
 .hidn{margin:0;padding:10px 14px;font-size:13px;line-height:1.4;color:var(--muted);text-align:center}
-#hidn{border-top:1px solid var(--line)}
+#hidn,#moreln{border-top:1px solid var(--line)}
 #qhid{border-bottom:1px solid var(--line);text-align:left}
 .hidn button{all:unset;cursor:pointer;color:var(--sea);font-weight:600;padding:4px 2px;text-decoration:underline;text-underline-offset:2px;text-decoration-thickness:1px}
 .hidn button:focus-visible{outline:2px solid var(--sea);outline-offset:2px;border-radius:4px}
@@ -753,6 +753,7 @@ tr.skel td{padding:10px 8px}
         <tbody id="tbody"><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:58%"></i><i style="width:36%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:70%"></i><i style="width:30%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:48%"></i><i style="width:40%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:64%"></i><i style="width:34%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:54%"></i><i style="width:42%"></i></span></div></td></tr><tr class="skel" aria-hidden="true"><td colspan="6"><div class="sk"><i class="skp"></i><span class="skl"><i style="width:66%"></i><i style="width:28%"></i></span></div></td></tr></tbody>
       </table>
       <div id="more-sentinel"></div>
+      <p class="hidn" id="moreln" hidden></p>
       <div class="empty" id="empty" role="status" hidden><p id="empty-t" data-t="empty"></p><p id="nores" hidden></p><button type="button" class="act prim" id="tryq" hidden>Искать</button><button type="button" class="act" id="reset3" data-t="reset">Сбросить всё</button></div>
       <p class="hidn" id="hidn" hidden></p>
       <p class="hidn" id="blind" role="status" hidden></p>
@@ -789,7 +790,7 @@ tr.skel td{padding:10px 8px}
   map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:phone?[14,14]:[8,8]});
 })();
 </script>
-<script src="data.js?v=0b9b9d3ec5"></script>
+<script src="data.js?v=14275a112f"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -879,13 +880,13 @@ Object.assign(I18N.pt,{search:"Nome, cidade, comodidades",nores:"Nada encontrado
  foot:"Dados recolhidos em {0} em sites oficiais, sistemas de reserva e no Google Maps. Os preços e as regras podem mudar, por isso confirme antes de ir. Avaliações: o selo verde é do Google, o azul é do Booking, o cinzento indica poucas avaliações; ao lado está o número de avaliações. Distâncias em linha reta. As fotos pertencem aos respetivos autores; cada uma tem link para a fonte."});
 // round 7: places without confirmed outside access are hidden by default (owner decision 11.11.2026); dated sessions labelled with the check date
 Object.assign(I18N.ru,{op_show:"Показать ещё {0} {1} без подтверждённого входа для посторонних",op_show0:"Показать места без подтверждённого входа для посторонних",op_hide:"Только разовое посещение",op_pl:["место","места","мест"],
- op_line:"ещё {0} {1} без разового посещения",op_more:"показать",op_tag:"вход для посторонних не подтверждён",collapse:"Свернуть",op_guests:"только для гостей отеля",op_noout:"посторонним вход не продаётся",bl_head:"Не показаны из-за нехватки данных:",bl_price:"без цены {0}",bl_hrs:"без часов {0}",bl_ses:"с расписанием сессий {0}",bl_day:"часы на сегодня неизвестны {0}",bl_days:"часы части дней неизвестны {0}",bl_appt:"по записи {0}",closed_from:"Закрыто с {0}, даты следующего сезона не опубликованы",bl_txt:"часы только текстом {0}",bl_sea:"без данных о море {0}",hrs_valid:"Эти часы действуют с {0} по {1}",closed_per:"Закрыто с {0} по {1}",bl_rate:"без рейтинга {0}",op_q1:"Найдено среди мест без подтверждённого входа: {0}",op_qn:"Ещё {0} {1} среди остальных мест",op_qpl:["совпадение","совпадения","совпадений"],
+ op_line:"Это все {0} {1} с разовым посещением. Ещё {2} {3} без разового посещения",op_more:"показать",op_more_all:"показать все места",op_end:"Это все {0} {1}",op_line0:"Ещё {0} {1} без разового посещения",op_shown:"Показано {0} из {1}",op_showmore:"Показать ещё",op_all_toast:"Показаны все {0} {1}",op_tag:"вход для посторонних не подтверждён",collapse:"Свернуть",op_guests:"только для гостей отеля",op_noout:"посторонним вход не продаётся",bl_head:"Не показаны из-за нехватки данных:",bl_price:"без цены {0}",bl_hrs:"без часов {0}",bl_ses:"с расписанием сессий {0}",bl_day:"часы на сегодня неизвестны {0}",bl_days:"часы части дней неизвестны {0}",bl_appt:"по записи {0}",closed_from:"Закрыто с {0}, даты следующего сезона не опубликованы",bl_txt:"часы только текстом {0}",bl_sea:"без данных о море {0}",hrs_valid:"Эти часы действуют с {0} по {1}",closed_per:"Закрыто с {0} по {1}",bl_rate:"без рейтинга {0}",op_q1:"Найдено среди мест без разового посещения: {0}",op_qn:"Ещё {0} {1} среди мест без разового посещения",op_qpl:["совпадение","совпадения","совпадений"],
  op_exc:"Вход для посторонних в это место не подтверждён",op_all:"Все места",op_sub:"включая без подтверждённого входа для посторонних",sch_up_d:"Ближайшие сеансы на дату проверки {0}"});
 Object.assign(I18N.en,{op_show:"Show {0} more {1} without confirmed outside access",op_show0:"Show places without confirmed outside access",op_hide:"Single visit only",op_pl:["place","places"],
- op_line:"{0} more {1} without a single-visit option",op_more:"show",op_tag:"access for non-guests not confirmed",collapse:"Collapse",op_guests:"hotel guests only",op_noout:"no entry for non-members",bl_head:"Not shown for lack of data:",bl_price:"no price {0}",bl_hrs:"no hours {0}",bl_ses:"session schedule {0}",bl_day:"today's hours unknown {0}",bl_days:"hours unknown for some days {0}",bl_appt:"by appointment {0}",closed_from:"Closed from {0}; next season dates not published",bl_txt:"hours as text only {0}",bl_sea:"no sea data {0}",hrs_valid:"These hours apply from {0} to {1}",closed_per:"Closed from {0} to {1}",bl_rate:"no rating {0}",op_q1:"Found among places without confirmed access: {0}",op_qn:"{0} more {1} among other places",op_qpl:["match","matches"],
+ op_line:"That is all {0} {1} with a single-visit option. {2} more {3} without one",op_more:"show",op_more_all:"show all places",op_end:"That is all {0} {1}",op_line0:"{0} more {1} without a single-visit option",op_shown:"Showing {0} of {1}",op_showmore:"Show more",op_all_toast:"Showing all {0} {1}",op_tag:"access for non-guests not confirmed",collapse:"Collapse",op_guests:"hotel guests only",op_noout:"no entry for non-members",bl_head:"Not shown for lack of data:",bl_price:"no price {0}",bl_hrs:"no hours {0}",bl_ses:"session schedule {0}",bl_day:"today's hours unknown {0}",bl_days:"hours unknown for some days {0}",bl_appt:"by appointment {0}",closed_from:"Closed from {0}; next season dates not published",bl_txt:"hours as text only {0}",bl_sea:"no sea data {0}",hrs_valid:"These hours apply from {0} to {1}",closed_per:"Closed from {0} to {1}",bl_rate:"no rating {0}",op_q1:"Found among places without a single-visit option: {0}",op_qn:"{0} more {1} among places without a single-visit option",op_qpl:["match","matches"],
  op_exc:"Access for non-guests is not confirmed here",op_all:"All places",op_sub:"including places without confirmed outside access",sch_up_d:"Upcoming sessions as of {0}"});
 Object.assign(I18N.pt,{op_show:"Mostrar mais {0} {1} sem acesso confirmado para não hóspedes",op_show0:"Mostrar locais sem acesso confirmado para não hóspedes",op_hide:"Só entrada avulsa",op_pl:["local","locais"],
- op_line:"mais {0} {1} sem entrada avulsa",op_more:"mostrar",op_tag:"acesso para não hóspedes por confirmar",collapse:"Recolher",op_guests:"só para hóspedes",op_noout:"sem entrada para não clientes",bl_head:"Não mostrados por falta de dados:",bl_price:"sem preço {0}",bl_hrs:"sem horário {0}",bl_ses:"horário de sessões {0}",bl_day:"horário de hoje desconhecido {0}",bl_days:"horário de alguns dias desconhecido {0}",bl_appt:"por marcação {0}",closed_from:"Encerrado desde {0}; datas da próxima época por publicar",bl_txt:"horário só em texto {0}",bl_sea:"sem dados do mar {0}",hrs_valid:"Este horário vale de {0} a {1}",closed_per:"Encerrado de {0} a {1}",bl_rate:"sem avaliação {0}",op_q1:"Encontrado entre locais sem acesso confirmado: {0}",op_qn:"Mais {0} {1} entre os outros locais",op_qpl:["resultado","resultados"],
+ op_line:"São todos os {0} {1} com entrada avulsa. Mais {2} {3} sem entrada avulsa",op_more:"mostrar",op_more_all:"mostrar todos os locais",op_end:"São todos os {0} {1}",op_line0:"Mais {0} {1} sem entrada avulsa",op_shown:"A mostrar {0} de {1}",op_showmore:"Mostrar mais",op_all_toast:"A mostrar todos os {0} {1}",op_tag:"acesso para não hóspedes por confirmar",collapse:"Recolher",op_guests:"só para hóspedes",op_noout:"sem entrada para não clientes",bl_head:"Não mostrados por falta de dados:",bl_price:"sem preço {0}",bl_hrs:"sem horário {0}",bl_ses:"horário de sessões {0}",bl_day:"horário de hoje desconhecido {0}",bl_days:"horário de alguns dias desconhecido {0}",bl_appt:"por marcação {0}",closed_from:"Encerrado desde {0}; datas da próxima época por publicar",bl_txt:"horário só em texto {0}",bl_sea:"sem dados do mar {0}",hrs_valid:"Este horário vale de {0} a {1}",closed_per:"Encerrado de {0} a {1}",bl_rate:"sem avaliação {0}",op_q1:"Encontrado entre locais sem entrada avulsa: {0}",op_qn:"Mais {0} {1} entre locais sem entrada avulsa",op_qpl:["resultado","resultados"],
  op_exc:"O acesso de não hóspedes a este local não está confirmado",op_all:"Todos os locais",op_sub:"incluindo locais sem acesso confirmado para não hóspedes",sch_up_d:"Próximas sessões à data da verificação {0}"});
 // round 9 (external review 11.11.2026): recommended order by default, booking wording from the headline offer, hours known for some days only
 Object.assign(I18N.ru,{day_req:"вход по запросу"});Object.assign(I18N.en,{day_req:"entry on request"});Object.assign(I18N.pt,{day_req:"entrada sob consulta"});
@@ -1792,16 +1793,23 @@ function markLast(){ const r=tbody.querySelector("tr.row.active"); if(!r) return
 addEventListener("resize",()=>markLast());
 function appendRows(n){ const end=Math.min(LIST.length,shown+n); if(end<=shown) return; let h=""; if(!shown&&amRO) amRO.disconnect();
   for(let k=shown;k<end;k++){ const p=LIST[k]; h+=rowHTML(p); if(st.open===p._i) h+=detailHTML(p); }
-  tbody.insertAdjacentHTML("beforeend",h); shown=end; markLast(); const na=tbody.querySelectorAll(".am:not([data-f])"); fitAm(na); if(amRO) na.forEach(e=>amRO.observe(e)); }
+  tbody.insertAdjacentHTML("beforeend",h); shown=end; markLast(); const na=tbody.querySelectorAll(".am:not([data-f])"); fitAm(na); if(amRO) na.forEach(e=>amRO.observe(e)); endLine(); kick(); }
 function ensureShown(i){ const k=LIST.findIndex(p=>p._i===i); if(k<0) return false; if(k>=shown) appendRows(k-shown+1+PAGE/2); return true; }
 const sentinel=document.getElementById("more-sentinel");
 // rows below the first screen are added in small idle slices (a page of 40 rows with their layout was one long task on a slow phone);
 // when the end of the list comes near the screen (scrolling), a whole page goes in at once so the list never runs out under the finger
 const CH=6; let fillQ=0;
 function fill(){ if(shown>=LIST.length||isFull()) return; const top=sentinel.getBoundingClientRect().top; if(top>=innerHeight+1500&&shown>=PAGE) return; // the first page (40 rows) is always completed, in idle slices
-  if(top<innerHeight+150){ appendRows(PAGE); requestAnimationFrame(fill); return; }
+  if(top<innerHeight+150){ appendRows(PAGE); return; }
   if(fillQ) return; fillQ=1; idle(()=>{ fillQ=0; if(shown<LIST.length&&!isFull()){ appendRows(CH); fill(); } },400); }
-try{ new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)) fill(); },{rootMargin:"1500px 0px"}).observe(sentinel); }catch(e){ window.addEventListener("scroll",fill,{passive:true}); }
+// owner 16.11.2026 (msg 1173: "All places" stopped at about 400 of 1 113): the IntersectionObserver alone reports only when the sentinel
+// crosses the 1500 px margin. Rows added in an idle slice pushed it out and a fast wheel scroll brought it back before the observer
+// looked again, so it never fired and nothing called fill(). Now every scroll, resize, change of the list's height, every append and the
+// return from the full-screen map re-check (one call per frame); the observer stays as one more trigger
+let fillRaf=0; function kick(){ if(fillRaf||shown>=LIST.length) return; fillRaf=requestAnimationFrame(()=>{ fillRaf=0; fill(); }); }
+try{ new IntersectionObserver(es=>{ if(es.some(e=>e.isIntersecting)) fill(); },{rootMargin:"1500px 0px"}).observe(sentinel); }catch(e){}
+addEventListener("scroll",kick,{passive:true}); addEventListener("resize",kick);
+try{ new ResizeObserver(kick).observe(document.getElementById("list")); }catch(e){}
 function updateMarkers(list){ const ms=[]; let key=""; list.forEach(p=>{ const m=markers[p._i]; if(m){ ms.push(m); key+=p._i+","; } });
   if(key===lastMk) return false; lastMk=key; cluster.clearLayers(); cluster.addLayers(ms); return true; }
 // pins and the map fit for the current list. The very first render of a plain landing (no deep link, no saved view) does this in its own task
@@ -1827,7 +1835,7 @@ function render(keep){
   HIDL=st.all?[]:P.filter(p=>!inBase(p)&&!nameHit(p)&&passFn(p,"open")); if(lastR) HIDL.sort((x,y)=>(lastR.get(y._i)||0)-(lastR.get(x._i)||0));
   // chip counts live in the filter panel: computed now when it is open, otherwise once the page is idle (and at the latest when it opens)
   updateFtoggle(); if(fbox.classList.contains("open")) facetCounts(); else if(!fcDirty){ fcDirty=1; idle(()=>{ if(fcDirty) facetCounts(); },1500); } drawNores(); drawOpen();
-  requestAnimationFrame(fill);
+  kick();
 }
 function setActiveMk(i){ document.querySelectorAll(".mk.active").forEach(e=>e.classList.remove("active")); if(i!=null){ const el=document.querySelector(`.mk[data-i="${i}"]`); if(el) el.classList.add("active"); } }
 function scrollToRow(i){ const go=()=>{ if(isFull()) return; const r=rowEl(i); if(r) r.scrollIntoView({block:"start"}); };  /* no scroll under the full-screen map: iOS Safari then shifts the fixed map up (owner 16.11.2026) */ go(); requestAnimationFrame(go); setTimeout(go,150); }
@@ -1875,7 +1883,7 @@ function listReturn(sameOnly){ const r=mapRet; mapRet=null; if(!r) return false;
   else { if(sameOnly) return false; y=Math.min(y,Math.max(0,Math.round(window.scrollY+document.querySelector(".main").getBoundingClientRect().top))); }
   const go=()=>window.scrollTo(0,y); go(); requestAnimationFrame(go); return true; }
 function showFull(noFit,after){ if(isFull()) return; if(!mapRet) mapRet={y:window.scrollY,sig:listSig(),n:shown}; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>whenFullSized(()=>{ if(!noFit) fitList(LIST); if(after) after(); }),60); }
-function hideFull(){ cancelPinFocus(); if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); }
+function hideFull(){ cancelPinFocus(); if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); kick(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); kick(); },60); }
 function openFull(noFit){ if(isFull()) return; mapRet=null; hPush({v:"map"},location.href); showFull(noFit); }
 function closeFull(){ cancelPinFocus(); if(HS().v==="map") history.back(); else if(isFull()){ hideFull(); listReturn(); } }
 function showOnMap(i){ cancelPinFocus(); const seq=focusSeq; if(isPhone()) openFull(true); setTimeout(()=>{ if(seq!==focusSeq) return; map.invalidateSize(); if(markers[i]) focusPin(i); },80); }
@@ -2109,6 +2117,12 @@ tbody.addEventListener("pointerdown",()=>loadMore(),{passive:true,once:true});
 // places without confirmed outside access: the toggle at the top of the filters (count = hidden places that pass the other filters),
 // a quiet line under the list, and with a query a line above it naming hidden matches
 let HIDL=[];
+// under the list (UXR B1, 16.11.2026): while rows are still coming, "Shown N of M · Show more" (a manual way on if loading ever stalls);
+// once every row is in, the closing line (#hidn) with the total
+function endLine(){ const hl=document.getElementById("hidn"), ml=document.getElementById("moreln"); if(!hl||!ml) return; const done=shown>=LIST.length;
+  hl.hidden=!done||!hl.dataset.txt; ml.hidden=done;
+  if(!done){ if(ml.dataset.lang!==LANG){ ml.dataset.lang=LANG; ml.innerHTML=`<span></span> · <button type="button" data-more="1">${esc(t("op_showmore"))}</button>`; } ml.firstChild.textContent=t("op_shown",nfmt(shown),nfmt(LIST.length)); } }
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-more]"); if(b) appendRows(PAGE); });
 function setAll(on){ st.all=!!on; st.exc=(!st.all&&st.open!=null&&!P[st.open]._open)?st.open:null; render(true); }
 // the switch "All places (N)": N = how many places the list holds with the switch on (current filters applied). The same switch in the sheet and on the full-screen map
 function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=document.getElementById("otog");
@@ -2119,11 +2133,16 @@ function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=documen
   const segs=`<button type="button" role="radio" data-seg="open" aria-checked="${fOn}">${esc(t("seg_open"))}<span class="n">${nfmt(op)}</span></button><button type="button" role="radio" data-seg="all" aria-checked="${!fOn}">${esc(t("seg_all"))}<span class="n">${nfmt(tot)}</span></button>`;
   document.getElementById("otseg").innerHTML=segs; document.getElementById("otsub").textContent=sub;
   const m=document.getElementById("mapall"); m.innerHTML=segs; m.title=sub; const ms=document.getElementById("mainseg"); ms.innerHTML=segs; ms.title=sub;
-  const more=`<button type="button" data-oall="1">${esc(t("op_more"))}</button>`;
+  const more=`<button type="button" data-oall="1">${esc(t("op_more_all"))}</button>`;
   const hl=document.getElementById("hidn");
-  if(!on&&n&&!q){ hl.hidden=false; hl.innerHTML=`${esc(t("op_line",nfmt(n),plf(n,"op_pl")))} · ${more}`; }
-  else if(on&&nIn){ hl.hidden=false; hl.innerHTML=`<button type="button" data-oall="0">${esc(t("op_hide"))}</button>`; }
-  else hl.hidden=true;
+  // owner 16.11.2026 (msg 1173): in "All places" the line used to be a bare "Single visit only" link; now it says what the list is
+  // ("That is the whole list: N places, K of them without a single visit · show single-visit only") and appears only once every row is in,
+  // so it never claims "whole list" over a list that is still loading
+  // UXR B2: no bare "Single visit only" link at the end (the switch is at the top); the closing line says the total
+  const L=LIST.length; let ht="";
+  if(!on&&n&&!q) ht=`${esc(L>1?t("op_line",nfmt(L),plf(L,"op_pl"),nfmt(n),plf(n,"op_pl")):t("op_line0",nfmt(n),plf(n,"op_pl")))} · ${more}`;
+  else if(L>1) ht=esc(t("op_end",nfmt(L),plf(L,"op_pl")));
+  hl.dataset.txt=ht?"1":""; hl.innerHTML=ht; endLine();
   // blind spots of the price / hours / rating filters (owner msg 848): places that pass every other filter but have no data for this one
   const bl=document.getElementById("blind"), bp=[];
   if(passFn){ if(st.price!=null){ const k=P.filter(p=>p._vp==null&&passFn(p,"price")).length; if(k) bp.push(t("bl_price",nfmt(k))); }
@@ -2135,7 +2154,10 @@ function drawOpen(){ const n=HIDL.length, on=st.all, q=!!st.qt.length, b=documen
   const qh=document.getElementById("qhid");
   if(!on&&n&&q){ qh.hidden=false; qh.innerHTML=`${esc(n<=2?t("op_q1",HIDL.map(pname).join(", ")):t("op_qn",nfmt(n),plf(n,"op_qpl")))} · ${more}`; } else qh.hidden=true; }
 for(const id of ["otseg","mapall","mainseg"]) document.getElementById(id).addEventListener("click",e=>{ const x=e.target.closest("[data-seg]"); if(!x) return; e.stopPropagation(); const all=x.dataset.seg==="all"; if(all!==st.all) setAll(all); });
-document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-oall]"); if(b) setAll(b.dataset.oall==="1"); });
+document.addEventListener("click",e=>{ const b=e.target.closest&&e.target.closest("[data-oall]"); if(!b) return; const on=b.dataset.oall==="1"; setAll(on);
+  // the list is re-sorted as a whole, so the reader goes to its start (the switch and the search bar on top) and is told what changed
+  const y=Math.max(0,Math.round(window.scrollY+document.querySelector(".main").getBoundingClientRect().top)); if(window.scrollY>y) window.scrollTo(0,y);
+  if(on) toast(t("op_all_toast",nfmt(LIST.length),plf(LIST.length,"op_pl"))); });
 // a query that matches nothing at all: "Nothing found for ..." and one tap on the closest spelling
 function drawNores(){ const nr=!!(lastR&&!lastR.size); const np=document.getElementById("nores"), b=document.getElementById("tryq");
   document.getElementById("empty-t").hidden=nr; np.hidden=!nr; if(nr) np.textContent=t("nores",qEl.value.trim());
