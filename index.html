@@ -1793,17 +1793,29 @@ function openFromMap(i){ const p=P[i];
 // the fit must run on the full-screen size: on a slow phone 60 ms is not always enough for the layout, and a fit on the small preview size
 // (150 px tall) leaves the full map zoomed out to half of Europe (owner 12.11.2026). Wait until the map is at least 60 % of the screen tall.
 function whenFullSized(fn,tries){ map.invalidateSize(); const sz=map.getSize(); if(sz.y<innerHeight*0.6&&(tries=tries==null?20:tries)>0) return setTimeout(()=>whenFullSized(fn,tries-1),50); fn(); }
-function showFull(noFit,after){ if(isFull()) return; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>whenFullSized(()=>{ if(!noFit) fitList(LIST); if(after) after(); }),60); }
+// Leaving the full-screen map for the list (owner 16.11.2026: the list came back "somewhere in the middle"). The page scroll is remembered
+// when the map opens. Same list on return (same places, same order): back to exactly that spot. The list changed on the map (filters,
+// "all places", sort): its start, i.e. the search bar at the top of the screen, never lower than where the reader was. A card opened from
+// a pin keeps the remembered spot, so map -> card -> back to the map -> List still returns to where the reader was before the map.
+let mapRet=null;
+const listSig=()=>LIST.map(p=>p._i).join(",");
+function listReturn(sameOnly){ const r=mapRet; mapRet=null; if(!r) return false; let y=r.y;
+  if(r.sig===listSig()){ if(shown<r.n) appendRows(r.n-shown); }
+  else { if(sameOnly) return false; y=Math.min(y,Math.max(0,Math.round(window.scrollY+document.querySelector(".main").getBoundingClientRect().top))); }
+  const go=()=>window.scrollTo(0,y); go(); requestAnimationFrame(go); return true; }
+function showFull(noFit,after){ if(isFull()) return; if(!mapRet) mapRet={y:window.scrollY,sig:listSig(),n:shown}; document.documentElement.classList.add("mapfull"); syncMapMode(); setTimeout(()=>whenFullSized(()=>{ if(!noFit) fitList(LIST); if(after) after(); }),60); }
 function hideFull(){ cancelPinFocus(); if(!isFull()) return; closePreview(); closePop(); document.documentElement.classList.remove("mapfull","fpanel"); fbox.classList.remove("open"); ft.setAttribute("aria-expanded","false"); syncMapMode(); setTimeout(()=>{ map.invalidateSize(); if(st.open==null||!markers[st.open]) fitAuto(); },60); }
-function openFull(noFit){ if(isFull()) return; hPush({v:"map"},location.href); showFull(noFit); }
-function closeFull(){ cancelPinFocus(); if(HS().v==="map") history.back(); else hideFull(); }
+function openFull(noFit){ if(isFull()) return; mapRet=null; hPush({v:"map"},location.href); showFull(noFit); }
+function closeFull(){ cancelPinFocus(); if(HS().v==="map") history.back(); else if(isFull()){ hideFull(); listReturn(); } }
 function showOnMap(i){ cancelPinFocus(); const seq=focusSeq; if(isPhone()) openFull(true); setTimeout(()=>{ if(seq!==focusSeq) return; map.invalidateSize(); if(markers[i]) focusPin(i); },80); }
 function applyState(s){ cancelPinFocus(); s=s||{v:"list"};
   if(s.v==="map"){ const v=s.view; const restore=()=>{ if(!v) return; map.setView(v.c,v.z,{animate:false}); if(v.pv!=null&&markers[v.pv]) openPin(v.pv); };
     if(isFull()) restore(); else showFull(true,restore); return; }
-  hideFull();
-  if(s.v==="card"){ const p=byId(s.id); if(p){ openCard(p._i,true); scrollToRow(p._i); } return; }
-  if(st.open!=null) closeCard(st.open); }
+  const wasFull=isFull(); hideFull();
+  // a card that was open under the map: the same spot in it if the list is unchanged; a card opened from a pin (back:"map") always starts at its top
+  if(s.v==="card"){ const p=byId(s.id); if(p){ openCard(p._i,true); if(!(wasFull&&s.back!=="map"&&listReturn(true))) scrollToRow(p._i); } return; }
+  if(st.open!=null) closeCard(st.open);
+  if(wasFull) listReturn(); }
 document.getElementById("mapbtn").onclick=()=>openFull(); document.getElementById("mapfull-x").onclick=()=>closeFull();
 window.addEventListener("popstate",e=>{ let s=e.state; if(!s){ const m=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); if(m&&byId(m[1])){ s={v:"card",id:m[1]}; hReplace(s,location.href); } } applyState(s); });
 const onMQ=()=>{ document.querySelectorAll("[data-tp]").forEach(e=>{ e.placeholder=t(e.dataset.tp==="search"&&isPhone()?"search_s":e.dataset.tp); }); if(!isPhone()) closeSheet(); closePreview(); map.closePopup(); syncMapMode(); updateFtoggle(); map.invalidateSize(); fitAuto(); render(true); };
@@ -2055,9 +2067,10 @@ document.getElementById("tryq").onclick=e=>{ qEl.value=e.currentTarget.dataset.q
 renderHead(); render();
 // first view: a saved state (reload) is restored; a deep link #p-id (alias ids too) opens as a card entry, so the browser's back collapses it
 function initNav(){ try{ const q0=new URLSearchParams(location.search).get("q"); if(q0){ qEl.value=q0; applyQ(); } }catch(_){}
-  const s=HS(); const mm=/^#p-(.+)$/.exec(decodeURIComponent(location.hash||"")); const p=mm?byId(mm[1]):null;
+  const s=HS(); const m0=/^#([pm])-(.+)$/.exec(decodeURIComponent(location.hash||"")); const mm=m0&&[m0[0],m0[2]]; const p=mm?byId(mm[1]):null;
   if(s.v){ applyState(s); return; }
-  if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) map.whenReady(()=>{ try{ cluster.zoomToShowLayer(markers[p._i],()=>{}); }catch(_){} }); }  /* deep link before the map has a view: wait for it (Leaflet getBounds on an unset view threw) */
+  if(p){ hReplace({v:"list"},listUrl()); hPush({v:"card",id:mm[1]},cardUrl(mm[1])); openCard(p._i,true); scrollToRow(p._i); if(markers[p._i]) map.whenReady(()=>{ try{ cluster.zoomToShowLayer(markers[p._i],()=>{}); }catch(_){} });
+    if(m0[1]==="m"&&isPhone()&&markers[p._i]) map.whenReady(()=>showOnMap(p._i)); }  /* #m-id (16.11.2026, owner: «Открыть на карте» on a place page led to the list): on phones the full-screen map at the pin, back = the card */  /* deep link before the map has a view: wait for it (Leaflet getBounds on an unset view threw) */
   else hReplace({v:"list"},location.href); }
 initNav();
 // details after the window load event (tiles, first photos and fonts go first), while the browser is idle
