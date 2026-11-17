@@ -172,7 +172,7 @@ html.fpanel .fx:hover{background:var(--chip);color:var(--ink)}
 select{appearance:none;-webkit-appearance:none;border:1px solid var(--line);background:var(--bg) var(--sel-chev) no-repeat right 8px center/16px 16px;border-radius:10px;padding:5px 30px 5px 10px;font-size:13px;min-height:32px;cursor:pointer}
 /* reset: a warm pill while there is something to reset, quiet text when there is nothing */
 .reset{all:unset;box-sizing:border-box;display:inline-flex;align-items:center;cursor:pointer;min-height:28px;padding:0 10px;border-radius:999px;font-size:13px;font-weight:600;color:var(--heat-text);background:var(--heat-soft);white-space:nowrap}
-.reset:not(:disabled):hover{text-decoration:underline;text-underline-offset:2px}
+@media (hover:hover) and (pointer:fine){.reset:not(:disabled):hover{text-decoration:underline;text-underline-offset:2px}}
 .reset:focus-visible{outline:2px solid var(--sea);outline-offset:2px}
 .reset:disabled{cursor:default;color:var(--muted);background:transparent;font-weight:400}
 .hint{font-size:13px;color:var(--muted);margin:0 0 8px}
@@ -260,7 +260,7 @@ tr.row.w-status td:first-child img{filter:grayscale(.5);opacity:.8}
 .thumbs img{width:100%;height:100%;object-fit:cover;display:block}
 tr.detail > td{background:var(--act-bg);padding:12px 14px 8px;max-width:0;box-shadow:inset 2px 0 0 var(--heat),inset -2px 0 0 var(--heat),inset 0 -2px 0 var(--heat)}
 .dcoll{all:unset;box-sizing:border-box;display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:44px;margin-top:10px;border-top:1px solid var(--line);color:var(--heat-text,var(--heat));font-weight:600;cursor:pointer}
-.dcoll:hover,.dcoll:focus-visible{text-decoration:underline;text-underline-offset:3px}
+.dcoll:focus-visible{text-decoration:underline;text-underline-offset:3px}@media (hover:hover) and (pointer:fine){.dcoll:hover{text-decoration:underline;text-underline-offset:3px}}
 .dcoll svg{width:14px;height:14px}
 .gallery{display:flex;gap:6px;overflow-x:auto;margin-bottom:12px;padding-bottom:2px;max-width:var(--detw,100%);width:100%;scroll-snap-type:x proximity;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:thin}
 .gallery button{all:unset;cursor:zoom-in;flex:0 0 auto;width:120px;height:84px;border-radius:8px;overflow:hidden;background:var(--chip);scroll-snap-align:start}
@@ -362,7 +362,7 @@ html.fpanel .fdone:active{transform:translateY(1px)}
 .feei::after{content:"";position:absolute;inset:-11px}
 .feei .ic{width:15px;height:15px}
 .feei:hover,.feei:focus-visible{color:var(--sea)}
-.hbtn:hover .wkmore,.hbtn:focus-visible .wkmore{color:var(--sea);text-decoration:underline}
+.hbtn:focus-visible .wkmore{color:var(--sea);text-decoration:underline}@media (hover:hover) and (pointer:fine){.hbtn:hover .wkmore{color:var(--sea);text-decoration:underline}}
 .wkmore{color:var(--sea);display:inline-flex;align-items:center;gap:2px;margin-top:2px;padding:1px 8px;border:1px solid color-mix(in srgb,var(--sea) 40%,var(--line));border-radius:999px;font-weight:600}
 .wkmore .ic-s{width:12px;height:12px;vertical-align:-1px}
 /* popover (desktop) / bottom sheet (phone): hours, schedule, route, language, feedback */
@@ -527,10 +527,10 @@ tr.row{scroll-margin-top:44px}
 .fbl{margin-top:8px;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;line-height:1.4}
 .fbb{all:unset;cursor:pointer;color:var(--muted);display:inline-flex;align-items:center;gap:4px}
 .fbb .ic,.fbl .fbo .ic{width:16px;height:16px}
-.fbb:hover,.fbb:focus-visible{color:var(--ink);text-decoration:underline dotted}
+.fbb:focus-visible{color:var(--ink);text-decoration:underline dotted}@media (hover:hover) and (pointer:fine){.fbb:hover{color:var(--ink);text-decoration:underline dotted}}
 .fbb:disabled,.fbb[aria-disabled="true"]{cursor:default;color:var(--ok);text-decoration:none}
 .fbl a.fbo{color:var(--muted);text-decoration:none;display:inline-flex;align-items:center;gap:2px}
-.fbl a.fbo:hover{color:var(--ink);text-decoration:underline dotted}
+@media (hover:hover) and (pointer:fine){.fbl a.fbo:hover{color:var(--ink);text-decoration:underline dotted}}
 .fbl .sep{opacity:.6}
 .fbf{display:grid;gap:6px;font-size:13px;min-width:220px}
 .fbf label{display:flex;align-items:center;gap:8px;cursor:pointer;padding:2px 0}
