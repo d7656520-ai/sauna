@@ -3,5 +3,3 @@ Allow: /
 Disallow: /sauna/owner.html
 Disallow: /sauna/refs/
 Disallow: /sauna/data_more.js
-
-Sitemap: https://d7656520-ai.github.io/sauna/sitemap.xml
