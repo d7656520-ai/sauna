@@ -39,7 +39,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="dns-prefetch" href="https://lh3.googleusercontent.com">
-<link rel="preload" href="data.js?v=559eb9652e" as="script" fetchpriority="high">
+<link rel="preload" href="data.js?v=33102cb09b" as="script" fetchpriority="high">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <!-- fonts do not block the first paint: system font first, swap when loaded -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Onest:wght@400;600&family=Unbounded:wght@600&display=swap" media="print" onload="this.media='all'">
@@ -828,7 +828,7 @@ tr.skel td{padding:10px 8px}
   if(phone) map.setView([39.18,-8.64],6); else map.fitBounds([[36.95,-9.52],[42.16,-6.19]],{padding:[8,8]});
 })();
 </script>
-<script src="data.js?v=559eb9652e"></script>
+<script src="data.js?v=33102cb09b"></script>
 <script>
 (function(){
 // Owner / visitor feedback (Google Forms). Empty strings = feature hidden.
@@ -1141,6 +1141,10 @@ function prep(p,i){ p._i=i; const a=p.access||{}; const r=p.ratings||{}; const h
   const sparse=!r.google&&!r.booking&&a.day_pass_price_eur==null&&a.membership_month_eur==null&&!p.wk&&!Object.keys(hl).some(k=>/_eur$/.test(k)&&hl[k]!=null)&&!(p.of||[]).some(o=>o.price_eur!=null);
   p._weak = p.status ? "status" : p.confidence==="low" ? "low" : sparse ? "sparse" : null;
   if(p._weak) p._score-=0.6;
+  // «Рейтинг» sort only (owner 1259, WT 17.11.2026): no heat-room frame among the place's photos (build flag nh, the internal status no_heat_photo)
+  // -0.15; the sauna is a side service of a massage or beauty salon (sauna_side: sold as sessions or in packs, no frame of it, guests never
+  // mention it) -0.4; the two add up. «Рекомендуемые» keeps _score as before
+  p._rs=p._score-(p.nh?0.15:0)-(p.sauna_side?0.4:0);
   // recommended order (default): the shrunk rating plus what makes the entry useful to someone looking for a place to sweat: a heat-room first photo
   // (+0.25; a spa-zone photo +0.10; no photo at all -0.15) and a known price for outsiders (single visit +0.25; pack, treatment, group or month only +0.10).
   // Low confidence, "not open yet" and sparse records already carry the -0.6 above. Weights checked on the data: the top 20 all have a price and a heat or spa first photo
@@ -2039,7 +2043,7 @@ function filtered(){
       case "kind": return d*(kLabel(x).localeCompare(kLabel(y)))||x._d-y._d;
       case "dist": return d*(x._d-y._d);
       case "name": return d*coll.compare(pname(x),pname(y));
-      case "score": return d*(x._score-y._score)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
+      case "score": return d*(x._rs-y._rs)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
       default: return d*(x._rec-y._rec)||((y.ratings?.google_reviews||0)-(x.ratings?.google_reviews||0));
     }
   });
